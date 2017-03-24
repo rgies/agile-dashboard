@@ -1,0 +1,9 @@
+{% extends "MetricsBundle::layout.html.twig" %}
+{% block content %}
+    <div id="MetricsBundle-default-about-headline" class="page-header editable">
+        {{ editor_get_content("MetricsBundle-default-about-headline", "<h1>About</h1>") }}
+    </div>
+    <div id="MetricsBundle-default-about-body" class="editable">
+        {{ editor_get_content("MetricsBundle-default-about-body", "Website description") }}
+    </div>
+{% endblock %}

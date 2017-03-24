@@ -1,0 +1,64 @@
+/* -- Required label --------------- */
+label.required:after {
+    content: "*";
+}
+
+/* -- Error label ------------------ */
+label.error:before {
+    font-family: FontAwesome;
+    content: "\F071 \0020";
+    color: #dfb800;
+}
+
+label.error {
+    color: #DF382C;
+}
+
+/* -- Content Block -------------- */
+#content-block {
+    padding-bottom: 30px;
+    min-height: 400px;
+}
+
+#right-content-col {
+    margin-top: 30px;
+}
+
+/* -- Copyright ------------------ */
+#copyright-footer {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* -- Big Quote-------------------- */
+q:before {
+    content: " ";
+    background: url('../images/quote.png') top left no-repeat transparent;
+    height: 1em;
+    width: 52px;
+    display: inline-block;
+    font-size: 36px;
+    font-weight: 300;
+    line-height: 1em;
+}
+
+q:after {
+    content: "";
+}
+
+/* -- Scroll to top -------------------- */
+#toTop {
+    display: none;
+    position: fixed;
+    bottom: 0px;
+    right: 25px;
+    font-size: 64px;
+    opacity: 0.4;
+    filter: alpha(opacity=40); /* For IE8 and earlier */
+}
+
+#toTop:hover {
+    opacity: 0.8;
+    filter: alpha(opacity=80); /* For IE8 and earlier */
+}

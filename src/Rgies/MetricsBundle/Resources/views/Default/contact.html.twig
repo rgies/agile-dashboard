@@ -1,0 +1,54 @@
+{% extends "MetricsBundle::layout.html.twig" %}
+{% block content %}
+    {% if app.session.getFlashBag.has("message") %}
+    <!-- Confirmation message -->
+    <div class="alert alert-success" role="alert">
+        {% for flashMessage in app.session.flashbag.get("message") %}
+        {{ flashMessage }}
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div class="page-header">
+        <h1>Contact us</h1>
+    </div>
+    <p>
+        <form id="contactForm" name="contactForm" role="form" method="post" action="{{ path("contact") }}">
+
+            <!-- Name input-->
+            <div class="form-group">
+                <label for="name">Name*</label>
+                <input id="name" name="name" type="text" placeholder="Name" class="form-control " required="required">
+                <p class="help-block">Please insert your name.</p>
+            </div>
+
+            <!-- Email input-->
+            <div class="form-group">
+                <label for="email">Email*</label>
+                <input id="email" name="email" type="email" placeholder="Email" class="form-control email" required="required">
+                <p class="help-block">Please insert your email.</p>
+            </div>
+
+            <!-- Message -->
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea id="message" class="form-control" name="message">Your message.</textarea>
+            </div>
+
+            <!-- Submit -->
+            <div class="form-group">
+                <div class="control">
+                    <button id="submit" name="submit" type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+
+        </form>
+    </p>
+{% endblock %}
+
+
+{% block js %}
+    <script>
+        // Form validation
+        $("#contactForm").validate();
+    </script>
+{% endblock %}

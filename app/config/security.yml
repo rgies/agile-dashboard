@@ -1,0 +1,45 @@
+security:
+    encoders:
+        Symfony\Component\Security\Core\User\User:
+            algorithm: sha256
+            encode_as_base64: false
+            iterations: 1
+
+    role_hierarchy:
+        ROLE_EDITOR:      [ROLE_USER]
+        ROLE_ADMIN:       [ROLE_USER, ROLE_EDITOR]
+        ROLE_SUPER_ADMIN: [ROLE_EDITOR, ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+
+    providers:
+        in_memory:
+            memory:
+                users:
+                    # Default password for user is [user] please change urgendly
+                    #User:  { password: 04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb, roles: [ 'ROLE_USER' ] }
+
+                    # Default password for admin is [admin] please change urgendly
+                    Admin: { password: 8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918, roles: [ 'ROLE_ADMIN' ] }
+
+    firewalls:
+        dev:
+            pattern:  ^/(_(profiler|wdt|gui)|css|images|js)/
+            security: false
+
+        login:
+            pattern:  ^/login$
+            security: false
+
+        secured_area:
+            pattern:    ^/
+            form_login:
+                login_path: login
+                check_path: login_auth
+                csrf_provider: form.csrf_provider
+                csrf_parameter: _security_token
+            logout:
+                path:   logout
+                #target: _demo
+            anonymous: ~
+
+    access_control:
+        #- { path: ^/xxx/, roles: ROLE_ADMIN }

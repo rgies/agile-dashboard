@@ -1,0 +1,10 @@
+{% extends "MetricsBundle::layout.html.twig" %}
+{% block content %}
+    <div id="MetricsBundle-default-imprint-headline" class="page-header editable">
+        {{ editor_get_content("MetricsBundle-default-imprint-headline", "<h1>Imprint</h1>") }}
+    </div>
+    <h4>{{ platform.vendor }}</h4>
+    <div id="MetricsBundle-default-imprint-body" class="editable">
+        {{ editor_get_content("MetricsBundle-default-imprint-body", "Street<br/>Zip City<br/>Phone<br/>Email") }}
+    </div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "MetricsBundle::layout.html.twig" %}
+{% block content %}
+    <!-- Slider Teaser -->
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-lg-12">
+            <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+                <!-- Indicators -->
+                <ol class="carousel-indicators">
+                    {% for image in sliderImages %}
+                    <li data-target="#carousel-example-generic" data-slide-to="{{ loop.index0 }}"{% if loop.first %} class="active"{% endif %}></li>
+                    {% endfor %}
+                </ol>
+
+                <!-- Wrapper for slides -->
+                <div class="carousel-inner">
+                    {% for image in sliderImages %}
+                    <div class="item{% if loop.first %} active{% endif %}">
+                        <img src="{{ asset('bundles/metrics/images/slider/') }}{{ image.src }}" alt="Slider Image">
+                        <div class="container">
+                            <div class="carousel-caption">{{ image.caption | raw }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Controls -->
+                <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                </a>
+                <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <!-- Main Column-->
+        <div id="main-content-col" class="col-md-9 col-sm-9 col-lg-9">
+            <div id="MetricsBundle-default-index-headline" class="page-header editable">
+                {{ editor_get_content("MetricsBundle-default-index-headline", "<h1>Welcome <small>to your home page</small></h1>") }}
+            </div>
+            <div id="MetricsBundle-default-index-body" class="editable">
+                {{ editor_get_content("MetricsBundle-default-index-body", "Please place here your page content.") }}
+            </div>
+        </div>
+        <!-- Right Column-->
+        <div id="right-content-col" class="col-md-3 col-sm-3 col-lg-3">
+            <div id="MetricsBundle-default-index-txt1" class="well editable">
+                {{ editor_get_content("MetricsBundle-default-index-txt1", "<h3>NEWS</h3><p>xxx xxx xxx xxx xxx xxx xxx xxx</p>") }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

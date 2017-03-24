@@ -1,0 +1,64 @@
+{{ '{% extends "' }}{{ bundle }}{{ '::layout.html.twig" %}' }}
+
+{% block content %}
+{{ "{% block content -%}" }}
+<div class="container">
+    <div class="page-header">
+        <h1>{{ entity }} list</h1>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+            {%- for field, metadata in fields %}
+
+                <th>{{ field|capitalize }}</th>
+
+            {%- endfor %}
+
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {{ '{% for entity in entities %}' }}
+            <tr>
+
+        {%- for field, metadata in fields %}
+            {%- if loop.first and ('show' in actions) %}
+
+                <td><a href="{{ "{{ path('" ~ route_name_prefix ~ "_show', { 'id': entity.id }) }}" }}">{{ '{{ entity.' ~ field|replace({'_': ''}) ~ ' }}' }}</a></td>
+
+            {%- elseif metadata.type in ['date', 'datetime'] %}
+
+                <td>{{ '{% if entity.' ~ field|replace({'_': ''}) ~ ' %}{{ entity.' ~ field|replace({'_': ''}) ~ '|date(\'Y-m-d H:i:s\') }}{% endif %}' }}</td>
+
+            {%- else %}
+
+                <td>{{ '{{ entity.' ~ field|replace({'_': ''}) ~ ' }}' }}</td>
+
+            {%- endif %}
+
+            {%- if loop.last %}
+
+                <td>
+                    {%- include "crud/views/others/actions.html.twig.twig" %}
+                </td>
+
+            {%- endif %}
+        {%- endfor %}
+
+            </tr>
+        {{ '{% endfor %}' }}
+        </tbody>
+    </table>
+
+    {%- if 'new' in actions %}
+    <div>
+        <button type="button" class="btn btn-primary" onclick="location.href='{{ "{{ path('" ~ route_name_prefix ~ "_new') }}" }}'">
+            Create a new entry
+        </button>
+    </div>
+    {%- endif %}
+</div>
+{{ "{% endblock %}" }}
+{% endblock content %}

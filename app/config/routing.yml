@@ -1,0 +1,5 @@
+metrics:
+    resource: "@MetricsBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
