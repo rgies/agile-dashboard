@@ -1,0 +1,12 @@
+parameters:
+    platform_name: 'Agile Dashboard'
+    platform_version: '1.0'
+    platform_vendor: 'Agile Leadership 3.0'
+    platform_contact: mail@agile-lead.com
+    platform_keywords: 'webportal,blog'
+    platform_description: 'This is my website with blog.'
+
+
+    # Dashboard widgets
+    widget_types:
+        'jira/count': 'Jira Ticket Count'

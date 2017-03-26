@@ -1,0 +1,35 @@
+{% block content %}
+    <div class="panel-heading widget-panel-title" style="">
+    <span>
+        {{ widget.title|length > 22 ? widget.title[:22] ~ '...' : widget.title }}
+    </span>
+        <div class="btn-group pull-right" style="cursor: pointer">
+            <span alt="Menu" title="Menu" class="fa fa-bars" data-toggle="dropdown" aria-expanded="false"></span>
+            <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                <!-- Edit Button -->
+                <li>
+                    <a href="{{ path('widgets_edit', {id: widget.id}) }}">
+                        <i class="fa fa-edit fa-fw"></i> Edit
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="widget-{{ widget.id }}-body" class="panel-body widget-panel-body">
+        <h1><span id="widget-value-{{ widget.id }}">###</span></h1>
+    </div>
+
+    <script>
+        // ======================================
+        // Ajax request to get widget data
+        // ======================================
+        addDataRequest('{{ path('jira-count-ajax') }}', {'id': {{ widget.id }}}, function (data) {
+            var response = JSON.parse(data);
+            $('#widget-value-{{ widget.id }}').hide('blind',null,function(){
+                $('#widget-value-{{ widget.id }}').html(response['count']).show('blind');
+            });
+        });
+    </script>
+
+{% endblock %}

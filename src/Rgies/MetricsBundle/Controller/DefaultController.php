@@ -8,8 +8,6 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use JiraRestApi\Issue\IssueService;
-use JiraRestApi\JiraException;
 
 class DefaultController extends Controller
 {
@@ -21,25 +19,17 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
+        $em = $this->getDoctrine()->getManager();
+        $section = $em->getRepository('MetricsBundle:Widgets');
 
-        $jql = 'project = Consumer and "Epic Link" = CON-1070 AND fixVersion = "GMD v1 (MVP)" and status = Done';
+        $query = $section->createQueryBuilder('w')
+            ->where('w.enabled = 1')
+            ->orderBy('w.id', 'ASC');
 
-        try {
-            $issueService = new IssueService();
-
-            //$ret = $issueService->search($jql, 0, 100, ['null']);
-            $ret = $issueService->search($jql, 0, 100000, ['created','resolutiondate']);
+        $entities = $query->getQuery()->getResult();
 
 
-
-            var_dump($ret);
-        } catch (JiraException $e) {
-            $this->assertTrue(false, 'testSearch Failed : '.$e->getMessage());
-        }
-
-        exit;
-
-        return array('sliderImages' => $sliderImages);
+        return array('widgets' => $entities);
     }
 
     /**

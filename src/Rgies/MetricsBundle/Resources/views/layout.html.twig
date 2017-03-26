@@ -5,16 +5,20 @@
     {% block css %}{% endblock %}
 {% endblock %}
 {% block body %}
+
     <!-- Navigation -->
     {% include 'MetricsBundle::navi.html.twig' %}
+
     <!-- Content -->
-    <div id="content-block" class="container">
+    <div id="content-block" class="page-container">
         {% block content %}Content{% endblock %}
     </div>
+
     <!-- Scroll to top -->
     <a href="#top" id="toTop" class="well-sm" alt="Scroll to top" title="Scroll to top">
         <span class="glyphicon glyphicon-circle-arrow-up"></span>
     </a>
+
     <!-- Footer -->
     {% include 'MetricsBundle::footer.html.twig' %}
 {% endblock %}

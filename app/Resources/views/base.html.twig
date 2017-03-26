@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+<head>
+    <title>{% block title %}{{ platform.name }}{% endblock %}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="{% block description %}{{ platform.description }}{% endblock %}" />
+    <meta name="keywords" content="{% block keywords %}{{ platform.keywords }}{% endblock %}" />
+    {% block meta_tags %}{% endblock %}
+    <!-- Twitter Bootstrap Stylesheet -->
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
+    <!-- Font Awesome Stylesheet -->
+    <link href="{{ asset('css/font-awesome.min.css') }}" rel="stylesheet" media="screen">
+    {% block stylesheets %}{% endblock %}
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+</head>
+<body>
+{% block body %}{% endblock %}
+<!-- jQuery Framework -->
+<script src="{{ asset('js/jquery-1.10.2.min.js') }}"></script>
+<!-- Twitter Bootstrap -->
+<script src="{{ asset('js/bootstrap.min.js') }}"></script>
+<!-- jQuery Ajax Form -->
+<script src="{{ asset('js/jquery.form.min.js') }}"></script>
+<!-- jQuery Form Validate -->
+<script src="{{ asset('js/jquery.validate.min.js') }}"></script>
+{% if app.request.locale != 'en' %}<script src="{{ asset('js/locales/messages_' ~ app.request.locale ~ '.min.js') }}" />{% endif %}
+<!-- Twitter Bootstrap Fileupload -->
+<script src="{{ asset('js/bootstrap-filestyle.min.js') }}"></script>
+<!-- Dropzone.js File Uploader -->
+<script src="{{ asset('js/dropzone.min.js') }}"></script>
+{% block javascripts %}{% endblock %}
+</body>
+</html>

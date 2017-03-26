@@ -1,3 +1,15 @@
+/* --------------------------------------- */
+/* -- Basic styles ----------------------- */
+/* --------------------------------------- */
+.page-container {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.text-strike {
+    text-decoration: line-through;
+}
+
 /* -- Required label --------------- */
 label.required:after {
     content: "*";
@@ -23,6 +35,48 @@ label.error {
 #right-content-col {
     margin-top: 30px;
 }
+
+/* --------------------------------------- */
+/* -- Widget Panel ------------__--------- */
+/* --------------------------------------- */
+.widget-panel-title, .widget-panel-title:active, .widget-panel-title:visited {
+    padding: 5px 10px;
+    font-weight: bold;
+    /*font-size: 15px;*/
+    text-shadow: 0px 1px 1px #555555;
+    background-color: transparent !important;
+    color: #FFFFFF !important;
+    border-bottom: 0px;
+    text-decoration: none;
+    /*color: #555555 !important;*/
+    /*opacity: 0.8;*/
+}
+.widget-panel {
+    width: 220px;
+    float: left;
+    margin-right: 15px;
+    margin-bottom: 15px;
+}
+
+.widget-panel-body {
+    cursor: pointer;
+    height: 100px;
+    padding-top: 0px;
+    padding-bottom: 3px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.widget-panel-footer {
+    cursor: pointer;
+    padding: 2px 10px;
+    font-size: 8pt;
+    /*background-color: #000000;*/
+    color: #FFFFFF;
+    border-top: 0px;
+    /*opacity: 0.3;*/
+}
+
 
 /* -- Copyright ------------------ */
 #copyright-footer {
