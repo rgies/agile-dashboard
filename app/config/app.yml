@@ -1,7 +1,17 @@
+# General Parameters
 parameters:
     platform_name: 'Agile Dashboard'
     platform_version: '1.0'
 
+    # Widget update intervall in minutes
+    widget_update_interval: 5
+
     # Dashboard widgets
     widget_types:
         'jira/count': 'Jira Ticket Count'
+
+
+# Twig Configuration
+twig:
+    globals:
+        # Variables

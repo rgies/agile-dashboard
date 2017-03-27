@@ -29,7 +29,10 @@ class DefaultController extends Controller
         $entities = $query->getQuery()->getResult();
 
 
-        return array('widgets' => $entities);
+        return array (
+            'interval'  => $this->getParameter('widget_update_interval'),
+            'widgets'   => $entities
+        );
     }
 
     /**

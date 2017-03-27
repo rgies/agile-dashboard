@@ -24,6 +24,9 @@
 {% endblock %}
 
 {% block javascripts %}
+    <!-- Sparkline js -->
+    <script src="{{ asset('js/jquery.sparkline.min.js') }}"></script>
+    <!-- Custom js -->
     <script src="{{ asset('bundles/metrics/js/default.js') }}"></script>
     {%- if is_granted("ROLE_EDITOR") %}{{ editor_init() }}{% endif %}
     <!-- individual page java scripts -->
