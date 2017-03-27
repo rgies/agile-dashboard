@@ -1,26 +1,30 @@
 {% block content %}
-    <div class="panel-heading widget-panel-title" style="">
-    <span>
-        {{ widget.title|length > 22 ? widget.title[:22] ~ '...' : widget.title }}
-    </span>
-        <div class="btn-group pull-right" style="cursor: pointer">
-            <span alt="Menu" title="Menu" class="fa fa-bars" data-toggle="dropdown" aria-expanded="false"></span>
-            <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                <!-- Edit Button -->
-                <li>
-                    <a href="{{ path('widgets_edit', {id: widget.id}) }}">
-                        <i class="fa fa-edit fa-fw"></i> Edit
-                    </a>
-                </li>
-            </ul>
+    <div id="widget-{{ widget.id }}" class="panel panel-default widget-panel">
+        <div class="panel-heading widget-panel-title" style="">
+        <span>
+            {{ widget.title|length > 22 ? widget.title[:22] ~ '...' : widget.title }}
+        </span>
+            <div class="btn-group pull-right" style="cursor: pointer">
+                <span alt="Menu" title="Menu" class="fa fa-bars" data-toggle="dropdown" aria-expanded="false"></span>
+                <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                    <!-- Edit Button -->
+                    <li>
+                        <a href="{{ path('widgets_edit', {id: widget.id}) }}">
+                            <i class="fa fa-edit fa-fw"></i> Edit
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="widget-{{ widget.id }}-body" class="panel-body widget-panel-body">
+            <h1><span id="widget-value-{{ widget.id }}">###</span></h1>
+            <span id="sparkline-{{ widget.id }}"></span>
         </div>
     </div>
 
-    <div id="widget-{{ widget.id }}-body" class="panel-body widget-panel-body">
-        <h1><span id="widget-value-{{ widget.id }}">###</span></h1>
-    </div>
-
     <script>
+        var activityLine{{ widget.id }} = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
         // ======================================
         // Ajax request to get widget data
         // ======================================
@@ -28,6 +32,14 @@
             var response = JSON.parse(data);
             $('#widget-value-{{ widget.id }}').hide('blind',null,function(){
                 $('#widget-value-{{ widget.id }}').html(response['count']).show('blind');
+            });
+
+            // Sparkline Charts
+            activityLine{{ widget.id }}.shift();
+            activityLine{{ widget.id }}.push(response['count']);
+            $("#sparkline-{{ widget.id }}").sparkline(activityLine{{ widget.id }}, {
+                type: 'line',
+                tooltipFormat: '{{ '<i style="color: {{color}}" class="fa fa-circle"></i>&nbsp;{{y}}&nbsp;&nbsp;&nbsp;&nbsp;<br/>&nbsp;' }}'
             });
         });
     </script>

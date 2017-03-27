@@ -10,9 +10,7 @@
 
     {% if widgets|length %}
         {% for widget in widgets %}
-        <div id="widget-{{ widget.id }}" class="panel panel-default widget-panel">
             {% include 'MetricsBundle::' ~ widget.type ~ '.html.twig' with {'widget': widget} %}
-        </div>
         {% endfor %}
     {% endif %}
 
@@ -22,7 +20,7 @@
     <script>
         $(document).ready(function() {
             refreshWidgetData();
-            var updateTimer = window.setInterval(function(){refreshWidgetData()}, 240000);
+            var updateTimer = window.setInterval(function(){refreshWidgetData()}, {{ interval }} * 60000 );
         });
 
         function refreshWidgetData()
