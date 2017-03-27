@@ -1,13 +1,13 @@
 parameters:
     platform_vendor:   MyCompany GmbH
     platform_contact:  contact@website.com
-    platform_keywords: 'webportal,blog'
-    platform_description: 'This is my website with blog.'
+    platform_keywords: 'metrics,kpi,agile,company,dashboard'
+    platform_description: 'Company dashboard for agile metrics.'
 
     database_driver:   pdo_mysql
     database_host:     127.0.0.1
     database_port:     ~
-    database_name:     symfony
+    database_name:     agile_dashboard
     database_user:     root
     database_password: ~
 
