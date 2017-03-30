@@ -20,11 +20,3 @@ $ cd agile-dashboard
 $ composer install
 ```
 
-2. Copy the `.env.dist` to `.env` and insert the Jira login credentials:
-
-```bash
-$ cp .env.dist .env
-$ nano .env
-```
-
-

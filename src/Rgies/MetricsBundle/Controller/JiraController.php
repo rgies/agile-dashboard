@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use JiraRestApi\Issue\IssueService;
+use JiraRestApi\Configuration\ArrayConfiguration;
 use JiraRestApi\JiraException;
 
 
@@ -60,19 +61,41 @@ class JiraController extends Controller
         return new Response(json_encode($response), Response::HTTP_OK);
     }
 
+
+    /**
+     * @return ArrayConfiguration
+     */
+    protected function _getLoginCredentials()
+    {
+        return new ArrayConfiguration(
+            array(
+                'jiraHost' => $this->getParameter('jira_host'),
+                'jiraUser' => $this->getParameter('jira_user'),
+                'jiraPassword' => $this->getParameter('jira_password'),
+            )
+        );
+    }
+
+    /**
+     * Gets issue list from given jql.
+     *
+     * @param string $jql
+     * @param int $limit
+     * @return \JiraRestApi\Issue\IssueSearchResult|null
+     */
     protected function _getIssueList($jql, $limit = 100000)
     {
         $ret = null;
 
         try {
-            $issueService = new IssueService();
+            $issueService = new IssueService($this->_getLoginCredentials());
 
             //$ret = $issueService->search($jql, 0, 100, ['null']);
             $ret = $issueService->search($jql, 0, $limit, ['created','resolutiondate']);
 
             //var_dump($ret);
         } catch (JiraException $e) {
-            $this->assertTrue(false, 'testSearch Failed : '.$e->getMessage());
+            $this->createNotFoundException('Search Failed: ' . $e->getMessage());
         }
 
         return $ret;
