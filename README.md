@@ -7,16 +7,22 @@ Dashboard with metrics for agile companies
 
 2. Clone the repository:
 
-```bash
-$ git clone https://github.com/rgies/agile-dashboard.git
-$ cd agile-dashboard
-```
+
+    $ git clone https://github.com/rgies/agile-dashboard.git
+    $ cd agile-dashboard
+
 
 ## How to configure
 
 1. Start setup and follow the instuctions:
 
-```bash
-$ composer install
-```
+    $ composer install
 
+2. Create database table
+
+    $ app/console doctrine:database:create
+    
+3. Update database schema
+
+    $ app/console doctrine:schema:update --force
+    
