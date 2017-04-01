@@ -6,6 +6,12 @@
         <h1>Widgets list</h1>
     </div>
 
+    <div>
+        <button type="button" class="btn btn-primary" onclick="location.href='{{ path('widgets_new') }}'">
+            <i class="fa fa-plus"></i> Create a new entry
+        </button>
+    </div><br/>
+
     <table class="table table-striped">
         <thead>
             <tr>
@@ -24,18 +30,11 @@
                 <td>{{ entity.type }}</td>
                 <td>{{ entity.enabled }}</td>
                 <td>
-                <ul>
-                    <li>
-                        <a href="{{ path('widgets_edit', { 'id': entity.id }) }}">edit</a>
-                    </li>
-                </ul>
+                    <a href="{{ path('widgets_edit', { 'id': entity.id }) }}"><i class="fa fa-edit"></i> Edit</a>
                 </td>
             </tr>
         {% endfor %}
         </tbody>
-    </table>    <div>
-        <button type="button" class="btn btn-primary" onclick="location.href='{{ path('widgets_new') }}'">
-            Create a new entry
-        </button>
-    </div></div>
+    </table>
+</div>
 {% endblock %}
