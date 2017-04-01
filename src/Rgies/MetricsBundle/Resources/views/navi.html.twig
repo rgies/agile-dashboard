@@ -11,27 +11,37 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="{{ path("home") }}">
-                    {{ platform.name }}
+                    <i class="fa fa-dashboard"></i> {{ platform.name }}
                 </a>
             </div>
             <!-- Nav Items -->
             <div class="collapse navbar-collapse" id="bs-navbar-collapse-top">
                 <ul class="nav navbar-nav">
-                    <li><a href="{{ path("widgets") }}">Widgets</a></li>
+                    {% if dashboards is defined %}
+                    {% for item in dashboards %}
+                        <li{% if item.id == dashboard.id %} class="navbar-inverse"{% endif %}>
+                            <a href="{{ path("home", {id: item.id}) }}">
+                                {{ item.title }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    {% endif %}
                     <!--  <li><a href="{{ path("about") }}">About</a></li>
                     <li><a href="{{ path("imprint") }}">Imprint</a></li>
                     <li><a href="{{ path("contact") }}">Contact</a></li> -->
                 </ul>
-                {%- if app.user %}
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span> {{ app.user.username }} <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span> Options <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="{{ path("logout") }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                            <li><a href="{{ path("dashboard") }}"><i class="fa fa-dashboard fa-fw"></i> Dashboards</a></li>
+                            <li><a href="{{ path("widgets") }}"><i class="fa fa-puzzle-piece fa-fw"></i> Widgets</a></li>
+                            {%- if app.user %}
+                            <li><a href="{{ path("logout") }}"><span class="glyphicon glyphicon-log-out fa-fw"></span> Logout</a></li>
+                            {% endif %}
                         </ul>
                     </li>
                 </ul>
-                {% endif -%}
             </div>
         </div>
     </nav>

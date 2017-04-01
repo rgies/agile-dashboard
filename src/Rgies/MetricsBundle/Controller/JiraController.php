@@ -30,6 +30,34 @@ class JiraController extends Controller
     }
 
     /**
+     * @Route("/disableAjax/", name="jira-disable-ajax")
+     * @Method("POST")
+     * @return Response
+     */
+    public function disableAjaxAction(Request $request)
+    {
+        if (!$request->isXmlHttpRequest()) {
+            return new Response('No valid request', Response::HTTP_FORBIDDEN);
+        }
+
+        $id = $request->get('id');
+
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('MetricsBundle:Widgets')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Widgets entity.');
+        }
+
+        $entity->setEnabled(false);
+        $em->flush();
+
+
+        return new Response(json_encode(array()), Response::HTTP_OK);
+    }
+
+    /**
      * @Route("/countAjax/", name="jira-count-ajax")
      * @Method("POST")
      * @return Response

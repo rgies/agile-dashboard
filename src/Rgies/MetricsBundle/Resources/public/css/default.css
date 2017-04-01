@@ -59,7 +59,6 @@ label.error {
 }
 
 .widget-panel-body {
-    cursor: pointer;
     height: 100px;
     padding-top: 0px;
     padding-bottom: 3px;
@@ -68,7 +67,6 @@ label.error {
 }
 
 .widget-panel-footer {
-    cursor: pointer;
     padding: 2px 10px;
     font-size: 8pt;
     /*background-color: #000000;*/

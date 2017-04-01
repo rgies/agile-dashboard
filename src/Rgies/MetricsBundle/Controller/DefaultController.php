@@ -2,6 +2,7 @@
 
 namespace Rgies\MetricsBundle\Controller;
 
+use Rgies\MetricsBundle\Entity\Dashboard;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\SecurityContextInterface;
@@ -14,24 +15,47 @@ class DefaultController extends Controller
     /**
      * Website home action.
      *
-     * @Route("/", name="home")
+     * @Route("/id/{id}", name="home")
      * @Template()
      */
-    public function indexAction()
+    public function indexAction($id = null)
     {
         $em = $this->getDoctrine()->getManager();
-        $section = $em->getRepository('MetricsBundle:Widgets');
 
-        $query = $section->createQueryBuilder('w')
+        $dashboardEntity = $em->getRepository('MetricsBundle:Dashboard');
+        $dashboards = $dashboardEntity->createQueryBuilder('d')
+                //->where('d.enabled = 1')
+                ->orderBy('d.pos', 'ASC')
+                ->getQuery()->getResult();
+
+        // create default dashboard
+        if (!$dashboards) {
+            $dashboard = new Dashboard();
+            $dashboard->setTitle('Main Metrics');
+            $dashboard->setPos(1);
+            $em->persist($dashboard);
+            $em->flush();
+            $dashboards = array($dashboard);
+        }
+
+        $widgetEntity = $em->getRepository('MetricsBundle:Widgets');
+        $widgets = $widgetEntity->createQueryBuilder('w')
             ->where('w.enabled = 1')
-            ->orderBy('w.id', 'ASC');
+            ->orderBy('w.id', 'ASC')
+            ->getQuery()->getResult();
 
-        $entities = $query->getQuery()->getResult();
+        if ($id) {
+            $dashboard = $dashboardEntity->find($id);
+        } else {
+            $dashboard = $dashboards[0];
+        }
 
 
         return array (
-            'interval'  => $this->getParameter('widget_update_interval'),
-            'widgets'   => $entities
+            'interval'      => $this->getParameter('widget_update_interval'),
+            'widgets'       => $widgets,
+            'dashboards'    => $dashboards,
+            'dashboard'     => $dashboard,
         );
     }
 

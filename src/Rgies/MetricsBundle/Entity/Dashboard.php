@@ -31,9 +31,9 @@ class Dashboard
     /**
      * @var integer
      *
-     * @ORM\Column(name="order", type="integer")
+     * @ORM\Column(name="pos", type="integer")
      */
-    private $order;
+    private $pos;
 
 
     /**
@@ -71,27 +71,27 @@ class Dashboard
     }
 
     /**
-     * Set order
+     * Set pos
      *
-     * @param integer $order
+     * @param integer $pos
      *
      * @return Dashboard
      */
-    public function setOrder($order)
+    public function setPos($pos)
     {
-        $this->order = $order;
+        $this->pos = $pos;
 
         return $this;
     }
 
     /**
-     * Get order
+     * Get pos
      *
      * @return integer
      */
-    public function getOrder()
+    public function getPos()
     {
-        return $this->order;
+        return $this->pos;
     }
 }
 

@@ -1,6 +1,7 @@
 {% extends "MetricsBundle::layout.html.twig" %}
 
 {% block content %}
+    <h2 class="page-header">{{ dashboard.title }}</h2>
     <script>
         var requestStack = [];
         function addDataRequest(url, params, callback) {
@@ -12,6 +13,14 @@
         {% for widget in widgets %}
             {% include 'MetricsBundle::' ~ widget.type ~ '.html.twig' with {'widget': widget} %}
         {% endfor %}
+    {% else %}
+        <div id="widget-0" class="panel panel-default widget-panel">
+            <div class="panel-heading widget-panel-title" style="">&nbsp;</div>
+
+            <div class="panel-body widget-panel-body">
+                <center><a href="{{ path('widgets_new') }}"><i class="fa fa-plus-circle fa-5x"></i></a></center>
+            </div>
+        </div>
     {% endif %}
 
 {% endblock %}
@@ -29,6 +38,12 @@
                 var request = requestStack[i];
                 $.post(request['url'], request['params'], request['callback']);
             }
+        }
+
+        function disableWidget(id)
+        {
+            $('#widget-' + id).remove();
+            $.post('{{ path('jira-disable-ajax') }}', {id: id} );
         }
     </script>
 {% endblock %}
