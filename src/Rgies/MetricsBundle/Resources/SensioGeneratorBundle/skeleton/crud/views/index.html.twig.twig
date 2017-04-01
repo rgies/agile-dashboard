@@ -2,10 +2,18 @@
 
 {% block content %}
 {{ "{% block content -%}" }}
-<div class="container">
+<div class="container" xmlns="http://www.w3.org/1999/html">
     <div class="page-header">
         <h1>{{ entity }} list</h1>
     </div>
+
+    {%- if 'new' in actions %}
+        <div>
+            <button type="button" class="btn btn-primary" onclick="location.href='{{ "{{ path('" ~ route_name_prefix ~ "_new') }}" }}'">
+                <i class="fa fa-plus"></i> Create a new entry
+            </button>
+        </div><br/>
+    {%- endif %}
 
     <table class="table table-striped">
         <thead>
@@ -26,7 +34,7 @@
         {%- for field, metadata in fields %}
             {%- if loop.first and ('show' in actions) %}
 
-                <td><a href="{{ "{{ path('" ~ route_name_prefix ~ "_show', { 'id': entity.id }) }}" }}">{{ '{{ entity.' ~ field|replace({'_': ''}) ~ ' }}' }}</a></td>
+                <td><a href="{{ "{{ path('" ~ route_name_prefix ~ "_edit', { 'id': entity.id }) }}" }}">{{ '{{ entity.' ~ field|replace({'_': ''}) ~ ' }}' }}</a></td>
 
             {%- elseif metadata.type in ['date', 'datetime'] %}
 
@@ -41,7 +49,9 @@
             {%- if loop.last %}
 
                 <td>
-                    {%- include "crud/views/others/actions.html.twig.twig" %}
+                    {%- if 'edit' in actions %}
+                        <a href="{{ "{{ path('" ~ route_name_prefix ~ "_edit', { 'id': entity.id }) }}" }}"><i class="fa fa-edit"></i> Edit</a>
+                    {%- endif %}
                 </td>
 
             {%- endif %}
@@ -52,13 +62,6 @@
         </tbody>
     </table>
 
-    {%- if 'new' in actions %}
-    <div>
-        <button type="button" class="btn btn-primary" onclick="location.href='{{ "{{ path('" ~ route_name_prefix ~ "_new') }}" }}'">
-            Create a new entry
-        </button>
-    </div>
-    {%- endif %}
 </div>
 {{ "{% endblock %}" }}
 {% endblock content %}
