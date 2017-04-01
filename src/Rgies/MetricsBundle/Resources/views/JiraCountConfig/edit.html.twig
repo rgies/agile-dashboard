@@ -3,11 +3,10 @@
 {% block content -%}
 <div class="container">
     <div class="page-header">
-        <h1>Widgets creation</h1>
+        <h1>JiraCountConfig edit</h1>
     </div>
 
-    {{ form(form) }}
-
+    {{ form(edit_form) }}
 
     <div class="form-group">
         <div class="control">
@@ -17,19 +16,29 @@
         </div>
     </div>
 
+    <br/>
+
+    <a href="{{ path('home') }}">
+        <i class="fa fa-arrow-circle-left"></i> Return to dashboard
+    </a>
+
 </div>
 {% endblock %}
 
 {% block js %}
     <script type="text/javascript">
+
         function formSave()
         {
-            var form = $("#create-form");
+            var form = $("#edit-form");
 
             if (form.validate())
             {
                 form.submit();
             }
         }
+
+
+        $("#edit-form").validate();
     </script>
 {% endblock %}

@@ -38,30 +38,9 @@ class Widgets
     /**
      * @var boolean
      *
-     * @ORM\Column(name="enabled", type="boolean")
+     * @ORM\Column(name="enabled", type="boolean", nullable=true)
      */
     private $enabled;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="min", type="integer", nullable=true)
-     */
-    private $min;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="max", type="integer", nullable=true)
-     */
-    private $max;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="param", type="text")
-     */
-    private $param;
 
 
     /**
@@ -146,76 +125,5 @@ class Widgets
         return $this->enabled;
     }
 
-    /**
-     * Set min
-     *
-     * @param integer $min
-     *
-     * @return Widgets
-     */
-    public function setMin($min)
-    {
-        $this->min = $min;
-
-        return $this;
-    }
-
-    /**
-     * Get min
-     *
-     * @return integer
-     */
-    public function getMin()
-    {
-        return $this->min;
-    }
-
-    /**
-     * Set max
-     *
-     * @param integer $max
-     *
-     * @return Widgets
-     */
-    public function setMax($max)
-    {
-        $this->max = $max;
-
-        return $this;
-    }
-
-    /**
-     * Get max
-     *
-     * @return integer
-     */
-    public function getMax()
-    {
-        return $this->max;
-    }
-
-    /**
-     * Set param
-     *
-     * @param string $param
-     *
-     * @return Widgets
-     */
-    public function setParam($param)
-    {
-        $this->param = $param;
-
-        return $this;
-    }
-
-    /**
-     * Get param
-     *
-     * @return string
-     */
-    public function getParam()
-    {
-        return $this->param;
-    }
 }
 

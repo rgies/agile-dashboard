@@ -28,6 +28,8 @@
 {% if app.request.locale != 'en' %}<script src="{{ asset('js/locales/messages_' ~ app.request.locale ~ '.min.js') }}" />{% endif %}
 <!-- Twitter Bootstrap Fileupload -->
 <script src="{{ asset('js/bootstrap-filestyle.min.js') }}"></script>
+<!-- Twitter Bootstrap Alerts, Confirmation and Dialogs -->
+<script src="{{ asset('js/bootbox.min.js') }}"></script>
 <!-- Dropzone.js File Uploader -->
 <script src="{{ asset('js/dropzone.min.js') }}"></script>
 {% block javascripts %}{% endblock %}

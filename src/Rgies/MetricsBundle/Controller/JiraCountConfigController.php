@@ -7,21 +7,21 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Rgies\MetricsBundle\Entity\Widgets;
-use Rgies\MetricsBundle\Form\WidgetsType;
+use Rgies\MetricsBundle\Entity\JiraCountConfig;
+use Rgies\MetricsBundle\Form\JiraCountConfigType;
 
 /**
- * Widgets controller.
+ * JiraCountConfig controller.
  *
- * @Route("/widgets")
+ * @Route("/jiracountconfig")
  */
-class WidgetsController extends Controller
+class JiraCountConfigController extends Controller
 {
 
     /**
-     * Lists all Widgets entities.
+     * Lists all JiraCountConfig entities.
      *
-     * @Route("/", name="widgets")
+     * @Route("/", name="jiracountconfig")
      * @Method("GET")
      * @Template()
      */
@@ -29,22 +29,22 @@ class WidgetsController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('MetricsBundle:Widgets')->findAll();
+        $entities = $em->getRepository('MetricsBundle:JiraCountConfig')->findAll();
 
         return array(
             'entities' => $entities,
         );
     }
     /**
-     * Creates a new Widgets entity.
+     * Creates a new JiraCountConfig entity.
      *
-     * @Route("/", name="widgets_create")
+     * @Route("/", name="jiracountconfig_create")
      * @Method("POST")
-     * @Template("MetricsBundle:Widgets:new.html.twig")
+     * @Template("MetricsBundle:JiraCountConfig:new.html.twig")
      */
     public function createAction(Request $request)
     {
-        $entity = new Widgets();
+        $entity = new JiraCountConfig();
         $form = $this->createCreateForm($entity);
         $form->handleRequest($request);
 
@@ -53,8 +53,8 @@ class WidgetsController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            //return $this->redirect($this->generateUrl('widgets_show', array('id' => $entity->getId())));
-            return $this->redirect($this->generateUrl('jiracountconfig_new', array('id' => $entity->getId())));
+            //return $this->redirect($this->generateUrl('jiracountconfig_show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('home'));
         }
 
         return array(
@@ -64,35 +64,37 @@ class WidgetsController extends Controller
     }
 
     /**
-     * Creates a form to create a Widgets entity.
+     * Creates a form to create a JiraCountConfig entity.
      *
-     * @param Widgets $entity The entity
+     * @param JiraCountConfig $entity The entity
      *
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createCreateForm(Widgets $entity)
+    private function createCreateForm(JiraCountConfig $entity)
     {
-        $form = $this->createForm(new WidgetsType($this->container), $entity, array(
-            'action' => $this->generateUrl('widgets_create'),
+        $form = $this->createForm(new JiraCountConfigType(), $entity, array(
+            'action' => $this->generateUrl('jiracountconfig_create'),
             'method' => 'POST',
             'attr'   => array('id' => 'create-form'),
         ));
 
+        //$form->add('id', 'hidden', array('attr' => array('name' => 'id', 'value' => $id)));
         //$form->add('submit', 'submit', array('label' => 'Create'));
 
         return $form;
     }
 
     /**
-     * Displays a form to create a new Widgets entity.
+     * Displays a form to create a new JiraCountConfig entity.
      *
-     * @Route("/new", name="widgets_new")
+     * @Route("/new/{id}", name="jiracountconfig_new")
      * @Method("GET")
      * @Template()
      */
-    public function newAction()
+    public function newAction($id)
     {
-        $entity = new Widgets();
+        $entity = new JiraCountConfig();
+        $entity->setWidgetId($id);
         $form   = $this->createCreateForm($entity);
 
         return array(
@@ -102,9 +104,9 @@ class WidgetsController extends Controller
     }
 
     /**
-     * Finds and displays a Widgets entity.
+     * Finds and displays a JiraCountConfig entity.
      *
-     * @Route("/{id}", name="widgets_show")
+     * @Route("/{id}", name="jiracountconfig_show")
      * @Method("GET")
      * @Template()
      */
@@ -112,10 +114,10 @@ class WidgetsController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('MetricsBundle:Widgets')->find($id);
+        $entity = $em->getRepository('MetricsBundle:JiraCountConfig')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Widgets entity.');
+            throw $this->createNotFoundException('Unable to find JiraCountConfig entity.');
         }
 
         $deleteForm = $this->createDeleteForm($id);
@@ -127,9 +129,9 @@ class WidgetsController extends Controller
     }
 
     /**
-     * Displays a form to edit an existing Widgets entity.
+     * Displays a form to edit an existing JiraCountConfig entity.
      *
-     * @Route("/{id}/edit", name="widgets_edit")
+     * @Route("/{id}/edit", name="jiracountconfig_edit")
      * @Method("GET")
      * @Template()
      */
@@ -137,10 +139,13 @@ class WidgetsController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('MetricsBundle:Widgets')->find($id);
+        $entity = $this->_getConfigEntity($id);
+
+        //$entity = $em->getRepository('MetricsBundle:JiraCountConfig')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Widgets entity.');
+            return $this->forward('MetricsBundle:JiraCountConfig:new', array('id' => $id));
+            //throw $this->createNotFoundException('Unable to find JiraCountConfig entity.');
         }
 
         $editForm = $this->createEditForm($entity);
@@ -154,16 +159,16 @@ class WidgetsController extends Controller
     }
 
     /**
-    * Creates a form to edit a Widgets entity.
+    * Creates a form to edit a JiraCountConfig entity.
     *
-    * @param Widgets $entity The entity
+    * @param JiraCountConfig $entity The entity
     *
     * @return \Symfony\Component\Form\Form The form
     */
-    private function createEditForm(Widgets $entity)
+    private function createEditForm(JiraCountConfig $entity)
     {
-        $form = $this->createForm(new WidgetsType($this->container), $entity, array(
-            'action' => $this->generateUrl('widgets_update', array('id' => $entity->getId())),
+        $form = $this->createForm(new JiraCountConfigType(), $entity, array(
+            'action' => $this->generateUrl('jiracountconfig_update', array('id' => $entity->getId())),
             'method' => 'PUT',
             'attr'   => array('id' => 'edit-form'),
         ));
@@ -173,20 +178,20 @@ class WidgetsController extends Controller
         return $form;
     }
     /**
-     * Edits an existing Widgets entity.
+     * Edits an existing JiraCountConfig entity.
      *
-     * @Route("/{id}", name="widgets_update")
+     * @Route("/{id}", name="jiracountconfig_update")
      * @Method("PUT")
-     * @Template("MetricsBundle:Widgets:edit.html.twig")
+     * @Template("MetricsBundle:JiraCountConfig:edit.html.twig")
      */
     public function updateAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('MetricsBundle:Widgets')->find($id);
+        $entity = $em->getRepository('MetricsBundle:JiraCountConfig')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Widgets entity.');
+            throw $this->createNotFoundException('Unable to find JiraCountConfig entity.');
         }
 
         $deleteForm = $this->createDeleteForm($id);
@@ -196,26 +201,20 @@ class WidgetsController extends Controller
         if ($editForm->isValid()) {
             $em->flush();
 
-            if (!$this->_getConfigEntity($id))
-            {
-                return $this->redirect($this->generateUrl('jiracountconfig_new', array('id' => $id)));
-            }
-
-            //return $this->redirect($this->generateUrl('widgets_edit', array('id' => $id)));
-            return $this->redirect($this->generateUrl('widgets'));
+            //return $this->redirect($this->generateUrl('jiracountconfig_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('home'));
         }
 
         return array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
-            //'config_uri'  => $this->generateUrl('jiracountconfig_edit', array('id' => $id)),
         );
     }
     /**
-     * Deletes a Widgets entity.
+     * Deletes a JiraCountConfig entity.
      *
-     * @Route("/{id}", name="widgets_delete")
+     * @Route("/{id}", name="jiracountconfig_delete")
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, $id)
@@ -225,27 +224,21 @@ class WidgetsController extends Controller
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('MetricsBundle:Widgets')->find($id);
+            $entity = $em->getRepository('MetricsBundle:JiraCountConfig')->find($id);
 
             if (!$entity) {
-                throw $this->createNotFoundException('Unable to find Widgets entity.');
+                throw $this->createNotFoundException('Unable to find JiraCountConfig entity.');
             }
 
             $em->remove($entity);
-
-            // delete config
-            if ($config = $this->_getConfigEntity($id)) {
-                $em->remove($config);
-            }
-
             $em->flush();
         }
 
-        return $this->redirect($this->generateUrl('widgets'));
+        return $this->redirect($this->generateUrl('jiracountconfig'));
     }
 
     /**
-     * Creates a form to delete a Widgets entity by id.
+     * Creates a form to delete a JiraCountConfig entity by id.
      *
      * @param mixed $id The entity id
      *
@@ -253,12 +246,12 @@ class WidgetsController extends Controller
      */
     private function createDeleteForm($id)
     {
-        return $this->createFormBuilder(null, array('attr'=>array('id' => 'delete-form')))
-            ->setAction($this->generateUrl('widgets_delete', array('id' => $id)))
+        return $this->createFormBuilder()
+            ->setAction($this->generateUrl('jiracountconfig_delete', array('id' => $id)))
             ->setMethod('DELETE')
-            //->add('submit', 'submit', array('label' => 'Delete'))
+            ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()
-            ;
+        ;
     }
 
     protected function _getConfigEntity($id)
@@ -278,4 +271,5 @@ class WidgetsController extends Controller
 
         return null;
     }
+
 }

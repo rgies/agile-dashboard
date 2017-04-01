@@ -41,21 +41,34 @@ class JiraController extends Controller
             return new Response('No valid request', Response::HTTP_FORBIDDEN);
         }
 
-        $response = array('count' => 0);
+        $id = $request->get('id');
+        $response = array('count' => '###');
 
         //$jql = 'project = Consumer and "Epic Link" = CON-1070 AND fixVersion = "GMD v1 (MVP)" and status = Done';
 
         $em = $this->getDoctrine()->getManager();
-        $entity = $em->getRepository('MetricsBundle:Widgets')->find($request->get('id'));
+        $entity = $em->getRepository('MetricsBundle:Widgets')->find($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Widget entity.');
         }
 
-        $jql = $entity->getParam();
+        $query = $em->getRepository('MetricsBundle:JiraCountConfig')->createQueryBuilder('i')
+            ->where('i.widgetId = :id')
+            ->setParameter('id', $id);
+        $items = $query->getQuery()->getResult();
 
-        $issues = $this->_getIssueList($jql);
-        $response['count'] = $issues->getTotal();
+
+        if ($items)
+        {
+            $jql = $items[0]->getJqlQuery();
+
+            $issues = $this->_getIssueList($jql);
+
+            if ($issues) {
+                $response['count'] = $issues->getTotal();
+            }
+        }
 
 
         return new Response(json_encode($response), Response::HTTP_OK);

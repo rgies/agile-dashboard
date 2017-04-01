@@ -6,30 +6,21 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class WidgetsType extends AbstractType
+class JiraCountConfigType extends AbstractType
 {
-    protected $_container;
-
-    /**
-     * Class constructor.
-     */
-    public function __construct($container)
-    {
-        $this->_container = $container;
-    }
-
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $widgetTypes = $this->_container->getParameter('widget_types');
-
         $builder
-            ->add('title')
-            ->add('type', 'choice', array('choices' => $widgetTypes))
-            ->add('enabled')
+            ->add('icon')
+            ->add('jql_query')
+            ->add('history')
+            //->add('happy_expression')
+            //->add('unhappy_expression')
+            ->add('widget_id', 'hidden')
         ;
     }
     
@@ -39,7 +30,7 @@ class WidgetsType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Rgies\MetricsBundle\Entity\Widgets'
+            'data_class' => 'Rgies\MetricsBundle\Entity\JiraCountConfig'
         ));
     }
 
@@ -48,6 +39,6 @@ class WidgetsType extends AbstractType
      */
     public function getName()
     {
-        return 'rgies_metricsbundle_widgets';
+        return 'rgies_metricsbundle_jiracountconfig';
     }
 }
