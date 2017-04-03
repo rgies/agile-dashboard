@@ -1,7 +1,7 @@
 {% extends "MetricsBundle::layout.html.twig" %}
 
 {% block content %}
-    <h2 class="page-header">{{ dashboard.title }}</h2>
+    <h2 class="page-header">{{ dashboard.title }} <button class="btn btn-default" onclick="location.href='{{ path('widgets_new') }}'"><i class="fa fa-plus"></i></button></h2>
     <script>
         var requestStack = [];
         function addDataRequest(url, params, callback) {
@@ -11,7 +11,9 @@
 
     {% if widgets|length %}
         {% for widget in widgets %}
+            {% if widget.enabled %}
             {% include 'MetricsBundle::' ~ widget.type ~ '.html.twig' with {'widget': widget} %}
+            {% endif %}
         {% endfor %}
     {% else %}
         <div id="widget-0" class="panel panel-default widget-panel">

@@ -42,6 +42,11 @@ class Widgets
      */
     private $enabled;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="Rgies\MetricsBundle\Entity\Dashboard", inversedBy="widgets")
+     * @ORM\JoinColumn(name="dashboard_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
+     */
+    private $dashboard;
 
     /**
      * Get id
@@ -125,5 +130,27 @@ class Widgets
         return $this->enabled;
     }
 
-}
+    /**
+     * Set dashboard
+     *
+     * @param \Rgies\MetricsBundle\Entity\Dashboard $dashboard
+     *
+     * @return Widgets
+     */
+    public function setDashboard(\Rgies\MetricsBundle\Entity\Dashboard $dashboard = null)
+    {
+        $this->dashboard = $dashboard;
 
+        return $this;
+    }
+
+    /**
+     * Get dashboard
+     *
+     * @return \Rgies\MetricsBundle\Entity\Dashboard
+     */
+    public function getDashboard()
+    {
+        return $this->dashboard;
+    }
+}

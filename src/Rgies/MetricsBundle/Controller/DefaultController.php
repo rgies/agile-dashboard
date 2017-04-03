@@ -15,6 +15,7 @@ class DefaultController extends Controller
     /**
      * Website home action.
      *
+     * @Route("/", name="start")
      * @Route("/id/{id}", name="home")
      * @Template()
      */
@@ -38,12 +39,6 @@ class DefaultController extends Controller
             $dashboards = array($dashboard);
         }
 
-        $widgetEntity = $em->getRepository('MetricsBundle:Widgets');
-        $widgets = $widgetEntity->createQueryBuilder('w')
-            ->where('w.enabled = 1')
-            ->orderBy('w.id', 'ASC')
-            ->getQuery()->getResult();
-
         if ($id) {
             $dashboard = $dashboardEntity->find($id);
         } else {
@@ -53,7 +48,7 @@ class DefaultController extends Controller
 
         return array (
             'interval'      => $this->getParameter('widget_update_interval'),
-            'widgets'       => $widgets,
+            'widgets'       => $dashboard->getWidgets(),
             'dashboards'    => $dashboards,
             'dashboard'     => $dashboard,
         );

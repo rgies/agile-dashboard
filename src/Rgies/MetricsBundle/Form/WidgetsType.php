@@ -28,6 +28,11 @@ class WidgetsType extends AbstractType
 
         $builder
             ->add('title')
+            ->add('dashboard', 'entity', array(
+                'class' => 'MetricsBundle:Dashboard',
+                'label' => 'Dashboard',
+                'property' => 'title'
+            ))
             ->add('type', 'choice', array('choices' => $widgetTypes))
             ->add('enabled')
         ;

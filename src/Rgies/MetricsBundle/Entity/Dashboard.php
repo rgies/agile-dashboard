@@ -35,6 +35,11 @@ class Dashboard
      */
     private $pos;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Rgies\MetricsBundle\Entity\Widgets", mappedBy="dashboard")
+     */
+    private $widgets;
+
 
     /**
      * Get id
@@ -93,5 +98,47 @@ class Dashboard
     {
         return $this->pos;
     }
-}
 
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->widget = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add widget
+     *
+     * @param \Rgies\MetricsBundle\Entity\Widgets $widget
+     *
+     * @return Dashboard
+     */
+    public function addWidgets(\Rgies\MetricsBundle\Entity\Widgets $widget)
+    {
+        $this->widgets[] = $widget;
+
+        return $this;
+    }
+
+    /**
+     * Remove widget
+     *
+     * @param \Rgies\MetricsBundle\Entity\Widgets $widget
+     */
+    public function removeWidget(\Rgies\MetricsBundle\Entity\Widgets $widget)
+    {
+        $this->widgets->removeElement($widget);
+    }
+
+    /**
+     * Get widget
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getWidgets()
+    {
+        return $this->widgets;
+    }
+}
