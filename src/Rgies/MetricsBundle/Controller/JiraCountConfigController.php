@@ -72,7 +72,7 @@ class JiraCountConfigController extends Controller
      */
     private function createCreateForm(JiraCountConfig $entity)
     {
-        $form = $this->createForm(new JiraCountConfigType(), $entity, array(
+        $form = $this->createForm(new JiraCountConfigType($this->container), $entity, array(
             'action' => $this->generateUrl('jiracountconfig_create'),
             'method' => 'POST',
             'attr'   => array('id' => 'create-form'),
@@ -167,7 +167,7 @@ class JiraCountConfigController extends Controller
     */
     private function createEditForm(JiraCountConfig $entity)
     {
-        $form = $this->createForm(new JiraCountConfigType(), $entity, array(
+        $form = $this->createForm(new JiraCountConfigType($this->container), $entity, array(
             'action' => $this->generateUrl('jiracountconfig_update', array('id' => $entity->getId())),
             'method' => 'PUT',
             'attr'   => array('id' => 'edit-form'),

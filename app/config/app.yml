@@ -10,6 +10,9 @@ parameters:
     widget_types:
         'jira/count': 'Jira Ticket Count'
 
+    widget_icons:
+        'Default': 'fa fa-bar-chart'
+
 
 # Twig Configuration
 twig:

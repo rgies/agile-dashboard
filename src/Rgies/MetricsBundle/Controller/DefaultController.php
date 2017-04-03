@@ -45,7 +45,6 @@ class DefaultController extends Controller
             $dashboard = $dashboards[0];
         }
 
-
         return array (
             'interval'      => $this->getParameter('widget_update_interval'),
             'widgets'       => $dashboard->getWidgets(),
