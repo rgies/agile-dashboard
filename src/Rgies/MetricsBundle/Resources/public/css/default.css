@@ -52,6 +52,7 @@ label.error {
     /*opacity: 0.8;*/
 }
 .widget-panel {
+    position: relative;
     width: 220px;
     float: left;
     margin-right: 15px;
@@ -59,7 +60,7 @@ label.error {
 }
 
 .widget-panel-body {
-    height: 100px;
+    height: 110px;
     padding-top: 0px;
     padding-bottom: 3px;
     padding-left: 10px;
@@ -80,9 +81,9 @@ label.error {
     -webkit-transition: all .3s linear;
     -o-transition: all .3s linear;
     transition: all .3s linear;
-    position: relative;
-    top: -10px;
-    right: 0px;
+    position: absolute;
+    top: 15px;
+    right: 10px;
     z-index: 0;
     font-size: 90px;
     color: rgba(0, 0, 0, 0.15);
