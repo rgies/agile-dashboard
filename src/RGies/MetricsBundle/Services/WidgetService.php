@@ -51,18 +51,43 @@ class WidgetService
     public function getWidgetEditActionName($widgetType)
     {
         $widgetService = $this->_loadPluginService($widgetType);
-
         return $widgetService->getWidgetEditActionName($widgetType);
     }
 
     /**
      * Get configuration by given widget id.
      *
+     * @param $widgetType
      * @param $widgetId
      */
-    public function getWidgetConfig($widgetId)
+    public function getWidgetConfig($widgetType, $widgetId)
     {
+        $widgetService = $this->_loadPluginService($widgetType);
+        return $widgetService->getWidgetConfig($widgetId);
+    }
 
+    /**
+     * Deletes configuration by given widget id.
+     *
+     * @param $widgetType
+     * @param $widgetId
+     */
+    public function deleteWidgetConfig($widgetType, $widgetId)
+    {
+        $widgetService = $this->_loadPluginService($widgetType);
+        $widgetService->deleteWidgetConfig($widgetId);
+    }
+
+    /**
+     * Gets path to include the widget at the dashboard.
+     *
+     * @param $widgetType
+     * @return string
+     */
+    public function getWidgetIncludePath($widgetType)
+    {
+        $widgetService = $this->_loadPluginService($widgetType);
+        return $widgetService->getWidgetIncludePath();
     }
 
     /**

@@ -13,7 +13,7 @@
         <div id="sortable">
         {% for widget in widgets %}
             {% if widget.enabled %}
-            {% include 'MetricsBundle::' ~ widget.type ~ '.html.twig' with {'widget': widget} %}
+            {% include widgetService.getWidgetIncludePath(widget.type) with {'widget': widget} %}
             {% endif %}
         {% endfor %}
         </div>

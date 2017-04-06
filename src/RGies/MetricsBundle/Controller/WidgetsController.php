@@ -57,7 +57,6 @@ class WidgetsController extends Controller
             $widgetAction = $this->get('WidgetService')->getWidgetEditActionName($entity->getType());
 
             //return $this->redirect($this->generateUrl('widgets_show', array('id' => $entity->getId())));
-            //return $this->redirect($this->generateUrl('jiracountconfig_new', array('id' => $entity->getId())));
             return $this->redirect($this->generateUrl($widgetAction, array('id' => $entity->getId())));
         }
 
@@ -229,13 +228,10 @@ class WidgetsController extends Controller
                 throw $this->createNotFoundException('Unable to find Widgets entity.');
             }
 
-            $em->remove($entity);
-
             // delete config
-            if ($config = $this->_getConfigEntity($id)) {
-                $em->remove($config);
-            }
+            $this->get('WidgetService')->deleteWidgetConfig($entity->getType(), $id);
 
+            $em->remove($entity);
             $em->flush();
         }
 
@@ -308,21 +304,4 @@ class WidgetsController extends Controller
 
     }
 
-    protected function _getConfigEntity($id)
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        // todo: add flexible widget config objects
-        $query = $em->getRepository('MetricsBundle:JiraCountConfig')->createQueryBuilder('i')
-            ->where('i.widgetId = :id')
-            ->setParameter('id', $id);
-        $items = $query->getQuery()->getResult();
-
-
-        if ($items) {
-            return $items[0];
-        }
-
-        return null;
-    }
 }

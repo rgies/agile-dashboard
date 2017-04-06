@@ -28,4 +28,12 @@ interface WidgetPluginInterface
      * @return string
      */
     public function getWidgetEditActionName();
+
+    /**
+     * Deletes widget configuration.
+     *
+     * @param $widgetId integer
+     */
+    public function deleteWidgetConfig($widgetId);
+
 }
