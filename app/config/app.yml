@@ -14,7 +14,17 @@ parameters:
         'Default': 'fa fa-bar-chart'
 
 
+# Dashboard Services
+services:
+    widget_service:
+        class:            Rgies\MetricsBundle\Services\WidgetService
+        arguments:        [@doctrine, %widget_types%]
+
+
 # Twig Configuration
 twig:
     globals:
         # Variables
+
+        # Services
+        widgetService:  @widget_service
