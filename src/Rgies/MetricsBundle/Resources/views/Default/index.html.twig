@@ -10,11 +10,13 @@
     </script>
 
     {% if widgets|length %}
+        <div id="sortable">
         {% for widget in widgets %}
             {% if widget.enabled %}
             {% include 'MetricsBundle::' ~ widget.type ~ '.html.twig' with {'widget': widget} %}
             {% endif %}
         {% endfor %}
+        </div>
     {% else %}
         <div id="widget-0" class="panel panel-default widget-panel">
             <div class="panel-heading widget-panel-title" style="">&nbsp;</div>
@@ -28,6 +30,9 @@
 {% endblock %}
 
 {% block js %}
+    <link href="{{ asset('css/jquery-ui.min.css') }}" rel="stylesheet" media="screen">
+    <script src="{{ asset('js/jquery-ui.min.js') }}"></script>
+
     <script>
         var dashboardEditMode = false;
 
@@ -58,6 +63,20 @@
         $(document).ready(function() {
             refreshWidgetData();
             var updateTimer = window.setInterval(function(){refreshWidgetData()}, {{ interval }} * 60000 );
+
+            $(document).ready(function()
+            {
+                $( "#sortable" ).sortable(
+                        {
+                            update: function(event, ui) {
+                                var items = $(this).sortable('toArray', {attribute: 'data-id'}).toString();
+                                //$.post('{{ path('widgets_reorder') }}'
+                                //        , {'widgets': items, 'dashboard_id': {{ dashboard.id }}}).done(function(data){});
+                            }
+                        });
+                $( "#sortable" ).disableSelection();
+
+            });
         });
 
         function refreshWidgetData()

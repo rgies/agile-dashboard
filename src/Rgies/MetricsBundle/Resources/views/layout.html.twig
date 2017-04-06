@@ -29,6 +29,32 @@
     <!-- Custom js -->
     <script src="{{ asset('bundles/metrics/js/default.js') }}"></script>
     {%- if is_granted("ROLE_EDITOR") %}{{ editor_init() }}{% endif %}
+    <script>
+        // set global ajax timeout
+        $.ajaxSetup({
+            timeout: 15000
+        });
+
+        $(document).ready(function() {
+            $("body").tooltip({
+                selector: '[data-toggle="tooltip"]',
+                //selector: '[title]',
+                container: 'body',
+                html:true,
+                placement: 'auto top',
+                delay:{ show: 1000, hide: 100 }
+            });
+            $("body").popover({
+                selector: '[data-toggle="popover"]',
+                container: 'body',
+                html:true,
+                trigger: 'hover',
+                //placement: 'auto top',
+                delay:{ show: 1000, hide: 100 }
+            });
+        });
+
+    </script>
     <!-- individual page java scripts -->
     {% block js %}{% endblock %}
 {% endblock %}

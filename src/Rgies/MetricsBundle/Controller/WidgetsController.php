@@ -212,6 +212,7 @@ class WidgetsController extends Controller
             //'config_uri'  => $this->generateUrl('jiracountconfig_edit', array('id' => $id)),
         );
     }
+
     /**
      * Deletes a Widgets entity.
      *
@@ -259,6 +260,17 @@ class WidgetsController extends Controller
             //->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()
             ;
+    }
+
+    /**
+     * Deletes a Widgets entity.
+     *
+     * @Route("/reorderWidgets", name="widgets_reorder")
+     * @Method("POST")
+     */
+    public function reorderWidgetsAjaxAction()
+    {
+
     }
 
     protected function _getConfigEntity($id)
