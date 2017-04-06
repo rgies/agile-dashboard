@@ -1,0 +1,13 @@
+# Plugin Parameters
+parameters:
+    {{ bundle }}Config:
+        widget_view: '{{ namespace }}:default/index'
+        edit_action: '{{ bundle }}_widgetconfig_edit'
+
+# Plugin Services
+services:
+{% block services %}
+    {{ bundle }}Service:
+        class: {{ namespace }}\Services\WidgetPluginService
+        arguments: [@doctrine, %{{ bundle }}Config%]
+{% endblock services %}

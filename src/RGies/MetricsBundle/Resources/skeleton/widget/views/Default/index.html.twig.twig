@@ -1,0 +1,34 @@
+{{ '{% block content %}' }}
+<div id="widget-{{ '{{ widget.id }}' }}" data-id="{{ '{{ widget.id }}' }}" class="panel panel-default widget-panel">
+    <div class="panel-heading widget-panel-title">
+            <span>
+                {{ "{{ widget.title|length > 22 ? widget.title[:22] ~ '...' : widget.title }}" }}
+            </span>
+
+        <div class="btn-group pull-right" style="cursor: pointer">
+            <span alt="Menu" title="Menu" class="fa fa-bars" data-toggle="dropdown" aria-expanded="false"></span>
+            <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                <!-- Edit Button -->
+                <li>
+                    <a href="{{ "{{ path('widgets_edit', {id: widget.id}) }}" }}">
+                        <i class="fa fa-edit fa-fw"></i> Edit
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:disableWidget({{ '{{ widget.id }}' }})">
+                        <i class="fa fa-eye-slash fa-fw"></i> Disable
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="widget-{{ '{{ widget.id }}' }}-body" class="panel-body widget-panel-body">
+        <div class="widget-icon">
+            <i class="ion ion-stats-bars"></i>
+        </div>
+        <h3><span id="widget-value-{{ '{{ widget.id }}' }}">###</span></h3>
+    </div>
+</div>
+
+{{ '{% endblock %}' }}

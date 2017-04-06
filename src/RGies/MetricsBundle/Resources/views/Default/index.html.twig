@@ -1,0 +1,96 @@
+{% extends "MetricsBundle::layout.html.twig" %}
+
+{% block content %}
+    <h2 class="page-header">{{ dashboard.title }} <button id="widget-new" title="Add new widget" class="btn btn-default" style="display: none" onclick="location.href='{{ path('widgets_new') }}'"><i class="fa fa-plus"></i></button></h2>
+    <script>
+        var requestStack = [];
+        function addDataRequest(url, params, callback) {
+            requestStack.push({'url':url, 'params': params, 'callback': callback});
+        }
+    </script>
+
+    {% if widgets|length %}
+        <div id="sortable">
+        {% for widget in widgets %}
+            {% if widget.enabled %}
+            {% include 'MetricsBundle::' ~ widget.type ~ '.html.twig' with {'widget': widget} %}
+            {% endif %}
+        {% endfor %}
+        </div>
+    {% else %}
+        <div id="widget-0" class="panel panel-default widget-panel">
+            <div class="panel-heading widget-panel-title" style="">&nbsp;</div>
+
+            <div class="panel-body widget-panel-body">
+                <center><a href="{{ path('widgets_new') }}"><i class="fa fa-plus-circle fa-5x"></i></a></center>
+            </div>
+        </div>
+    {% endif %}
+
+{% endblock %}
+
+{% block js %}
+    <link href="{{ asset('css/jquery-ui.min.css') }}" rel="stylesheet" media="screen">
+    <script src="{{ asset('js/jquery-ui.min.js') }}"></script>
+
+    <script>
+        var dashboardEditMode = false;
+
+        // Catch key events
+        $( document ).keypress(function( event ) {
+
+            if ( $('input:focus, textarea:focus').length === 0 ) {
+                // create new task <n>-key
+                if (event.keyCode == 110) {
+                    location.href = '{{ path('widgets_new') }}';
+                }
+                // edit tasklist <e>-key
+                else if (event.keyCode == 101) {
+                    // toggle plus items
+                    if (dashboardEditMode == false) {
+                        dashboardEditMode = true;
+                        $('#dashboard-new').css('display', 'inline-block');
+                        $('#widget-new').css('display', 'inline-block');
+                    } else {
+                        dashboardEditMode = false;
+                        $('#dashboard-new').css('display', 'none');
+                        $('#widget-new').css('display', 'none');
+                    }
+                }
+            }
+        });
+
+        $(document).ready(function() {
+            refreshWidgetData();
+            var updateTimer = window.setInterval(function(){refreshWidgetData()}, {{ interval }} * 60000 );
+
+            $(document).ready(function()
+            {
+                $( "#sortable" ).sortable(
+                    {
+                        update: function(event, ui) {
+                            var items = $(this).sortable('toArray', {attribute: 'data-id'}).toString();
+                            $.post('{{ path('widgets_reorder') }}'
+                                    , {'widgets': items, 'dashboard_id': {{ dashboard.id }}}).done(function(data){});
+                        }
+                    });
+                $( "#sortable" ).disableSelection();
+
+            });
+        });
+
+        function refreshWidgetData()
+        {
+            for (var i = 0; i < requestStack.length; i++) {
+                var request = requestStack[i];
+                $.post(request['url'], request['params'], request['callback']);
+            }
+        }
+
+        function disableWidget(id)
+        {
+            $('#widget-' + id).remove();
+            $.post('{{ path('jira-disable-ajax') }}', {id: id} );
+        }
+    </script>
+{% endblock %}

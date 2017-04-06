@@ -3,6 +3,10 @@ parameters:
     platform_name: 'Agile Dashboard'
     platform_version: '1.0'
 
+    # Widget plugins
+    widget_plugins:
+        'SampleWidgetBundle': 'Beispiel Widget'
+
     # Widget update intervall in minutes
     widget_update_interval: 5
 
@@ -17,8 +21,8 @@ parameters:
 # Dashboard Services
 services:
     widget_service:
-        class:            Rgies\MetricsBundle\Services\WidgetService
-        arguments:        [@doctrine, %widget_types%]
+        class:            RGies\MetricsBundle\Services\WidgetService
+        arguments:        [@doctrine, %widget_types%, @service_container]
 
 
 # Twig Configuration
