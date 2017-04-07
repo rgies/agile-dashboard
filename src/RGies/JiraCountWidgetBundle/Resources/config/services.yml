@@ -1,0 +1,11 @@
+# Plugin Parameters
+parameters:
+    JiraCountWidgetBundleConfig:
+        widget_view: 'JiraCountWidgetBundle::default/widget.html.twig'
+        edit_action: 'JiraCountWidgetBundle_widgetconfig_edit'
+
+# Plugin Services
+services:
+    JiraCountWidgetBundleService:
+        class: RGies\JiraCountWidgetBundle\Services\WidgetPluginService
+        arguments: [@doctrine, %JiraCountWidgetBundleConfig%]

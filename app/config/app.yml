@@ -5,24 +5,57 @@ parameters:
 
     # Widget plugins
     widget_plugins:
-        'SampleWidgetBundle': 'Beispiel Widget'
+        'JiraCountWidgetBundle': 'Jira Issue Count'
 
-    # Widget update intervall in minutes
+    # Widget update interval in minutes
     widget_update_interval: 5
 
-    # Dashboard widgets
-    widget_types:
-        'jira/count': 'Jira Ticket Count'
-
+    # Widget icons
     widget_icons:
-        'Default': 'fa fa-bar-chart'
+        'Default':    'ion ion-stats-bars'
+        'Bug':        'ion ion-bug'
+        'User':       'ion ion-person'
+        'Heart':      'ion ion-heart'
+        'Happy':      'ion ion-happy-outline'
+        'Unhappy':    'ion ion-sad-outline'
+        'Inbox':      'ion ion-archive'
+        'Trend-up':   'ion ion-arrow-graph-up-right'
+        'Trend-down': 'ion ion-arrow-graph-down-right'
+        'Funnel':     'ion ion-funnel'
+        'Cloud':      'ion ion-cloud'
+        'Mail':       'ion ion-email'
+        'Message':    'ion ion-chatboxes'
+        'Folder':     'ion ion-folder'
+        'Magic':      'ion ion-wand'
+        'Fire':       'ion ion-flame'
+        'Radioactive':'ion ion-nuclear'
+        'Package':    'ion ion-cube'
+        'Time':       'ion ion-android-time'
+        'Date':       'ion ion-android-calendar'
+        'Stop-watch': 'ion ion-android-stopwatch'
+        'Speed':      'ion ion-speedometer'
+        'Global':     'ion ion-earth'
+        'Experiment': 'ion ion-erlenmeyer-flask'
+        'Trophy':     'ion ion-trophy'
+        'Monitor':    'ion ion-monitor'
+        'Smartphone': 'ion ion-iphone'
+        'Tablet':     'ion ion-ipad'
+        'Tag':        'ion ion-pricetag'
+        'Star':       'ion ion-android-star'
+        'Bookmark':   'ion ion-android-bookmark'
+        'Cart':       'ion ion-android-cart'
+        'Home':       'ion ion-android-home'
+        'Search':     'ion ion-search'
+        'Code':       'ion ion-code-working'
+        'Eye':        'ion ion-eye'
+        'Target':     'ion ion-pinpoint'
 
 
 # Dashboard Services
 services:
     widget_service:
         class:            RGies\MetricsBundle\Services\WidgetService
-        arguments:        [@doctrine, %widget_types%, @service_container]
+        arguments:        [@doctrine, %widget_plugins%, @service_container]
 
 
 # Twig Configuration

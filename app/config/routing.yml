@@ -1,3 +1,8 @@
+jira_count_widget:
+    resource: "@JiraCountWidgetBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 metrics:
     resource: "@MetricsBundle/Controller/"
     type:     annotation

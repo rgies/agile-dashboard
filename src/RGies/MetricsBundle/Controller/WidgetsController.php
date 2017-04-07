@@ -256,10 +256,38 @@ class WidgetsController extends Controller
     }
 
     /**
+     * @Route("/disableWidgets/", name="widgets_disable")
+     * @Method("POST")
+     * @return Response
+     */
+    public function disableWidgetAjaxAction(Request $request)
+    {
+        if (!$request->isXmlHttpRequest()) {
+            return new Response('No valid request', Response::HTTP_FORBIDDEN);
+        }
+
+        $id = $request->get('id');
+
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('MetricsBundle:Widgets')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Widgets entity.');
+        }
+
+        $entity->setEnabled(false);
+        $em->flush();
+
+        return new Response(json_encode(array()), Response::HTTP_OK);
+    }
+
+    /**
      * Reorder widget by given id list.
      *
      * @Route("/reorderWidgets/", name="widgets_reorder")
      * @Method("POST")
+     * @return Response
      */
     public function reorderWidgetsAjaxAction(Request $request)
     {

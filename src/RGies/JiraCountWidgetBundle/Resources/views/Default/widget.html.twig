@@ -1,0 +1,30 @@
+{% extends "MetricsBundle::templates/default-widget.html.twig" %}
+
+{% block widget_body %}
+    <i id="widget-icon-{{ widget.id }}" class="widget-icon"></i>
+    <h3><span id="widget-value-{{ widget.id }}">###</span></h3>
+    <span id="sparkline-{{ widget.id }}"></span>
+{% endblock %}
+
+{% block script %}
+    <script>
+        var activityLine{{ widget.id }} = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+
+        addDataRequest('{{ path('JiraCountWidgetBundle-collect-data') }}', {id:{{ widget.id }}, type:'{{ widget.type }}'}, function (data) {
+            var response = JSON.parse(data);
+            $('#widget-value-{{ widget.id }}').hide('blind',null,function() {
+                $('#widget-value-{{ widget.id }}').html(response['value']).show('blind');
+            });
+
+            $('#widget-icon-{{ widget.id }}').attr('class', 'widget-icon '+response['icon']);
+
+            // Sparkline Charts
+            activityLine{{ widget.id }}.shift();
+            activityLine{{ widget.id }}.push(response['value']);
+            $("#sparkline-{{ widget.id }}").sparkline(activityLine{{ widget.id }}, {
+                type: 'line',
+                tooltipFormat: '{{ '<i style="color: {{color}}" class="fa fa-circle"></i>&nbsp;{{y}}&nbsp;&nbsp;&nbsp;&nbsp;<br/>&nbsp;' }}'
+            });
+        });
+    </script>
+{% endblock %}
