@@ -1,0 +1,53 @@
+<?php
+
+namespace {{ namespace }}\Controller;
+
+{% block use_statements %}
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+{% if 'annotation' == format.routing -%}
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+{% endif %}
+{% endblock use_statements %}
+
+/**
+{% block phpdoc_class_header %}
+ * {{ controller }} controller.
+{% endblock phpdoc_class_header %}
+ *
+{% block phpdoc_class_annotations %}
+{% if 'annotation' == format.routing %}
+ * @Route("/{{ route_prefix }}", name="{{ route_prefix }}")
+{% endif %}
+{% endblock phpdoc_class_annotations %}
+ */
+{% block class_definition %}
+class {{ controller }}Controller extends Controller
+{% endblock class_definition %}
+{
+{% block class_body %}
+{% for action in actions %}
+    {% if 'annotation' == format.routing -%}
+    /**
+     * @Route("{{ action.route }}", name="{{ controller|lower }}-{{ action.route|trim('/') }}")
+     {% if 'default' == action.template -%}
+     * @Template()
+     {% else -%}
+     * @Template("{{ action.template }}")
+     {% endif -%}
+     */
+    {% endif -%}
+    public function {{ action.name }}(
+        {%- if action.placeholders|length > 0 -%}
+            ${{- action.placeholders|join(', $') -}}
+        {%- endif -%})
+    {
+        return array();
+    }
+
+{% endfor -%}
+{% endblock class_body %}
+}

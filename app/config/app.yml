@@ -28,7 +28,7 @@ parameters:
         'Folder':     'ion ion-folder'
         'Magic':      'ion ion-wand'
         'Fire':       'ion ion-flame'
-        'Radioactive':'ion ion-nuclear'
+        'Radioactive': 'ion ion-nuclear'
         'Package':    'ion ion-cube'
         'Time':       'ion ion-android-time'
         'Date':       'ion ion-android-calendar'

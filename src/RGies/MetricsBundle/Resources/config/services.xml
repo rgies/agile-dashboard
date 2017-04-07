@@ -1,0 +1,60 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <!-- Aloha Editor Configuration -->
+        <parameter key="Aloha" type="collection">
+            <parameter key="plugins">common/ui,common/format,common/highlighteditables,common/list,common/horizontalruler,common/link,common/image,common/table,common/undo,extra/cite</parameter>
+            <parameter key="settings">
+                plugins: {
+                    format: {
+                        editables : {'.page-header' : []}
+                    },
+                    link: {
+                        editables : {'.page-header' : []}
+                    },
+                    table: {
+                        editables : {'.page-header' : []}
+                    },
+                    list: {
+                        editables : {'.page-header' : []}
+                    },
+                    horizontalruler: {
+                        editables : {'.page-header' : []}
+                    },
+                    image: {
+                        'fixedAspectRatio' : true,
+                        editables : {'.page-header' : []}
+                    }
+                }
+            </parameter>
+        </parameter>
+    </parameters>
+
+    <services>
+        <!-- Aloha Editor Extension -->
+        <service id="alohaeditor_extension" class="RGies\MetricsBundle\Twig\AlohaEditorExtension">
+            <tag name="twig.extension" />
+            <argument type="service" id="service_container" />
+            <argument type="service" id="router"/>
+            <argument type="service" id="doctrine"/>
+        </service>
+    </services>
+
+    <!--
+    <parameters>
+        <parameter key="metrics.example.class">RGies\MetricsBundle\Example</parameter>
+    </parameters>
+
+    <services>
+        <service id="metrics.example" class="%metrics.example.class%">
+            <argument type="service" id="service_id" />
+            <argument>plain_value</argument>
+            <argument>%parameter_name%</argument>
+        </service>
+    </services>
+    -->
+</container>

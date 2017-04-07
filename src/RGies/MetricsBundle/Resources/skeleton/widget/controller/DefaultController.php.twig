@@ -1,0 +1,53 @@
+<?php
+
+namespace {{ namespace }}\Controller;
+
+{% block use_statements %}
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\SecurityContextInterface;
+{% if 'annotation' == format -%}
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+{% endif %}
+{% endblock use_statements %}
+
+{% block class_definition %}
+class DefaultController extends Controller
+{% endblock class_definition %}
+{
+{% block class_body %}
+    /**
+     * Collect needed widget data.
+     *
+     * @Route("/collect-data/", name="{{ bundle }}-collect-data")
+     * @Method("POST")
+     * @return Response
+     */
+    public function collectDataAjaxAction(Request $request)
+    {
+        if (!$request->isXmlHttpRequest())
+        {
+            return new Response('No valid request', Response::HTTP_FORBIDDEN);
+        }
+
+        $widgetId       = $request->get('id');
+        $widgetType     = $request->get('type');
+        $widgetConfig   = $this->get('WidgetService')->getWidgetConfig($widgetType, $widgetId);
+
+
+        // ======================================================
+        // INSERT HERE YOUR CODE TO COLLECT THE NEEDED DATA
+        // ======================================================
+        $response = array(
+            'value' => mt_rand (10,100)
+        );
+        // ======================================================
+
+
+        return new Response(json_encode($response), Response::HTTP_OK);
+    }
+{% endblock class_body %}
+}

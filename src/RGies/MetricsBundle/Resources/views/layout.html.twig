@@ -1,0 +1,40 @@
+{% extends "::base.html.twig" %}
+{% block stylesheets %}
+    <link href="{{ asset('bundles/metrics/css/default.css') }}" rel="stylesheet">
+    <!-- individual page stylesheets -->
+    {% block css %}{% endblock %}
+{% endblock %}
+{% block body %}
+
+    <!-- Navigation -->
+    {% include 'MetricsBundle::navi.html.twig' %}
+
+    <!-- Content -->
+    <div id="content-block" class="page-container">
+        {% block content %}Content{% endblock %}
+    </div>
+
+    <!-- Scroll to top -->
+    <a href="#top" id="toTop" class="well-sm" alt="Scroll to top" title="Scroll to top">
+        <span class="glyphicon glyphicon-circle-arrow-up"></span>
+    </a>
+
+    <!-- Footer -->
+    {% include 'MetricsBundle::footer.html.twig' %}
+{% endblock %}
+
+{% block javascripts %}
+    <!-- Sparkline js -->
+    <script src="{{ asset('js/jquery.sparkline.min.js') }}"></script>
+    <!-- Custom js -->
+    <script src="{{ asset('bundles/metrics/js/default.js') }}"></script>
+    {%- if is_granted("ROLE_EDITOR") %}{{ editor_init() }}{% endif %}
+    <script>
+        // set global ajax timeout
+        $.ajaxSetup({
+            timeout: 15000
+        });
+    </script>
+    <!-- individual page java scripts -->
+    {% block js %}{% endblock %}
+{% endblock %}

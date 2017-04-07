@@ -1,0 +1,42 @@
+{{ '{% extends "MetricsBundle::layout.html.twig" %}' }}
+
+{{ '{% block content -%}' }}
+<div class="container">
+    <div class="page-header">
+        <h1>{{ bundle_basename }} edit</h1>
+    </div>
+
+    {{ '{{ form(edit_form) }}' }}
+
+    <div class="form-group">
+        <div class="control">
+            <button id="save" type="submit" onclick="formSave()" class="btn btn-primary pull-right">
+                <i class="fa fa-check"></i> Save Configuration
+            </button>
+        </div>
+    </div>
+
+    <br/>
+
+    <a href="{{ "{{ path('home') }}" }}">
+        <i class="fa fa-arrow-circle-left"></i> Return to home
+    </a>
+</div>
+{{ '{% endblock %}' }}
+
+{{ '{% block js -%}' }}
+        <script type="text/javascript">
+
+            function formSave()
+            {
+                var form = $("#edit-form");
+
+                if (form.validate())
+                {
+                    form.submit();
+                }
+            }
+
+            $("#edit-form").validate();
+        </script>
+{{ '{% endblock %}' }}

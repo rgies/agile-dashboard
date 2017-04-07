@@ -1,0 +1,56 @@
+{% extends "MetricsBundle::layout.html.twig" %}
+
+{% block content -%}
+<div class="container">
+    <div class="page-header">
+        <h1>Widgets</h1>
+    </div>
+
+    <table class="record_properties table table-striped">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+            <tr>
+                <th>Title</th>
+                <td>{{ entity.title }}</td>
+            </tr>
+            <tr>
+                <th>Type</th>
+                <td>{{ entity.type }}</td>
+            </tr>
+            <tr>
+                <th>Enabled</th>
+                <td>{{ entity.enabled }}</td>
+            </tr>
+            <tr>
+                <th>Min</th>
+                <td>{{ entity.min }}</td>
+            </tr>
+            <tr>
+                <th>Max</th>
+                <td>{{ entity.max }}</td>
+            </tr>
+            <tr>
+                <th>Param</th>
+                <td>{{ entity.param }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('widgets') }}">
+            Back to the list
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('widgets_edit', { 'id': entity.id }) }}">
+            Edit
+        </a>
+    </li>
+    <li>{{ form(delete_form) }}</li>
+</ul>
+</div>
+{% endblock %}
