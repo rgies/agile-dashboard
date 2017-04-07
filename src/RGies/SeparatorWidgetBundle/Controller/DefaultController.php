@@ -1,33 +1,26 @@
 <?php
 
-namespace {{ namespace }}\Controller;
+namespace RGies\SeparatorWidgetBundle\Controller;
 
-{% block use_statements %}
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\SecurityContextInterface;
-{% if 'annotation' == format -%}
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-{% endif %}
-{% endblock use_statements %}
 
-{% block class_definition %}
 /**
  * Widget controller.
  *
- * @Route("/{{ extension_alias }}")
+ * @Route("/separator_widget")
  */
 class DefaultController extends Controller
-{% endblock class_definition %}
 {
-{% block class_body %}
     /**
      * Collect needed widget data.
      *
-     * @Route("/collect-data/", name="{{ bundle }}-collect-data")
+     * @Route("/collect-data/", name="SeparatorWidgetBundle-collect-data")
      * @Method("POST")
      * @return Response
      */
@@ -54,5 +47,4 @@ class DefaultController extends Controller
 
         return new Response(json_encode($response), Response::HTTP_OK);
     }
-{% endblock class_body %}
 }

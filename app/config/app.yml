@@ -6,6 +6,7 @@ parameters:
     # Widget plugins
     widget_plugins:
         'JiraCountWidgetBundle': 'Jira Issue Count'
+        'SeparatorWidgetBundle': 'Separator'
 
     # Widget update interval in minutes
     widget_update_interval: 5

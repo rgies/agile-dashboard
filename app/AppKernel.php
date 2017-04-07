@@ -25,6 +25,7 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new RGies\MetricsBundle\MetricsBundle(),
             new RGies\JiraCountWidgetBundle\JiraCountWidgetBundle(),
+            new RGies\SeparatorWidgetBundle\SeparatorWidgetBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

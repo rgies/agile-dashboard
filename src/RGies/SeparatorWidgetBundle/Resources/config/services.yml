@@ -1,0 +1,11 @@
+# Plugin Parameters
+parameters:
+    SeparatorWidgetBundleConfig:
+        widget_view: 'SeparatorWidgetBundle::default/widget.html.twig'
+        edit_action: 'SeparatorWidgetBundle_widgetconfig_edit'
+
+# Plugin Services
+services:
+    SeparatorWidgetBundleService:
+        class: RGies\SeparatorWidgetBundle\Services\WidgetPluginService
+        arguments: [@doctrine, %SeparatorWidgetBundleConfig%]

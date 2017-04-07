@@ -13,6 +13,11 @@ use JiraRestApi\Issue\IssueService;
 use JiraRestApi\Configuration\ArrayConfiguration;
 use JiraRestApi\JiraException;
 
+/**
+ * Widget controller.
+ *
+ * @Route("/jira_count_widget")
+ */
 class DefaultController extends Controller
 {
     /**
