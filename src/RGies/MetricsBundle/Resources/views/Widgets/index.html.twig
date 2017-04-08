@@ -18,6 +18,7 @@
                 <th>Id</th>
                 <th>Title</th>
                 <th>Type</th>
+                <th>Dashboard</th>
                 <th>Enabled</th>
                 <th>Actions</th>
             </tr>
@@ -28,7 +29,8 @@
                 <td>{{ entity.id }}</td>
                 <td><a href="{{ path('widgets_edit', { 'id': entity.id }) }}">{{ entity.title }}</a></td>
                 <td>{{ entity.type }}</td>
-                <td>{{ entity.enabled }}</td>
+                <td>{{ entity.dashboard.title }}</td>
+                <td>{% if entity.enabled==1 %}<i class="fa fa-check-circle"></i>{% endif %}</td>
                 <td>
                     <a href="{{ path('widgets_edit', { 'id': entity.id }) }}"><i class="fa fa-edit"></i> Edit</a>
                 </td>
