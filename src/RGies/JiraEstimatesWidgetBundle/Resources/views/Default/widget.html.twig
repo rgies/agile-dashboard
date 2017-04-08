@@ -1,0 +1,22 @@
+{% extends "MetricsBundle::templates/default-widget.html.twig" %}
+
+{% block widget_body %}
+    <i id="widget-icon-{{ widget.id }}" class="widget-icon"></i>
+    <h3><span id="widget-value-{{ widget.id }}">###</span></h3>
+{% endblock %}
+
+{% block script %}
+    <script>
+        addDataRequest('{{ path('JiraEstimatesWidgetBundle-collect-data') }}', {id:{{ widget.id }}, type:'{{ widget.type }}'}, function (data) {
+            var response = JSON.parse(data);
+            $('#widget-value-{{ widget.id }}').hide('blind',null,function() {
+                $('#widget-value-{{ widget.id }}').html(
+                    response['value']
+                ).show('blind');
+            });
+
+            $('#widget-icon-{{ widget.id }}').attr('class', 'widget-icon '+response['icon']);
+
+        });
+    </script>
+{% endblock %}

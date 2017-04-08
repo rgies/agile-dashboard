@@ -82,7 +82,7 @@ label.error {
     -o-transition: all .3s linear;
     transition: all .3s linear;
     position: absolute;
-    top: 30px;
+    top: 34px;
     right: 10px;
     z-index: 0;
     font-size: 90px;

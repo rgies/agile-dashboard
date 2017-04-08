@@ -1,6 +1,6 @@
 <?php
 
-namespace RGies\JiraCountWidgetBundle\Controller;
+namespace RGies\JiraEstimatesWidgetBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -10,20 +10,23 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use JiraRestApi\Issue\IssueService;
+use JiraRestApi\Issue;
 use JiraRestApi\Configuration\ArrayConfiguration;
+use JiraRestApi\Issue\TimeTracking;
 use JiraRestApi\JiraException;
+
 
 /**
  * Widget controller.
  *
- * @Route("/jira_count_widget")
+ * @Route("/jira_estimates_widget")
  */
 class DefaultController extends Controller
 {
     /**
      * Collect needed widget data.
      *
-     * @Route("/collect-data/", name="JiraCountWidgetBundle-collect-data")
+     * @Route("/collect-data/", name="JiraEstimatesWidgetBundle-collect-data")
      * @Method("POST")
      * @return Response
      */
@@ -42,20 +45,27 @@ class DefaultController extends Controller
         $response['icon'] = $widgetConfig->getIcon();
 
         $jql = $widgetConfig->getJqlQuery();
+        $spendTime = 0;
 
         try {
             $issueService = new IssueService($this->_getLoginCredentials());
-            $issues = $issueService->search($jql, 0, 100000, ['key']);
+            $issues = $issueService->search($jql, 0, 100000, ['aggregatetimespent']);
+
+            foreach ($issues->getIssues() as $issue) {
+
+                if ($issue->fields->aggregatetimespent) {
+                    $spendTime += $issue->fields->aggregatetimespent;
+                }
+            }
         } catch (JiraException $e) {
             $this->createNotFoundException('Search Failed: ' . $e->getMessage());
         }
 
-        if ($issues) {
-            $response['value'] = $issues->getTotal();
-        }
+        $response['value'] = $this->_formatTime($spendTime);
 
         return new Response(json_encode($response), Response::HTTP_OK);
     }
+
 
     /**
      * @return ArrayConfiguration
@@ -69,5 +79,16 @@ class DefaultController extends Controller
                 'jiraPassword' => $this->getParameter('jira_password'),
             )
         );
+    }
+
+    protected function _formatTime($time)
+    {
+        if ($time / 3600 >= 1000) {
+            $time = round($time / (3600 * 8),1) . ' d';
+        }
+        else {
+            $time = round($time / (3600),1) . ' h';
+        }
+        return $time;
     }
 }

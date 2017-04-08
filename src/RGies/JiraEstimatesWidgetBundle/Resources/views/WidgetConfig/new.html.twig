@@ -1,25 +1,24 @@
-{{ '{% extends "' }}{{ bundle }}{{ '::layout.html.twig" %}' }}
+{% extends "MetricsBundle::layout.html.twig" %}
 
-{% block content %}
-{{ "{% block content -%}" }}
+{% block content -%}
 <div class="container">
     <div class="page-header">
-        <h1>{{ entity }} creation</h1>
+        <h1>JiraEstimatesWidget creation</h1>
     </div>
 
-    {{ '{{ form(form) }}' }}
+    {{ form(form) }}
 
     <div class="form-group">
         <div class="control">
             <button id="save" type="submit" onclick="formSave()" class="btn btn-primary pull-right">
-                <i class="fa fa-check"></i> Save
+                <i class="fa fa-check"></i> Save Configuration
             </button>
         </div>
     </div>
 </div>
-{{ "{% endblock %}" }}
+{% endblock %}
 
-{{ "{% block js -%}" }}
+{% block js -%}
     <script type="text/javascript">
         function formSave()
         {
@@ -33,5 +32,4 @@
 
         $("#create-form").validate();
     </script>
-{{ "{% endblock %}" }}
-{% endblock content %}
+{% endblock %}

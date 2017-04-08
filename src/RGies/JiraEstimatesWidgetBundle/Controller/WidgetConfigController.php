@@ -1,34 +1,29 @@
 <?php
 
-namespace {{ namespace }}\Controller;
+namespace RGies\JiraEstimatesWidgetBundle\Controller;
 
-{% block use_statements %}
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use {{ namespace }}\Entity\WidgetConfig;
-use {{ namespace }}\Form\WidgetConfigType;
-{% endblock use_statements %}
+use RGies\JiraEstimatesWidgetBundle\Entity\WidgetConfig;
+use RGies\JiraEstimatesWidgetBundle\Form\WidgetConfigType;
 
-{% block class_definition %}
 /**
  * WidgetConfig controller.
  *
- * @Route("/{{ extension_alias }}_widgetconfig")
+ * @Route("/jira_estimates_widget_widgetconfig")
  */
 class WidgetConfigController extends Controller
-{% endblock class_definition %}
 {
-{% block class_body %}
 
     /**
      * Creates a new WidgetConfig entity.
      *
-     * @Route("/", name="{{ bundle }}_widgetconfig_create")
+     * @Route("/", name="JiraEstimatesWidgetBundle_widgetconfig_create")
      * @Method("POST")
-     * @Template("{{ bundle }}:WidgetConfig:new.html.twig")
+     * @Template("JiraEstimatesWidgetBundle:WidgetConfig:new.html.twig")
      */
     public function createAction(Request $request)
     {
@@ -60,7 +55,7 @@ class WidgetConfigController extends Controller
     private function createCreateForm(WidgetConfig $entity)
     {
         $form = $this->createForm(new WidgetConfigType($this->container), $entity, array(
-            'action' => $this->generateUrl('{{ bundle }}_widgetconfig_create'),
+            'action' => $this->generateUrl('JiraEstimatesWidgetBundle_widgetconfig_create'),
             'method' => 'POST',
             'attr'   => array('id' => 'create-form'),
         ));
@@ -71,7 +66,7 @@ class WidgetConfigController extends Controller
     /**
      * Displays a form to create a new WidgetConfig entity.
      *
-     * @Route("/new/{id}", name="{{ bundle }}_widgetconfig_new")
+     * @Route("/new/{id}", name="JiraEstimatesWidgetBundle_widgetconfig_new")
      * @Method("GET")
      * @Template()
      */
@@ -91,7 +86,7 @@ class WidgetConfigController extends Controller
     /**
      * Displays a form to edit an existing WidgetConfig entity.
      *
-     * @Route("/{id}/edit", name="{{ bundle }}_widgetconfig_edit")
+     * @Route("/{id}/edit", name="JiraEstimatesWidgetBundle_widgetconfig_edit")
      * @Method("GET")
      * @Template()
      */
@@ -99,14 +94,14 @@ class WidgetConfigController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $query = $em->getRepository('{{ bundle }}:WidgetConfig')->createQueryBuilder('i')
+        $query = $em->getRepository('JiraEstimatesWidgetBundle:WidgetConfig')->createQueryBuilder('i')
                    ->where('i.widget_id = :id')
                    ->setParameter('id', $id);
         $items = $query->getQuery()->getResult();
 
 
         if (!$items) {
-            return $this->forward('{{ bundle }}:WidgetConfig:new', array('id' => $id));
+            return $this->forward('JiraEstimatesWidgetBundle:WidgetConfig:new', array('id' => $id));
         }
 
         $entity = $items[0];
@@ -129,7 +124,7 @@ class WidgetConfigController extends Controller
     private function createEditForm(WidgetConfig $entity)
     {
         $form = $this->createForm(new WidgetConfigType($this->container), $entity, array(
-            'action' => $this->generateUrl('{{ bundle }}_widgetconfig_update', array('id' => $entity->getId())),
+            'action' => $this->generateUrl('JiraEstimatesWidgetBundle_widgetconfig_update', array('id' => $entity->getId())),
             'method' => 'PUT',
             'attr'   => array('id' => 'edit-form'),
         ));
@@ -140,15 +135,15 @@ class WidgetConfigController extends Controller
     /**
      * Edits an existing WidgetConfig entity.
      *
-     * @Route("/{id}", name="{{ bundle }}_widgetconfig_update")
+     * @Route("/{id}", name="JiraEstimatesWidgetBundle_widgetconfig_update")
      * @Method("PUT")
-     * @Template("{{ bundle }}:WidgetConfig:edit.html.twig")
+     * @Template("JiraEstimatesWidgetBundle:WidgetConfig:edit.html.twig")
      */
     public function updateAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('{{ bundle }}:WidgetConfig')->find($id);
+        $entity = $em->getRepository('JiraEstimatesWidgetBundle:WidgetConfig')->find($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find WidgetConfig entity.');
@@ -169,5 +164,4 @@ class WidgetConfigController extends Controller
         );
     }
 
-{% endblock class_body %}
 }
