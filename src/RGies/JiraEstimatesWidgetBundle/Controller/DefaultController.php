@@ -46,10 +46,12 @@ class DefaultController extends Controller
 
         $jql = $widgetConfig->getJqlQuery();
         $spendTime = 0;
+        $totalCount = 0;
 
         try {
             $issueService = new IssueService($this->_getLoginCredentials());
-            $issues = $issueService->search($jql, 0, 100000, ['aggregatetimespent']);
+            $issues = $issueService->search($jql, 0, 10000, ['aggregatetimespent']);
+            $totalCount = $issues->getTotal();
 
             foreach ($issues->getIssues() as $issue) {
 
@@ -61,7 +63,14 @@ class DefaultController extends Controller
             $this->createNotFoundException('Search Failed: ' . $e->getMessage());
         }
 
-        $response['value'] = $this->_formatTime($spendTime);
+        $response['value'] = $spendTime;
+
+        if ($issues->getTotal() > $issues->getMaxResults()) {
+            $response['warning'] = 'limit of ' . $issues->getMaxResults() . ' issues reached';
+        } else {
+            $response['subtext'] = $totalCount . ' issues / Ø '
+                . round($spendTime / 3600 / $issues->getTotal(), 1) . 'h';
+        }
 
         return new Response(json_encode($response), Response::HTTP_OK);
     }
@@ -79,16 +88,5 @@ class DefaultController extends Controller
                 'jiraPassword' => $this->getParameter('jira_password'),
             )
         );
-    }
-
-    protected function _formatTime($time)
-    {
-        if ($time / 3600 >= 1000) {
-            $time = round($time / (3600 * 8),1) . ' d';
-        }
-        else {
-            $time = round($time / (3600),1) . ' h';
-        }
-        return $time;
     }
 }

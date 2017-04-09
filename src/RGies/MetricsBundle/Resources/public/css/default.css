@@ -89,6 +89,24 @@ label.error {
     color: rgba(0, 0, 0, 0.15);
 }
 
+.widget-value-unit {
+    vertical-align: super;
+    font-size: 18px;
+    padding-left: 4px;
+}
+
+.widget-value-subtext {
+    font-size: 10px;
+    font-weight: normal;
+    opacity: 0.5;
+}
+
+.widget-value-warning {
+    font-size: 10px;
+    font-weight: normal;
+    color: #ff0000;
+}
+
 .widget-panel h3 {
     z-index: 0;
     font-size: 38px;
