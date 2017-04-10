@@ -57,47 +57,49 @@ class WidgetService
     /**
      * Get configuration by given widget id.
      *
-     * @param $widgetType
+     * @param string $widgetType Type name of the widget
      * @param $widgetId
      */
     public function getWidgetConfig($widgetType, $widgetId)
     {
         $widgetService = $this->_loadPluginService($widgetType);
-        return $widgetService->getWidgetConfig($widgetId);
+        return $widgetService->getWidgetConfig($widgetId, $widgetType);
     }
 
     /**
      * Deletes configuration by given widget id.
      *
-     * @param $widgetType
+     * @param string $widgetType Type name of the widget
      * @param $widgetId
      */
     public function deleteWidgetConfig($widgetType, $widgetId)
     {
         $widgetService = $this->_loadPluginService($widgetType);
-        $widgetService->deleteWidgetConfig($widgetId);
+        $widgetService->deleteWidgetConfig($widgetId, $widgetType);
     }
 
     /**
      * Gets path to include the widget at the dashboard.
      *
-     * @param $widgetType
+     * @param string $widgetType Type name of the widget
      * @return string
      */
     public function getWidgetIncludePath($widgetType)
     {
         $widgetService = $this->_loadPluginService($widgetType);
-        return $widgetService->getWidgetIncludePath();
+        return $widgetService->getWidgetIncludePath($widgetType);
     }
 
     /**
      * Loads the required service from given plugin type.
      *
-     * @param string $bundle Type name of plugin
+     * @param string $widgetType Type name of the widget
      * @return object
      */
-    protected function _loadPluginService($bundle)
+    protected function _loadPluginService($widgetType)
     {
+        $list = explode('/', $widgetType, 2);
+        $bundle = $list[0];
         $path = $this->_serviceContainer->get('kernel')->locateResource('@' . $bundle . '/Services');
 
         // load bundle plugin service
