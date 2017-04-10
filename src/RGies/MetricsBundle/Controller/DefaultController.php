@@ -6,6 +6,7 @@ use RGies\MetricsBundle\Entity\Dashboard;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\Security\Core\SecurityContextInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -13,6 +14,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 class DefaultController extends Controller
 {
+    const LAST_VISITED_DASHBOARD = 'last_dashboard_id';
+
     /**
      * Website home action.
      *
@@ -20,9 +23,10 @@ class DefaultController extends Controller
      * @Route("/id/{id}", name="home")
      * @Template()
      */
-    public function indexAction($id = null)
+    public function indexAction(Request $request, $id = null)
     {
         $em = $this->getDoctrine()->getManager();
+        $dashboard = null;
 
         // get dashboards
         $dashboards = $em->getRepository('MetricsBundle:Dashboard')
@@ -39,13 +43,21 @@ class DefaultController extends Controller
             $em->persist($dashboard);
             $em->flush();
             $dashboards = array($dashboard);
-        }
-
-        if ($id) {
-            $dashboard = $em->getRepository('MetricsBundle:Dashboard')
-                ->find($id);
+        } else if ($id) {
+            // create cookie
+            $expire = new \DateTime('+600 days');
+            $cookie = new Cookie(self::LAST_VISITED_DASHBOARD, $id, $expire);
+            $response = new Response();
+            $response->headers->setCookie($cookie);
+            $response->send();
+        } else if ($request->cookies->has(self::LAST_VISITED_DASHBOARD)) {
+            $id = $request->cookies->get(self::LAST_VISITED_DASHBOARD);
         } else {
             $dashboard = $dashboards[0];
+        }
+
+        if (!$dashboard && $id) {
+            $dashboard = $em->getRepository('MetricsBundle:Dashboard')->find($id);
         }
 
         // get widgets

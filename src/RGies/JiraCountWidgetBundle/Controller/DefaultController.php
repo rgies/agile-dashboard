@@ -38,7 +38,7 @@ class DefaultController extends Controller
         $widgetType     = $request->get('type');
         $widgetConfig   = $this->get('WidgetService')->getWidgetConfig($widgetType, $widgetId);
 
-        $response = array('value'=>'###');
+        $response = array();
         $response['icon'] = $widgetConfig->getIcon();
 
         $jql = $widgetConfig->getJqlQuery();
@@ -47,7 +47,8 @@ class DefaultController extends Controller
             $issueService = new IssueService($this->_getLoginCredentials());
             $issues = $issueService->search($jql, 0, 100000, ['key']);
         } catch (JiraException $e) {
-            $this->createNotFoundException('Search Failed: ' . $e->getMessage());
+            $response['warning'] = wordwrap($e->getMessage(), 38, '<br/>');
+            return new Response(json_encode($response), Response::HTTP_OK);
         }
 
         if ($issues) {

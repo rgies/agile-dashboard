@@ -1,5 +1,4 @@
 parameters:
-    platform_vendor:   MyCompany GmbH
     platform_contact:  contact@website.com
     platform_keywords: 'metrics,kpi,agile,company,dashboard'
     platform_description: 'Company dashboard for agile metrics.'

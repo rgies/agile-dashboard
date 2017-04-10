@@ -1,4 +1,4 @@
 <div id="widget-{{ widget.id }}" data-id="{{ widget.id }}">
     <div class="clearfix"></div>
-    <h3 class="clearfix page-header">{{ widget.title }}</h3>
+    <h3 class="clearfix dashboard-separator" ondblclick="location.href='{{ path('widgets_edit', {id: widget.id}) }}'">{{ widget.title }}</h3>
 </div>

@@ -2,6 +2,7 @@
 parameters:
     platform_name: 'Agile Dashboard'
     platform_version: '1.0'
+    platform_vendor: 'R.Gies'
 
     # Widget plugins
     widget_plugins:
