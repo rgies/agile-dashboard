@@ -1,0 +1,26 @@
+{% extends "MetricsBundle::templates/default-widget.html.twig" %}
+
+{% block widget_body %}
+    <span id="widget-value-{{ widget.id }}">
+        <table>
+            <tr><td><i class="fa fa-circle"></i> ##-###### &nbsp;&nbsp;&nbsp;&nbsp;############</td></tr>
+            <tr><td><i class="fa fa-circle"></i> ##-###### &nbsp;&nbsp;&nbsp;&nbsp;############</td></tr>
+            <tr><td><i class="fa fa-circle"></i> ##-###### &nbsp;&nbsp;&nbsp;&nbsp;############</td></tr>
+            <tr><td><i class="fa fa-circle"></i> ##-###### &nbsp;&nbsp;&nbsp;&nbsp;############</td></tr>
+            <tr><td><i class="fa fa-circle"></i> ##-###### &nbsp;&nbsp;&nbsp;&nbsp;############</td></tr>
+        </table>
+    </span>
+{% endblock %}
+
+{% block script %}
+    <script>
+        addDataRequest('{{ path('JiraListWidgetBundle-collect-data') }}', {id:{{ widget.id }}, type:'{{ widget.type }}'}, function (data) {
+            var response = JSON.parse(data);
+            /*
+            $('#widget-value-{{ widget.id }}').hide('blind',null,function() {
+                $('#widget-value-{{ widget.id }}').html(response['value']).show('blind');
+            });*/
+            $('#widget-value-{{ widget.id }}').html(response['value']).show();
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,11 @@
+# Plugin Parameters
+parameters:
+    JiraListWidgetBundleConfig:
+        widget_view: 'JiraListWidgetBundle::default/widget.html.twig'
+        edit_action: 'JiraListWidgetBundle_widgetconfig_edit'
+
+# Plugin Services
+services:
+    JiraListWidgetBundleService:
+        class: RGies\JiraListWidgetBundle\Services\WidgetPluginService
+        arguments: [@doctrine, %JiraListWidgetBundleConfig%]

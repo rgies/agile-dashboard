@@ -1,3 +1,8 @@
+jira_list_widget:
+    resource: "@JiraListWidgetBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 jira_estimates_widget:
     resource: "@JiraEstimatesWidgetBundle/Controller/"
     type:     annotation

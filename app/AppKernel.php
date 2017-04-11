@@ -27,6 +27,7 @@ class AppKernel extends Kernel
             new RGies\JiraCountWidgetBundle\JiraCountWidgetBundle(),
             new RGies\SeparatorWidgetBundle\SeparatorWidgetBundle(),
             new RGies\JiraEstimatesWidgetBundle\JiraEstimatesWidgetBundle(),
+            new RGies\JiraListWidgetBundle\JiraListWidgetBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

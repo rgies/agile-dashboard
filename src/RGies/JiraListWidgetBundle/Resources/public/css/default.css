@@ -1,0 +1,15 @@
+/* -- Required label --------------- */
+label.required:after {
+    content: "*";
+}
+
+/* -- Error label ------------------ */
+label.error:before {
+    font-family: FontAwesome;
+    content: "\F071 \0020";
+    color: #dfb800;
+}
+
+label.error {
+    color: #DF382C;
+}
