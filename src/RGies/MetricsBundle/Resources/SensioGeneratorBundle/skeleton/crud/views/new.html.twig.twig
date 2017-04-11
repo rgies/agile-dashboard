@@ -31,7 +31,10 @@
             }
         }
 
-        $("#create-form").validate();
+        $( document ).ready(function() {
+            $('input:text:visible:first').focus();
+            $("#create-form").validate();
+        });
     </script>
 {{ "{% endblock %}" }}
 {% endblock content %}

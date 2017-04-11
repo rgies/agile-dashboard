@@ -154,6 +154,7 @@ class WidgetConfigController extends Controller
 
         if ($editForm->isValid()) {
             $em->flush();
+            $this->get('CacheService')->deleteValue('JiraEstimatesWidget', $entity->getWidgetId());
 
             return $this->redirect($this->generateUrl('home'));
         }

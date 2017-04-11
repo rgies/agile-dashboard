@@ -60,6 +60,10 @@ services:
         class:            RGies\MetricsBundle\Services\WidgetService
         arguments:        [@doctrine, %widget_plugins%, @service_container]
 
+    cache_service:
+        class:            RGies\MetricsBundle\Services\CacheService
+        arguments:        [@doctrine]
+
 
 # Twig Configuration
 twig:
@@ -68,3 +72,4 @@ twig:
 
         # Services
         widgetService:  @widget_service
+        cacheService:   @cache_service

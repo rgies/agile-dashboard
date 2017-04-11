@@ -40,7 +40,14 @@ class DefaultController extends Controller
 
         $widgetId       = $request->get('id');
         $widgetType     = $request->get('type');
-        $widgetConfig   = $this->get('WidgetService')->getWidgetConfig($widgetType, $widgetId);
+
+        // Get data from cache
+        $cache = $this->get('CacheService');
+        if ($cacheValue = $cache->getValue('{{ bundle }}', $widgetId)) {
+            return new Response($cacheValue, Response::HTTP_OK);
+        }
+
+        $widgetConfig = $this->get('WidgetService')->getWidgetConfig($widgetType, $widgetId);
 
 
         // ======================================================
@@ -51,6 +58,8 @@ class DefaultController extends Controller
         );
         // ======================================================
 
+        // Cache response data
+        $cache->setValue('{{ bundle }}', $widgetId, json_encode($response));
 
         return new Response(json_encode($response), Response::HTTP_OK);
     }

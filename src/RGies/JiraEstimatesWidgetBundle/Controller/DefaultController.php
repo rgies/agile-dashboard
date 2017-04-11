@@ -39,7 +39,14 @@ class DefaultController extends Controller
 
         $widgetId       = $request->get('id');
         $widgetType     = $request->get('type');
-        $widgetConfig   = $this->get('WidgetService')->getWidgetConfig($widgetType, $widgetId);
+
+        // Data cache
+        $cache = $this->get('CacheService');
+        if ($cacheValue = $cache->getValue('JiraEstimatesWidget', $widgetId)) {
+            return new Response($cacheValue, Response::HTTP_OK);
+        }
+
+        $widgetConfig = $this->get('WidgetService')->getWidgetConfig($widgetType, $widgetId);
 
         $response = array();
         $response['icon'] = $widgetConfig->getIcon();
@@ -73,6 +80,8 @@ class DefaultController extends Controller
             $response['subtext'] = $totalCount . ' issues / Ø '
                 . round($spendTime / 3600 / $issues->getTotal(), 1) . 'h';
         }
+
+        $cache->setValue('JiraEstimatesWidget', $widgetId, json_encode($response));
 
         return new Response(json_encode($response), Response::HTTP_OK);
     }

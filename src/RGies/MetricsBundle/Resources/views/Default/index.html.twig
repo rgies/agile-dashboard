@@ -61,8 +61,15 @@
         });
 
         $(document).ready(function() {
-            refreshWidgetData();
-            var updateTimer = window.setInterval(function(){refreshWidgetData()}, {{ interval }} * 60000 );
+            dataRequestHandler.refreshWidgetData();
+
+            // Main timer to reload widget data
+            var updateTimer = window.setInterval(function(){
+                dataRequestHandler.refreshWidgetData()}, {{ interval }} * 60000 );
+
+            // Retry timer to reload widget data
+            var retryTimer = window.setInterval(function(){
+                dataRequestHandler.retryLoadData()}, 10000 );
 
             $(document).ready(function()
             {
@@ -79,11 +86,41 @@
             });
         });
 
-        function refreshWidgetData()
-        {
-            for (var i = 0; i < requestStack.length; i++) {
-                var request = requestStack[i];
-                $.post(request['url'], request['params'], request['callback']);
+        var dataRequestHandler = {
+
+            retryQueue: [],
+
+            /**
+             * Reloads data for all registered widgets.
+             */
+            refreshWidgetData: function ()
+            {
+                for (var i = 0; i < requestStack.length; i++) {
+                    var request = requestStack[i];
+
+                    $.ajax({
+                        type: "POST",
+                        url: request['url'],
+                        data: request['params'],
+                        context: request,
+                        success: request['callback'],
+                        error: function() {
+                            dataRequestHandler.retryQueue.push($(this)[0]);
+                        }
+                    });
+                }
+            },
+
+            /**
+             * Retry to load data which are failed at first load
+             */
+            retryLoadData: function()
+            {
+                if (dataRequestHandler.retryQueue.length > 0) {
+                    var request = dataRequestHandler.retryQueue.shift();
+                    //console.log('Retry:' + request['url']);
+                    $.post(request['url'], request['params'], request['callback']);
+                }
             }
         }
 

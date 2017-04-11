@@ -55,7 +55,9 @@
                 });
             }
 
-            $("#edit-form").validate();
+            $( document ).ready(function() {
+                $("#edit-form").validate();
+            });
         </script>
 {{ "{% endblock %}" }}
 {% endblock content %}
