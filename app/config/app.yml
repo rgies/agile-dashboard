@@ -13,6 +13,11 @@ parameters:
     # Widget update interval in minutes
     widget_update_interval: 5
 
+    # Widget cache in minutes
+    widget_cache:
+        max_lifetime: 600
+        default_lifetime: 10
+
     # Widget icons
     widget_icons:
         'Default':    'ion ion-stats-bars'
@@ -62,7 +67,7 @@ services:
 
     cache_service:
         class:            RGies\MetricsBundle\Services\CacheService
-        arguments:        [@doctrine]
+        arguments:        [@doctrine, %widget_cache%]
 
 
 # Twig Configuration

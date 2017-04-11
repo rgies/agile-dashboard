@@ -22,30 +22,33 @@ class CacheService
      */
     private $_doctrine;
 
+    private $_config;
+
     /**
      * Class constructor.
      */
-    public function __construct($doctrine)
+    public function __construct($doctrine, $config)
     {
         $this->_doctrine = $doctrine;
+        $this->_config = $config;
     }
 
     /**
      * Set cache value.
      *
-     * @param string $entity Unique name of entity
-     * @param integer $id    Data set id
+     * @param string $domain Domain
+     * @param string $id     Unique data id
      * @param string $value  Value to store in cache
      */
-    public function setValue($entity, $id, $value)
+    public function setValue($domain, $id, $value)
     {
         $em = $this->_doctrine->getManager();
 
         $cache = new Cache();
-        $cache->setEntity($entity)
-            ->setUid($id)
-            ->setValue($value)
-            ->setCreated(time());
+        $cache  -> setDomain($domain)
+                -> setUid($id)
+                -> setValue($value)
+                -> setCreated(time());
 
         $em->persist($cache);
         $em->flush();
@@ -58,23 +61,27 @@ class CacheService
     /**
      * Get cache value.
      *
-     * @param string $entity    Unique name of entity
-     * @param integer $id       Data set id
+     * @param string $domain    Domain
+     * @param string $id        Unique data id
      * @param string $default   OPTIONAL Default value
      * @param integer $lifetime OPTIONAL Lifetime of the requested value
      * @return string|null      Null or stored value
      */
-    public function getValue($entity, $id, $default=null, $lifetime=600)
+    public function getValue($domain, $id, $default=null, $lifetime=null)
     {
+        if ($lifetime === null) {
+            $lifetime = $this->_config['default_lifetime'] * 60;
+        }
+
         $em = $this->_doctrine->getManager();
         $cache = $em->getRepository('MetricsBundle:Cache')
-            ->createQueryBuilder('e')
-            ->where('e.entity = :entity')
-            ->andWhere('e.uid = :id')
-            ->orderBy('e.created', 'DESC')
-            ->setParameter('entity', $entity)
-            ->setParameter('id', $id)
-            ->getQuery()->getResult();
+            -> createQueryBuilder('e')
+            -> where('e.domain = :domain')
+            -> andWhere('e.uid = :id')
+            -> orderBy('e.created', 'DESC')
+            -> setParameter('domain', $domain)
+            -> setParameter('id', $id)
+            -> getQuery()->getResult();
 
         if ($cache && $cache[0]->getCreated()+$lifetime > time())
         {
@@ -84,9 +91,9 @@ class CacheService
         return $default;
     }
 
-    public function getValueItem($entity, $id, $item, $default=null, $lifetime=600)
+    public function getValueItem($domain, $id, $item, $default=null, $lifetime=600)
     {
-        $items = json_decode($this->getValue($entity, $id, '[]', $lifetime), true);
+        $items = json_decode($this->getValue($domain, $id, '[]', $lifetime), true);
 
         if (isset($items[$item])) {
             return $items[$item];
@@ -98,22 +105,22 @@ class CacheService
     /**
      * Delete cache value.
      *
-     * @param string $entity Unique name of entity
-     * @param integer $id    OPTIONAL Data set id
+     * @param string $domain Domain
+     * @param string $id     Unique data id
      * @return integer       Number of deleted items
      */
-    public function deleteValue($entity, $id = null)
+    public function deleteValue($domain, $id = null)
     {
         $em = $this->_doctrine->getManager();
 
-        $query = 'delete from MetricsBundle:Cache st where st.entity = :entity';
+        $query = 'delete from MetricsBundle:Cache st where st.domain = :domain';
 
         if ($id) {
             $query = $query . ' and st.uid = :id';
         }
 
         $q = $em->createQuery($query);
-        $q->setParameter('entity', $entity);
+        $q->setParameter('domain', $domain);
 
         if ($id) {
             $q->setParameter('id', $id);
@@ -129,8 +136,8 @@ class CacheService
     {
         $em = $this->_doctrine->getManager();
 
-        // Set max lifetime to 8h
-        $lifetime = 8 * 3600;
+        // Set max lifetime
+        $lifetime = $this->_config['max_lifetime'] * 60;
 
         $q = $em->createQuery('delete from MetricsBundle:Cache st where st.created < :now');
         $q->setParameter('now', time() - $lifetime);
