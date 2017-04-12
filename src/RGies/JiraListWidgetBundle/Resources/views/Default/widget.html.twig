@@ -1,26 +1,42 @@
 {% extends "MetricsBundle::templates/default-widget.html.twig" %}
 
 {% block widget_body %}
-    <span id="widget-value-{{ widget.id }}">
+    <span id="widget-value-{{ widget.id }}" style="font-size:11px">
         <table>
-            <tr><td><i class="fa fa-circle"></i> ##-###### &nbsp;&nbsp;&nbsp;&nbsp;############</td></tr>
-            <tr><td><i class="fa fa-circle"></i> ##-###### &nbsp;&nbsp;&nbsp;&nbsp;############</td></tr>
-            <tr><td><i class="fa fa-circle"></i> ##-###### &nbsp;&nbsp;&nbsp;&nbsp;############</td></tr>
-            <tr><td><i class="fa fa-circle"></i> ##-###### &nbsp;&nbsp;&nbsp;&nbsp;############</td></tr>
-            <tr><td><i class="fa fa-circle"></i> ##-###### &nbsp;&nbsp;&nbsp;&nbsp;############</td></tr>
+            <tr><td><i class="fa fa-circle"></i> <a>###-#######</a> &nbsp;&nbsp;&nbsp;&nbsp;<i>################</i></td></tr>
+            <tr><td><i class="fa fa-circle"></i> <a>###-#######</a> &nbsp;&nbsp;&nbsp;&nbsp;<i>################</i></td></tr>
+            <tr><td><i class="fa fa-circle"></i> <a>###-#######</a> &nbsp;&nbsp;&nbsp;&nbsp;<i>################</i></td></tr>
+            <tr><td><i class="fa fa-circle"></i> <a>###-#######</a> &nbsp;&nbsp;&nbsp;&nbsp;<i>################</i></td></tr>
+            <tr><td><i class="fa fa-circle"></i> <a>###-#######</a> &nbsp;&nbsp;&nbsp;&nbsp;<i>################</i></td></tr>
         </table>
     </span>
+
+    <p style="text-align:center">
+        <span id="widget-link-{{ widget.id }}" style="font-size: 12px">
+            <a><i class="fa fa-arrow-circle-right"></i> More info</a>
+        </span>
+    </p>
 {% endblock %}
 
 {% block script %}
     <script>
         addDataRequest('{{ path('JiraListWidgetBundle-collect-data') }}', {id:{{ widget.id }}, type:'{{ widget.type }}'}, function (data) {
             var response = JSON.parse(data);
-            /*
-            $('#widget-value-{{ widget.id }}').hide('blind',null,function() {
-                $('#widget-value-{{ widget.id }}').html(response['value']).show('blind');
-            });*/
-            $('#widget-value-{{ widget.id }}').html(response['value']).show();
+            $('#widget-value-{{ widget.id }}').html(response['value']);
+
+            if (response['total']) {
+                // More info link
+                $('#widget-link-{{ widget.id }}').html(
+                    '<a href="' + response['link']
+                    + '" target="_blank"><i class="fa fa-arrow-circle-right"></i> More info '
+                    + '</a>'
+                );
+
+                // Badge with total number of issues
+                $('#widget-title-suffix-{{ widget.id }}').html(
+                    '<span style="text-shadow: none; font-size: 10px" class="badge">' + response['total'] + '</span>'
+                );
+            }
         });
     </script>
 {% endblock %}

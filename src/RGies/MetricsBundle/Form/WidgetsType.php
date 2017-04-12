@@ -9,13 +9,15 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class WidgetsType extends AbstractType
 {
     protected $_container;
+    protected $_lastVisitedDashboardEntity;
 
     /**
      * Class constructor.
      */
-    public function __construct($container)
+    public function __construct($container, $lastVisitedDashboardEntity=null)
     {
         $this->_container = $container;
+        $this->_lastVisitedDashboardEntity = $lastVisitedDashboardEntity;
     }
 
     /**
@@ -26,13 +28,19 @@ class WidgetsType extends AbstractType
     {
         $widgetPlugins = $this->_container->getParameter('widget_plugins');
 
+        $dashboardChoice = array(
+            'class'     => 'MetricsBundle:Dashboard',
+            'label'     => 'Dashboard',
+            'property'  => 'title',
+        );
+
+        if ($this->_lastVisitedDashboardEntity) {
+            $dashboardChoice['data'] = $this->_lastVisitedDashboardEntity;
+        }
+
         $builder
             ->add('title')
-            ->add('dashboard', 'entity', array(
-                'class' => 'MetricsBundle:Dashboard',
-                'label' => 'Dashboard',
-                'property' => 'title'
-            ))
+            ->add('dashboard', 'entity', $dashboardChoice)
             ->add('type', 'choice', array('choices' => $widgetPlugins))
             ->add('enabled')
             ->add('pos', 'hidden')

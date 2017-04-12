@@ -4,6 +4,7 @@
         <span>
             {{ widget.title|length > 22 ? widget.title[:22] ~ '...' : widget.title }}
         </span>
+        <span id="widget-title-suffix-{{ widget.id }}"></span>
 
         <div class="btn-group pull-right" style="cursor: pointer">
             <span alt="Menu" title="Menu" class="fa fa-bars" data-toggle="dropdown" aria-expanded="false"></span>
@@ -12,6 +13,11 @@
                 <li>
                     <a href="{{ path('widgets_edit', {id: widget.id}) }}">
                         <i class="fa fa-edit fa-fw"></i> Edit
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ path(widgetService.getWidgetEditActionName(widget.type), {id: widget.id}) }}">
+                        <i class="fa fa-cog fa-fw"></i> Config
                     </a>
                 </li>
                 <li>

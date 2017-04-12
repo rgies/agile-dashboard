@@ -18,6 +18,7 @@ use RGies\MetricsBundle\Form\WidgetsType;
  */
 class WidgetsController extends Controller
 {
+    const LAST_VISITED_DASHBOARD = 'last_dashboard_id';
 
     /**
      * Lists all Widgets entities.
@@ -73,9 +74,9 @@ class WidgetsController extends Controller
      *
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createCreateForm(Widgets $entity)
+    private function createCreateForm(Widgets $entity, $dashboardEntity=null)
     {
-        $form = $this->createForm(new WidgetsType($this->container), $entity, array(
+        $form = $this->createForm(new WidgetsType($this->container, $dashboardEntity), $entity, array(
             'action' => $this->generateUrl('widgets_create'),
             'method' => 'POST',
             'attr'   => array('id' => 'create-form'),
@@ -93,10 +94,14 @@ class WidgetsController extends Controller
      * @Method("GET")
      * @Template()
      */
-    public function newAction()
+    public function newAction(Request $request)
     {
+        $lastDashboardId = $request->cookies->get(self::LAST_VISITED_DASHBOARD);
+        $em = $this->getDoctrine()->getManager();
+        $dashboardEntity = $em->getRepository('MetricsBundle:Dashboard')->find($lastDashboardId);
+
         $entity = new Widgets();
-        $form   = $this->createCreateForm($entity);
+        $form   = $this->createCreateForm($entity, $dashboardEntity);
 
         return array(
             'entity' => $entity,

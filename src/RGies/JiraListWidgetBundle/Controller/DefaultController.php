@@ -54,7 +54,7 @@ class DefaultController extends Controller
 
         try {
             $issueService = new IssueService($this->_getLoginCredentials());
-            $issues = $issueService->search($jql, 0, 5, ['key', 'summary']);
+            $issues = $issueService->search($jql, 0, 5, ['key', 'summary','created']);
         } catch (JiraException $e) {
             $response['warning'] = wordwrap($e->getMessage(), 38, '<br/>');
             return new Response(json_encode($response), Response::HTTP_OK);
@@ -65,15 +65,18 @@ class DefaultController extends Controller
             $value = '<table>';
 
             foreach ($issues->getIssues() as $issue) {
-                $value = $value . '<tr><td><i class="fa fa-circle"></i> '
+                $value = $value . '<tr style="white-space: nowrap;"><td><i class="fa fa-circle"></i> '
                     . $this->_createLink($issue->key,$issue->fields->summary)
                     . '&nbsp;&nbsp;</td><td>'
-                    . '<i><span title="' . $issue->fields->summary . '">' . substr($issue->fields->summary, 0, 12)
-                    . '</span></i></td></tr>';
+                    . '<i><span title="' . str_replace('"', '&quot;', $issue->fields->summary)
+                    . '">' . htmlentities(substr($issue->fields->summary, 0, 18))
+                    . '...</span></i></td></tr>';
             }
             $value .= '</table>';
         }
 
+        $response['link'] = $this->getParameter('jira_host') . '/issues/?jql=' . urlencode($jql);
+        $response['total'] = $issues->getTotal();
         $response['value'] = $value;
 
         // Cache response data
@@ -85,7 +88,7 @@ class DefaultController extends Controller
     protected function _createLink($key, $text)
     {
         return '<a href="' . $this->getParameter('jira_host') . '/browse/' . $key
-            . '" target="_blank" title="' . $text . '">' . $key . '</a>';
+            . '" target="_blank" title="' . str_replace('"', '&quot;', $text) . '">' . $key . '</a>';
     }
 
 
