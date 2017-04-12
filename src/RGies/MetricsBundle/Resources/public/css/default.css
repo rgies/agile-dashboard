@@ -46,7 +46,7 @@ label.error {
 }
 
 /* --------------------------------------- */
-/* -- Widget Panel ------------__--------- */
+/* -- Widget Panel ----------------------- */
 /* --------------------------------------- */
 .widget-panel-title, .widget-panel-title:active, .widget-panel-title:visited {
     padding: 5px 10px;
@@ -105,13 +105,13 @@ label.error {
 }
 
 .widget-value-subtext {
-    font-size: 10px;
+    font-size: 11px;
     font-weight: normal;
     opacity: 0.5;
 }
 
 .widget-value-warning {
-    font-size: 10px;
+    font-size: 9px;
     font-weight: normal;
     color: #ff0000;
 }

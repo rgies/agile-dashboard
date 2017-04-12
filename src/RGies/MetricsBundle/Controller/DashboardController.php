@@ -53,7 +53,7 @@ class DashboardController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('dashboard'));
+            return $this->redirect($this->generateUrl('home', array('id'=>$entity->getId())));
         }
 
         return array(

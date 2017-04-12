@@ -22,6 +22,15 @@
     <script>
         addDataRequest('{{ path('JiraListWidgetBundle-collect-data') }}', {id:{{ widget.id }}, type:'{{ widget.type }}'}, function (data) {
             var response = JSON.parse(data);
+
+            // Set warning
+            if (response['warning']) {
+                var value = '<div class="widget-value-warning"><i class="fa fa-warning"></i> '
+                + response['warning'] + '</div>';
+                $('#widget-value-{{ widget.id }}').html(value);
+                return;
+            }
+
             $('#widget-value-{{ widget.id }}').html(response['value']);
 
             if (response['total']) {
