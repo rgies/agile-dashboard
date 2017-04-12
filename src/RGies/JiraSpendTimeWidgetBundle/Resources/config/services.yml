@@ -1,0 +1,11 @@
+# Plugin Parameters
+parameters:
+    JiraSpendTimeWidgetBundleConfig:
+        widget_view: 'JiraSpendTimeWidgetBundle::default/widget.html.twig'
+        edit_action: 'JiraSpendTimeWidgetBundle_widgetconfig_edit'
+
+# Plugin Services
+services:
+    JiraSpendTimeWidgetBundleService:
+        class: RGies\JiraSpendTimeWidgetBundle\Services\WidgetPluginService
+        arguments: [@doctrine, %JiraSpendTimeWidgetBundleConfig%]

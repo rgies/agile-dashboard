@@ -1,10 +1,15 @@
+jira_high_effort_widget:
+    resource: "@JiraHighEffortWidgetBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 jira_list_widget:
     resource: "@JiraListWidgetBundle/Controller/"
     type:     annotation
     prefix:   /
 
-jira_estimates_widget:
-    resource: "@JiraEstimatesWidgetBundle/Controller/"
+jira_spendtime_widget:
+    resource: "@JiraSpendTimeWidgetBundle/Controller/"
     type:     annotation
     prefix:   /
 

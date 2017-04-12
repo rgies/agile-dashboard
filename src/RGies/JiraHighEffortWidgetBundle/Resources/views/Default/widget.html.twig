@@ -1,0 +1,24 @@
+{% extends "MetricsBundle::templates/default-widget.html.twig" %}
+
+{% block widget_body %}
+    <span id="widget-value-{{ widget.id }}" style="font-size:11px">
+        ###
+    </span>
+    <span id="widget-subtext-{{ widget.id }}" class="widget-value-subtext"></span>
+{% endblock %}
+
+{% block script %}
+    <script>
+        addDataRequest('{{ path('JiraHighEffortWidgetBundle-collect-data') }}', {id:{{ widget.id }}, type:'{{ widget.type }}'}, function (data) {
+            var response = JSON.parse(data);
+
+            if (response['value']) {
+                $('#widget-value-{{ widget.id }}').html(response['value']);
+            }
+
+            if (response['subtext']) {
+                $('#widget-subtext-{{ widget.id }}').html(response['subtext']);
+            }
+        });
+    </script>
+{% endblock %}

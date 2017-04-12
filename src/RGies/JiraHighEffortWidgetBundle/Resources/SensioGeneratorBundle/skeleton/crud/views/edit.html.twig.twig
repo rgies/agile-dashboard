@@ -1,0 +1,61 @@
+{{ '{% extends "' }}{{ bundle }}{{ '::layout.html.twig" %}' }}
+
+{% block content %}
+{{ "{% block content -%}" }}
+<div class="container">
+    <div class="page-header">
+        <h1>{{ entity }} edit</h1>
+    </div>
+
+    {{ '{{ form(edit_form) }}' }}
+    {{ '{{ form(delete_form) }}' }}
+
+    <div class="form-group">
+        <div class="control">
+            <button id="save" type="submit" onclick="formSave()" class="btn btn-primary pull-right">
+                <i class="fa fa-check"></i> Save
+            </button>
+            <span class="pull-right">&nbsp;&nbsp;&nbsp;</span>
+            <button id="delete" onclick="deleteEntity()" class="btn btn-danger pull-right">
+                <i class="fa fa-trash"></i> Delete
+            </button>
+        </div>
+    </div>
+
+    <br/>
+
+    <a href="{{ "{{ path('home') }}" }}">
+        <i class="fa fa-arrow-circle-left"></i> Return to home
+    </a>
+</div>
+{{ "{% endblock %}" }}
+
+{{ "{% block js -%}" }}
+        <script type="text/javascript">
+
+            function formSave()
+            {
+                var form = $("#edit-form");
+
+                if (form.validate())
+                {
+                    form.submit();
+                }
+            }
+
+            function deleteEntity()
+            {
+                var form = $("#delete-form");
+
+                bootbox.confirm('<h4><i class="fa fa-warning fa-2x text-danger"></i> Do you really want to delete <span class="label label-default">{{ '{{ entity.title }}' }}</span> widget ?</h4>', function(result) {
+                    if (result)
+                    {
+                        form.submit();
+                    }
+                });
+            }
+
+            $("#edit-form").validate();
+        </script>
+{{ "{% endblock %}" }}
+{% endblock content %}

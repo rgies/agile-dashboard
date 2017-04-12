@@ -6,10 +6,11 @@ parameters:
 
     # Widget plugins
     widget_plugins:
-        'JiraCountWidgetBundle': 'Jira Issue Count'
-        'JiraEstimatesWidgetBundle': 'Jira Spend Time'
-        'JiraListWidgetBundle': 'Jira Top5 Issues'
-        'SeparatorWidgetBundle': 'Separator'
+        'JiraCountWidgetBundle':      'Jira - Count issues'
+        'JiraSpendTimeWidgetBundle':  'Jira - Spend time on issues'
+        'JiraListWidgetBundle':       'Jira - List of top 5 issues'
+        'JiraHighEffortWidgetBundle': 'Jira - Highest efforts list'
+        'SeparatorWidgetBundle':      'Separator'
 
     # Widget update interval in minutes
     widget_update_interval: 5
