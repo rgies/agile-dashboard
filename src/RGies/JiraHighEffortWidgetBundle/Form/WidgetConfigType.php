@@ -26,7 +26,7 @@ class WidgetConfigType extends AbstractType
     {
         $builder
             ->add('widget_id','hidden')
-            ->add('jql_query','text',array('attr'=>array('placeholder'=>'project=PI and created>=startOfDay(-30)')))
+            ->add('jql_query','text',array('attr'=>array('placeholder'=>'project=PI and created>=-30d')))
         ;
     }
     
