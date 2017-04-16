@@ -368,4 +368,33 @@ class WidgetsController extends Controller
 
     }
 
+    /**
+     * Copy a Widgets entity.
+     *
+     * @Route("/copyWidget/{id}", name="widgets_copy")
+     * @Template()
+     */
+    public function copy($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $widget = $em->getRepository('MetricsBundle:Widgets')->find($id);
+        $config = $this->get('widgetService')->getWidgetConfig($widget->getType(), $id);
+
+        $newWidget = clone $widget;
+        $newConfig = clone $config;
+
+        $newWidget->setTitle($widget->getTitle() . '-Copy');
+        $em->persist($newWidget);
+        $em->flush();
+
+        $newConfig->setWidgetId($newWidget->getId());
+        $em->persist($newConfig);
+        $em->flush();
+
+        $widgetAction = $this->get('WidgetService')->getWidgetEditActionName($newWidget->getType());
+
+        //return $this->redirect($this->generateUrl('widgets_show', array('id' => $entity->getId())));
+        return $this->redirect($this->generateUrl($widgetAction, array('id' => $newWidget->getId())));
+    }
+
 }

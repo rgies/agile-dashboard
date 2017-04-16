@@ -129,6 +129,14 @@ label.error {
     cursor: move;
 }
 
+.widget-footer-line {
+    position: absolute;
+    bottom: 8px;
+    text-align: center;
+    left: 0;
+    right: 0;
+}
+
 /* -- Copyright ------------------ */
 #copyright-footer {
     margin-top: 30px;

@@ -15,6 +15,13 @@
                         <i class="fa fa-edit fa-fw"></i> Edit
                     </a>
                 </li>
+                <!-- Copy Button -->
+                <li>
+                    <a href="{{ path('widgets_copy', {id: widget.id}) }}">
+                        <i class="fa fa-copy fa-fw"></i> Copy
+                    </a>
+                </li>
+                <!-- Configuration Button -->
                 <li>
                     <a href="{{ path(widgetService.getWidgetEditActionName(widget.type), {id: widget.id}) }}">
                         <i class="fa fa-cog fa-fw"></i> Config
