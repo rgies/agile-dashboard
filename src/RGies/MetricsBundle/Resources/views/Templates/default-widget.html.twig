@@ -1,5 +1,5 @@
 {% block content %}
-<div id="widget-{{ widget.id }}" data-id="{{ widget.id }}" class="panel panel-default widget-panel">
+<div id="widget-{{ widget.id }}" data-id="{{ widget.id }}" class="widget-item panel panel-default widget-panel">
     <div class="panel-heading widget-panel-title">
         <span>
             {{ widget.title|length > 22 ? widget.title[:22] ~ '...' : widget.title }}

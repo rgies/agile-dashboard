@@ -8,15 +8,27 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class WidgetConfigType extends AbstractType
 {
+    protected $_container;
+
+    /**
+     * Class constructor.
+     */
+    public function __construct($container)
+    {
+        $this->_container = $container;
+    }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $icons = array_flip($this->_container->getParameter('widget_icons'));
+
         $builder
             ->add('widget_id','hidden')
-            ->add('datarow1','hidden')
+            ->add('icon', 'choice', array('choices' => $icons))
         ;
     }
     

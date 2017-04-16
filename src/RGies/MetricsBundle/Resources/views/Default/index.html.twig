@@ -46,20 +46,56 @@
                 }
                 // edit tasklist <e>-key
                 else if (event.keyCode == 101) {
-                    // toggle plus items
-                    if (dashboardEditMode == false) {
-                        dashboardEditMode = true;
-                        $('#dashboard-new').css('display', 'inline-block');
-                        $('#widget-new').css('display', 'inline-block');
-                    } else {
-                        dashboardEditMode = false;
-                        $('#dashboard-new').css('display', 'none');
-                        $('#widget-new').css('display', 'none');
-                    }
+                    toggleDashboardEditMode();
                 }
             }
         });
 
+        /**
+         * Activates or deactivates the dashboard edit mode.
+         */
+        function toggleDashboardEditMode()
+        {
+            // toggle plus items
+            if (dashboardEditMode == false) {
+                dashboardEditMode = true;
+                $('#dashboard-new').css('display', 'inline-block');
+                $('#widget-new').css('display', 'inline-block');
+                $('.widget-item').addClass('widget-panel-edit-mode');
+                $( "#sortable" ).sortable({
+                    opacity: 0.5,
+                    update: function(event, ui) {
+                        var items = $(this).sortable('toArray', {attribute: 'data-id'}).toString();
+                        $.post('{{ path('widgets_reorder') }}'
+                                , {'widgets': items, 'dashboard_id': {{ dashboard.id }}}).done(function(data){});
+                    }
+                }).disableSelection();
+                $( ".dashboard-nav-item" ).droppable({
+                    accept: ".widget-item",
+                    tolerance: "pointer",
+                    hoverClass: "navbar-inverse",
+                    drop: function( event, ui ) {
+                        var widgetId = ui.draggable.data('id');
+                        var dashboardId = $(this).attr('data-id');
+
+                        $('#widget-' + widgetId).remove();
+                        $.post('{{ path('widgets_set_dashboard') }}', {widgetId: widgetId, dashboardId: dashboardId} );
+                    }
+                });
+
+            } else {
+                dashboardEditMode = false;
+                $('#dashboard-new').css('display', 'none');
+                $('#widget-new').css('display', 'none');
+                $('.widget-item').removeClass('widget-panel-edit-mode');
+                $( "#sortable" ).sortable('disable');
+                $( ".dashboard-nav-item" ).sortable('disable');
+            }
+        }
+
+        /**
+         * Dashboard init
+         */
         $(document).ready(function() {
             dataRequestHandler.refreshWidgetData();
 
@@ -70,22 +106,11 @@
             // Retry timer to reload widget data
             var retryTimer = window.setInterval(function(){
                 dataRequestHandler.retryLoadData()}, 10000 );
-
-            $(document).ready(function()
-            {
-                $( "#sortable" ).sortable(
-                    {
-                        update: function(event, ui) {
-                            var items = $(this).sortable('toArray', {attribute: 'data-id'}).toString();
-                            $.post('{{ path('widgets_reorder') }}'
-                                    , {'widgets': items, 'dashboard_id': {{ dashboard.id }}}).done(function(data){});
-                        }
-                    });
-                $( "#sortable" ).disableSelection();
-
-            });
         });
 
+        /**
+         * Handler for the widget data management.
+         */
         var dataRequestHandler = {
 
             retryQueue: [],
@@ -95,6 +120,8 @@
              */
             refreshWidgetData: function ()
             {
+                dataRequestHandler.retryQueue = [];
+
                 for (var i = 0; i < requestStack.length; i++) {
                     var request = requestStack[i];
 
@@ -118,7 +145,6 @@
             {
                 if (dataRequestHandler.retryQueue.length > 0) {
                     var request = dataRequestHandler.retryQueue.shift();
-                    //console.log('Retry:' + request['url']);
                     $.post(request['url'], request['params'], request['callback']);
                 }
             }

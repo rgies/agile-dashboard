@@ -58,12 +58,14 @@ class WidgetService
      * Get configuration by given widget id.
      *
      * @param string $widgetType Type name of the widget
-     * @param $widgetId
+     * @param integer $widgetId ID of the widget
+     * @param boolean $toArray OPTIONAL True for result type array
+     * @return object | array | null
      */
-    public function getWidgetConfig($widgetType, $widgetId)
+    public function getWidgetConfig($widgetType, $widgetId, $toArray = false)
     {
         $widgetService = $this->_loadPluginService($widgetType);
-        return $widgetService->getWidgetConfig($widgetId, $widgetType);
+        return $widgetService->getWidgetConfig($widgetId, $widgetType, $toArray);
     }
 
     /**

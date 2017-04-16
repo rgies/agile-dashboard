@@ -40,7 +40,7 @@ class Widgets
      *
      * @ORM\Column(name="enabled", type="boolean", nullable=true)
      */
-    private $enabled;
+    private $enabled=true;
 
     /**
      * @ORM\ManyToOne(targetEntity="RGies\MetricsBundle\Entity\Dashboard", inversedBy="widgets")

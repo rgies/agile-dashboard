@@ -3,6 +3,7 @@
 namespace RGies\MetricsBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -204,6 +205,7 @@ class DashboardController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
     }
+
     /**
      * Deletes a Dashboard entity.
      *
@@ -246,4 +248,72 @@ class DashboardController extends Controller
             ->getForm()
         ;
     }
+
+    /**
+     * Generates data array.
+     *
+     * @param integer $id Dashbaord id
+     * @return array
+     */
+    protected function _toArray($id)
+    {
+        $data = array();
+        $em = $this->getDoctrine()->getManager();
+        //$entity = $em->getRepository('MetricsBundle:Dashboard')->find($id);
+
+        $dashboard = $em->getRepository('MetricsBundle:Dashboard')
+            ->createQueryBuilder('d')
+            ->where('d.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+
+        $data['dashboard'] = $dashboard;
+
+        $widgets = $em->getRepository('MetricsBundle:Widgets')
+            ->createQueryBuilder('w')
+            ->where('w.dashboard = :id')
+            ->setParameter('id', $id)
+            ->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+
+        $data['widgets'] = $widgets;
+
+        $data['configs'] = array();
+        foreach($widgets as $widget) {
+            $data['configs'][$widget['id']] =
+                $this->get('widgetService')->getWidgetConfig($widget['type'], $widget['id'], true)
+            ;
+        }
+
+        return $data;
+    }
+
+    /**
+     * Export dashboard.
+     *
+     * @Route("/dashboard-export/{id}", name="dashboard_export")
+     * @return Response
+     */
+    public function exportDashboardAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('MetricsBundle:Dashboard')->find($id);
+        $filename = str_replace(array(' ','%','/'), '_', $entity->getTitle()) . '.json';
+
+        $response = new Response();
+
+        $response->headers->set('Content-Type', 'application/json; charset=utf-8');
+        $response->headers->set('Pragma', 'public');
+        $response->headers->set('Cache-Control', 'maxage=1');
+        $response->headers->set('Content-Disposition', 'attachment;filename="' . $filename);
+
+        $response->setContent(
+            json_encode(
+                $this->_toArray($id)
+            )
+        );
+
+        return $response;
+    }
+
+
 }

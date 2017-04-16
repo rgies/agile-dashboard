@@ -2,7 +2,13 @@
 
 {% block widget_body %}
     <span id="widget-value-{{ widget.id }}" style="font-size:11px">
-        ###
+        <table>
+            <tr><td><i class="fa fa-circle"></i> <a>###-#######</a> &nbsp;&nbsp;&nbsp;&nbsp;<i>################</i></td></tr>
+            <tr><td><i class="fa fa-circle"></i> <a>###-#######</a> &nbsp;&nbsp;&nbsp;&nbsp;<i>################</i></td></tr>
+            <tr><td><i class="fa fa-circle"></i> <a>###-#######</a> &nbsp;&nbsp;&nbsp;&nbsp;<i>################</i></td></tr>
+            <tr><td><i class="fa fa-circle"></i> <a>###-#######</a> &nbsp;&nbsp;&nbsp;&nbsp;<i>################</i></td></tr>
+            <tr><td><i class="fa fa-circle"></i> <a>###-#######</a> &nbsp;&nbsp;&nbsp;&nbsp;<i>################</i></td></tr>
+        </table>
     </span>
     <span id="widget-subtext-{{ widget.id }}" class="widget-value-subtext"></span>
 {% endblock %}
@@ -11,6 +17,14 @@
     <script>
         addDataRequest('{{ path('JiraHighEffortWidgetBundle-collect-data') }}', {id:{{ widget.id }}, type:'{{ widget.type }}'}, function (data) {
             var response = JSON.parse(data);
+
+            // Set warning
+            if (response['warning']) {
+                var value = '<div class="widget-value-warning"><i class="fa fa-warning"></i> '
+                        + response['warning'] + '</div>';
+                $('#widget-value-{{ widget.id }}').html(value);
+                return;
+            }
 
             if (response['value']) {
                 $('#widget-value-{{ widget.id }}').html(response['value']);

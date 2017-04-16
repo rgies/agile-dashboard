@@ -54,7 +54,7 @@ class WidgetConfigController extends Controller
      */
     private function createCreateForm(WidgetConfig $entity)
     {
-        $form = $this->createForm(new WidgetConfigType(), $entity, array(
+        $form = $this->createForm(new WidgetConfigType($this->container), $entity, array(
             'action' => $this->generateUrl('SeparatorWidgetBundle_widgetconfig_create'),
             'method' => 'POST',
             'attr'   => array('id' => 'create-form'),
@@ -123,7 +123,7 @@ class WidgetConfigController extends Controller
      */
     private function createEditForm(WidgetConfig $entity)
     {
-        $form = $this->createForm(new WidgetConfigType(), $entity, array(
+        $form = $this->createForm(new WidgetConfigType($this->container), $entity, array(
             'action' => $this->generateUrl('SeparatorWidgetBundle_widgetconfig_update', array('id' => $entity->getId())),
             'method' => 'PUT',
             'attr'   => array('id' => 'edit-form'),

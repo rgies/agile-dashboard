@@ -7,7 +7,7 @@
     </div>
     <div>
         <button type="button" class="btn btn-primary" onclick="location.href='{{ path('dashboard_new') }}'">
-            <i class="fa fa-plus"></i> Create a new entry
+            <i class="fa fa-plus"></i> New dashboard
         </button>
     </div>
     <br/>
@@ -26,7 +26,13 @@
                 <td>{{ entity.id }}</td>
                 <td><a href="{{ path('dashboard_edit', { 'id': entity.id }) }}">{{ entity.title }}</a></td>
                 <td>{{ entity.pos }}</td>
-                <td><a href="{{ path('dashboard_edit', { 'id': entity.id }) }}"><i class="fa fa-edit"></i> Edit</a></td>
+                <td>
+                    <a href="{{ path('home', { 'id': entity.id }) }}"><i class="fa fa-dashboard"></i> View</a>
+                    &nbsp;&nbsp;
+                    <a href="{{ path('dashboard_edit', { 'id': entity.id }) }}"><i class="fa fa-edit"></i> Edit</a>
+                    &nbsp;&nbsp;
+                    <a href="{{ path('dashboard_export', { 'id': entity.id }) }}"><i class="fa fa-download"></i> Export</a>
+                </td>
             </tr>
         {% endfor %}
         </tbody>

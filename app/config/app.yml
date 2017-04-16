@@ -6,11 +6,11 @@ parameters:
 
     # Widget plugins
     widget_plugins:
-        'JiraCountWidgetBundle':      'Jira - Count issues'
-        'JiraSpendTimeWidgetBundle':  'Jira - Spend time on issues'
-        'JiraListWidgetBundle':       'Jira - List of top 5 issues'
-        'JiraHighEffortWidgetBundle': 'Jira - Highest efforts list'
-        'SeparatorWidgetBundle':      'Separator'
+        SeparatorWidgetBundle:      'Separator'
+        JiraCountWidgetBundle:      'Jira - Count issues'
+        JiraSpendTimeWidgetBundle:  'Jira - Spend time on issues'
+        JiraListWidgetBundle:       'Jira - List of top 5 issues'
+        JiraHighEffortWidgetBundle: 'Jira - Highest efforts list'
 
     # Widget update interval in minutes
     widget_update_interval: 5
@@ -23,6 +23,7 @@ parameters:
     # Widget icons
     widget_icons:
         'Default':    'ion ion-stats-bars'
+        'No Icon':    ''
         'Bug':        'ion ion-bug'
         'User':       'ion ion-person'
         'Heart':      'ion ion-heart'

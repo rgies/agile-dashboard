@@ -32,9 +32,9 @@ class WidgetConfig
     /**
      * @var string
      *
-     * @ORM\Column(name="datarow1", type="string", length=255, nullable=true)
+     * @ORM\Column(name="icon", type="string", length=255, nullable=true)
      */
-    private $datarow1;
+    private $icon='';
 
 
     /**
@@ -72,26 +72,26 @@ class WidgetConfig
     }
 
     /**
-     * Set datarow1
+     * Set icon
      *
-     * @param string $datarow1
+     * @param string $icon
      *
      * @return WidgetConfig
      */
-    public function setDatarow1($datarow1)
+    public function setIcon($icon)
     {
-        $this->datarow1 = $datarow1;
+        $this->icon = $icon;
 
         return $this;
     }
 
     /**
-     * Get datarow1
+     * Get icon
      *
      * @return string
      */
-    public function getDatarow1()
+    public function getIcon()
     {
-        return $this->datarow1;
+        return $this->icon;
     }
 }

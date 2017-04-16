@@ -308,7 +308,6 @@ class WidgetsController extends Controller
         $list = array_flip(explode(',', trim($ids, ',')));
 
         $em = $this->getDoctrine()->getManager();
-
         $item = $em->getRepository('MetricsBundle:Widgets');
 
         $query = $item->createQueryBuilder('w')
@@ -331,6 +330,38 @@ class WidgetsController extends Controller
                 $em->persist($entity);
             }
         }
+        $em->flush();
+
+        return new Response(json_encode($response), Response::HTTP_OK);
+
+    }
+
+    /**
+     * Sets new widget dashboard.
+     *
+     * @Route("/setWidgetDashboard/", name="widgets_set_dashboard")
+     * @Method("POST")
+     * @return Response
+     */
+    public function setWidgetDashboardAjaxAction(Request $request)
+    {
+        if (!$request->isXmlHttpRequest())
+        {
+            return new Response('No valid request', Response::HTTP_FORBIDDEN);
+        }
+
+        $response = array();
+
+        $widgetId = $request->request->get('widgetId');
+        $dashboardId = $request->request->get('dashboardId');
+
+        $em = $this->getDoctrine()->getManager();
+        $widget = $em->getRepository('MetricsBundle:Widgets')->find($widgetId);
+        $dashboard = $em->getRepository('MetricsBundle:Dashboard')->find($dashboardId);
+
+        $widget->setDashboard($dashboard);
+
+        $em->persist($widget);
         $em->flush();
 
         return new Response(json_encode($response), Response::HTTP_OK);

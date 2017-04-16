@@ -39,16 +39,22 @@ class WidgetPluginService implements WidgetPluginInterface
      *
      * @param integer $widgetId
      * @param string $widgetType Type name of the widget
+     * @param boolean $toArray OPTIONAL True for result type array
      * @return object
      */
-    public function getWidgetConfig($widgetId, $widgetType)
+    public function getWidgetConfig($widgetId, $widgetType, $toArray = false)
     {
         $em = $this->_doctrine->getManager();
 
         $query = $em->getRepository('SeparatorWidgetBundle:WidgetConfig')->createQueryBuilder('i')
             ->where('i.widget_id = :id')
             ->setParameter('id', $widgetId);
-        $items = $query->getQuery()->getResult();
+
+        if ($toArray) {
+            $items = $query->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+        } else {
+            $items = $query->getQuery()->getResult();
+        }
 
         if ($items) {
             return $items[0];
