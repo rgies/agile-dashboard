@@ -80,7 +80,7 @@ class DefaultController extends Controller
                 $response['value'] = $response['value'] . '<tr style="white-space: nowrap;"><td><i class="fa fa-circle"></i> '
                     . $this->_createLink($key, '')
                     . '&nbsp;&nbsp;</td><td>'
-                    . '<i>' . htmlentities(round($value / 3600,1) . 'h')
+                    . '<i class="ion ion-android-stopwatch"></i> <i>' . htmlentities(round($value / 3600,1) . 'h')
                     . '</i></td></tr>';
 
                 if ($z++==5) break;
