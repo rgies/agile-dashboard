@@ -38,8 +38,8 @@
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="javascript:toggleDashboardEditMode();"><i class="fa fa-arrows fa-fw"></i> Reorganize&nbsp;<span class="badge">e-key</span></a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="{{ path("dashboard") }}"><i class="fa fa-dashboard fa-fw"></i> Dashboards</a></li>
-                            <li><a href="{{ path("widgets") }}"><i class="fa fa-puzzle-piece fa-fw"></i> Widgets</a></li>
+                            <li><a href="{{ path("dashboard") }}"><i class="fa fa-dashboard fa-fw"></i> Manage Dashboards</a></li>
+                            <li><a href="{{ path("widgets") }}"><i class="fa fa-puzzle-piece fa-fw"></i> Manage Widgets</a></li>
                             {%- if app.user %}
                             <li><a href="{{ path("logout") }}"><span class="glyphicon glyphicon-log-out fa-fw"></span> Logout</a></li>
                             {% endif %}

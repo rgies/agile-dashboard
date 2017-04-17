@@ -81,6 +81,8 @@ class DefaultController extends Controller
                 . round($spendTime / 3600 / $issues->getTotal(), 1) . 'h';
         }
 
+        $response['link'] = $this->getParameter('jira_host') . '/issues/?jql=' . urlencode($jql);
+
         $cache->setValue('JiraSpendTimeWidget', $widgetId, json_encode($response));
 
         return new Response(json_encode($response), Response::HTTP_OK);

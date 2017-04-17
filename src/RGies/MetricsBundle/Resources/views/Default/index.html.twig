@@ -1,6 +1,19 @@
 {% extends "MetricsBundle::layout.html.twig" %}
 
 {% block content %}
+    {#== Copy Widget Dialog =====================================================================================#}
+    {% set content %}
+    <form id="copy-widget-form" method="post" action="{{ path('widgets_copy') }}" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="copy-widget-title">Title</label>
+            <input id="copy-widget-title" name="title" type="text" class="form-control" required="required">
+        </div>
+        <input id="copy-widget-id" type="hidden" name="id" value="">
+    </form>
+    {% endset %}
+    {% include 'MetricsBundle::Templates/modal.html.twig' with {'id': 'copy-widget-modal', 'title': 'Copy Widget', 'submit': 'Copy', 'content': content} only %}
+    {# END dialog #}
+
     <button id="widget-new" title="Add new widget" class="btn btn-default" style="display: none; margin-bottom: 8px;" onclick="location.href='{{ path('widgets_new') }}'"><i class="fa fa-plus"></i> Add widget</button>
     <script>
         var requestStack = [];
@@ -160,10 +173,28 @@
             }
         }
 
+        /**
+         * Disable widget and remove from dashboard.
+         *
+         * @param id
+         */
         function disableWidget(id)
         {
             $('#widget-' + id).remove();
             $.post('{{ path('widgets_disable') }}', {id: id} );
+        }
+
+        /**
+         * Copy widget.
+         *
+         * @param id
+         * @param title
+         */
+        function copyWidget(id, title)
+        {
+            $('#copy-widget-title').val(title);
+            $('#copy-widget-id').val(id);
+            $('#copy-widget-modal').modal();
         }
     </script>
 {% endblock %}

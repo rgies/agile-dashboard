@@ -118,9 +118,9 @@ label.error {
 
 .widget-panel h3 {
     z-index: 0;
-    font-size: 38px;
+    font-size: 42px;
     font-weight: bold;
-    margin: 15px 0 10px 0;
+    margin: 10px 0 8px 0;
     white-space: nowrap;
 }
 
@@ -135,6 +135,7 @@ label.error {
     text-align: center;
     left: 0;
     right: 0;
+    opacity: 0.5;
 }
 
 /* -- Copyright ------------------ */

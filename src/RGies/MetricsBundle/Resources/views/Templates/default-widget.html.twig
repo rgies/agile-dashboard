@@ -17,7 +17,7 @@
                 </li>
                 <!-- Copy Button -->
                 <li>
-                    <a href="{{ path('widgets_copy', {id: widget.id}) }}">
+                    <a href="javascript: copyWidget({{ widget.id }}, '{{ widget.title }}');">
                         <i class="fa fa-copy fa-fw"></i> Copy
                     </a>
                 </li>

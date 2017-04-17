@@ -3,6 +3,9 @@
 {% block widget_body %}
     <i id="widget-icon-{{ widget.id }}" class="widget-icon"></i>
     <h3><span id="widget-value-{{ widget.id }}">###</span></h3>
+    <div class="widget-footer-line">
+        <span id="widget-link-{{ widget.id }}" style="font-size: 12px"></span>
+    </div>
 {% endblock %}
 
 {% block script %}
@@ -36,6 +39,13 @@
 
                 $('#widget-value-{{ widget.id }}').html(value).show('blind');
             });
+
+            // Set more info link
+            $('#widget-link-{{ widget.id }}').html(
+                    '<a href="' + response['link']
+                    + '" target="_blank"><i class="fa fa-arrow-circle-right"></i> More info'
+                    + '</a>'
+            );
 
             $('#widget-icon-{{ widget.id }}').attr('class', 'widget-icon '+response['icon']);
         });
