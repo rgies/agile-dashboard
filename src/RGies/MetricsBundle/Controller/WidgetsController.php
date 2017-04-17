@@ -97,6 +97,10 @@ class WidgetsController extends Controller
     public function newAction(Request $request)
     {
         $lastDashboardId = $request->cookies->get(self::LAST_VISITED_DASHBOARD);
+        if (!$lastDashboardId) {
+            $lastDashboardId = 1;
+        }
+
         $em = $this->getDoctrine()->getManager();
         $dashboardEntity = $em->getRepository('MetricsBundle:Dashboard')->find($lastDashboardId);
 
