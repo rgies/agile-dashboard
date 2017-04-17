@@ -4,6 +4,12 @@
     <i id="widget-icon-{{ widget.id }}" class="widget-icon"></i>
     <h3><span id="widget-value-{{ widget.id }}">###</span></h3>
     <span id="sparkline-{{ widget.id }}"></span>
+
+    <div class="widget-footer-line">
+        <span id="widget-link-{{ widget.id }}" style="font-size: 12px">
+            <a><i class="fa fa-arrow-circle-right"></i> More info</a>
+        </span>
+    </div>
 {% endblock %}
 
 {% block script %}
@@ -12,6 +18,15 @@
 
         addDataRequest('{{ path('JiraCountWidgetBundle-collect-data') }}', {id:{{ widget.id }}, type:'{{ widget.type }}'}, function (data) {
             var response = JSON.parse(data);
+
+            // Set warning
+            if (response['warning']) {
+                var value = '<div class="widget-value-warning"><i class="fa fa-warning"></i> '
+                        + response['warning'] + '</div>';
+                $('#widget-value-{{ widget.id }}').html('');
+                $('#widget-link-{{ widget.id }}').html('');
+                return;
+            }
 
             // Set value
             $('#widget-value-{{ widget.id }}').hide('blind',null,function() {
@@ -38,6 +53,13 @@
 
             // Set icon
             $('#widget-icon-{{ widget.id }}').attr('class', 'widget-icon '+response['icon']);
+
+            // Set more info link
+            $('#widget-link-{{ widget.id }}').html(
+                    '<a href="' + response['link']
+                    + '" target="_blank"><i class="fa fa-arrow-circle-right"></i> More info'
+                    + '</a>'
+            );
 
             // Sparkline Charts
             activityLine{{ widget.id }}.shift();

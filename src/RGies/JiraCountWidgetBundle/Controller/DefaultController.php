@@ -62,6 +62,8 @@ class DefaultController extends Controller
             $response['value'] = $issues->getTotal();
         }
 
+        $response['link'] = $this->getParameter('jira_host') . '/issues/?jql=' . urlencode($jql);
+
         $cache->setValue('JiraCountWidget', $widgetId, json_encode($response));
 
         return new Response(json_encode($response), Response::HTTP_OK);
