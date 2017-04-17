@@ -16,7 +16,7 @@ class DashboardType extends AbstractType
     {
         $builder
             ->add('title')
-            ->add('pos')
+            ->add('pos','hidden')
         ;
     }
     

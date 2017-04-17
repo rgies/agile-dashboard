@@ -33,7 +33,7 @@ class Dashboard
      *
      * @ORM\Column(name="pos", type="integer")
      */
-    private $pos;
+    private $pos=99;
 
     /**
      * @ORM\OneToMany(targetEntity="RGies\MetricsBundle\Entity\Widgets", mappedBy="dashboard")

@@ -288,6 +288,46 @@ class DashboardController extends Controller
     }
 
     /**
+     * Reorder dashboards by given id list.
+     *
+     * @Route("/reorderDashboards/", name="dashboard_reorder")
+     * @Method("POST")
+     * @return Response
+     */
+    public function reorderDashboardsAjaxAction(Request $request)
+    {
+        if (!$request->isXmlHttpRequest())
+        {
+            return new Response('No valid request', Response::HTTP_FORBIDDEN);
+        }
+
+        $response = array();
+        $ids = $request->request->get('id_list', '');
+
+        $list = array_flip(explode(',', trim($ids, ',')));
+
+        $em = $this->getDoctrine()->getManager();
+        $entities = $em->getRepository('MetricsBundle:Dashboard')->findAll();
+
+        foreach ($entities as $entity)
+        {
+            if (isset($list[$entity->getId()]))
+            {
+                $entity->setPos($list[$entity->getId()]);
+                $em->persist($entity);
+            }
+            else
+            {
+                $entity->setPos(999);
+                $em->persist($entity);
+            }
+        }
+        $em->flush();
+
+        return new Response(json_encode($response), Response::HTTP_OK);
+    }
+
+    /**
      * Export dashboard.
      *
      * @Route("/dashboard-export/{id}", name="dashboard_export")
