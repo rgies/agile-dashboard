@@ -10,11 +10,12 @@ interface WidgetPluginInterface
     /**
      * Gets widget configuration.
      *
-     * @param integer $widgetId
      * @param string $widgetType Type name of the widget
-     * @return object
+     * @param integer $widgetId OPTIONAL Id of the widget
+     * @param boolean $toArray  OPTIONAL True for result type array
+     * @return object | array | null
      */
-    public function getWidgetConfig($widgetId, $widgetType);
+    public function getWidgetConfig($widgetType, $widgetId = null, $toArray = false);
 
     /**
      * Gets path to include the widget at the dashboard.

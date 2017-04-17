@@ -37,15 +37,18 @@ class WidgetPluginService implements WidgetPluginInterface
     /**
      * Gets widget configuration.
      *
-     * @param integer $widgetId
      * @param string $widgetType Type name of the widget
-     * @param boolean $toArray OPTIONAL True for result type array
-     * @return object
+     * @param integer $widgetId OPTIONAL Id of the widget
+     * @param boolean $toArray  OPTIONAL True for result type array
+     * @return object | array | null
      */
-    public function getWidgetConfig($widgetId, $widgetType, $toArray = false)
+    public function getWidgetConfig($widgetType, $widgetId = null, $toArray = false)
     {
-        $em = $this->_doctrine->getManager();
+        if ($widgetId === null) {
+            return new WidgetConfig();
+        }
 
+        $em = $this->_doctrine->getManager();
         $query = $em->getRepository('JiraSpendTimeWidgetBundle:WidgetConfig')->createQueryBuilder('i')
             ->where('i.widget_id = :id')
             ->setParameter('id', $widgetId);
