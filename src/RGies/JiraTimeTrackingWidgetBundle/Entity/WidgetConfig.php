@@ -32,6 +32,22 @@ class WidgetConfig
     /**
      * @var string
      *
+     * @ORM\Column(name="start_date", type="text", length=100, nullable=true)
+     */
+    private $start_date;
+
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="end_date", type="text", length=100, nullable=true)
+     */
+    private $end_date;
+
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="jql_query", type="text")
      */
     private $jql_query;
@@ -94,5 +110,53 @@ class WidgetConfig
     public function getJqlQuery()
     {
         return $this->jql_query;
+    }
+
+    /**
+     * Set startDate
+     *
+     * @param string $startDate
+     *
+     * @return WidgetConfig
+     */
+    public function setStartDate($startDate)
+    {
+        $this->start_date = $startDate;
+
+        return $this;
+    }
+
+    /**
+     * Get startDate
+     *
+     * @return string
+     */
+    public function getStartDate()
+    {
+        return $this->start_date;
+    }
+
+    /**
+     * Set endDate
+     *
+     * @param string $endDate
+     *
+     * @return WidgetConfig
+     */
+    public function setEndDate($endDate)
+    {
+        $this->end_date = $endDate;
+
+        return $this;
+    }
+
+    /**
+     * Get endDate
+     *
+     * @return string
+     */
+    public function getEndDate()
+    {
+        return $this->end_date;
     }
 }

@@ -28,7 +28,7 @@ class WidgetConfigType extends AbstractType
 
         $builder
             ->add('widget_id','hidden')
-            ->add('icon', 'choice', array('choices' => $icons))
+            ->add('icon', 'choice', array('choices' => $icons, 'required' => false))
         ;
     }
     

@@ -3,6 +3,7 @@
 namespace RGies\JiraTimeTrackingWidgetBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\SecurityContextInterface;
@@ -47,26 +48,54 @@ class DefaultController extends Controller
 
         $widgetConfig = $this->get('WidgetService')->getWidgetConfig($widgetType, $widgetId);
 
-
         $response = array();
         $userWorklog = array();
         $trackedDays = array();
         $totalTimeSpend = 0;
-        $startDate = time();
+        $startDate = new \DateTime('-5 years');
+        $endDate = new \DateTime('+1 day');
 
         $jql = $widgetConfig->getJqlQuery();
 
+
+        if ($widgetConfig->getStartDate()) {
+            try {
+                $startDate = new \DateTime($widgetConfig->getStartDate());
+            } catch (Exception $e)
+            {
+                $response['warning'] = wordwrap('Wrong start date format: ' . $e->getMessage(), 38, '<br/>');
+                return new Response(json_encode($response), Response::HTTP_OK);
+            }
+        }
+
+        if ($widgetConfig->getEndDate()) {
+            try {
+                $endDate = new \DateTime($widgetConfig->getEndDate());
+            } catch (Exception $e)
+            {
+                $response['warning'] = wordwrap('Wrong end date format: ' . $e->getMessage(), 38, '<br/>');
+                return new Response(json_encode($response), Response::HTTP_OK);
+            }
+        }
+
         try {
             $issueService = new IssueService($this->_getLoginCredentials());
-            $issues = $issueService->search($jql, 0, 10000, ['key','updated','worklog']);
+            $issues = $issueService->search($jql, 0, 10000, ['key','created','updated','worklog']);
 
+            /*
             foreach ($issues->getIssues() as $issue) {
                 //var_dump($issue->fields->updated->getTimestamp()); exit;
-                $timestamp = $issue->fields->updated->getTimestamp();
-                if ($timestamp<$startDate) {
-                    $startDate = $timestamp;
+
+                $dateTime = $issue->fields->created;
+                if ($dateTime < $startDate) {
+                    $startDate = $dateTime;
                 }
-            }
+
+                $dateTime = $issue->fields->updated;
+                if ($dateTime > $endDate) {
+                    $endDate = $dateTime;
+                }
+            }*/
 
             foreach ($issues->getIssues() as $issue) {
 
@@ -79,23 +108,20 @@ class DefaultController extends Controller
                     }
 
                     foreach ($issue->fields->worklog->worklogs as $worklog) {
-                        //var_dump($worklog); exit;
 
-                        $logdate = substr($worklog->updated,0,10);
+                        $logdate = new \DateTime($worklog->updated);
+                        $dateKey = $logdate->format('d-m-Y');
 
-                        if (strtotime($logdate)>=$startDate) {
-                            if (isset($trackedDays[$logdate])) {
-                                $trackedDays[$logdate] += $worklog->timeSpentSeconds;
+                        if ($logdate >= $startDate && $logdate <= $endDate) {
+                            if (isset($trackedDays[$dateKey])) {
+                                $trackedDays[$dateKey] += $worklog->timeSpentSeconds;
                             } else {
-                                $trackedDays[$logdate] = $worklog->timeSpentSeconds;
+                                $trackedDays[$dateKey] = $worklog->timeSpentSeconds;
                             }
 
                             $this->_updateWorklogItem($userWorklog, $worklog);
                             $totalTimeSpend += $worklog->timeSpentSeconds;
                         }
-
-
-
                     }
                 }
             }
@@ -104,11 +130,25 @@ class DefaultController extends Controller
             return new Response(json_encode($response), Response::HTTP_OK);
         }
 
-        $response['startdate'] = date('d-m-Y', $startDate);
+        //exit;
+        //var_dump($z); exit;
+
+        $response['issuecount'] = $issues->getTotal();
+        //$response['startdate'] = date('d-m-Y', $startDate);
+        $response['startdate'] = $startDate->format('d-m-Y');
+        $response['enddate'] = $endDate->format('d-m-Y');
         $response['usercount'] = count($userWorklog);
         $response['value'] = $totalTimeSpend;
         $response['subtext'] = '<i class="fa fa-user"></i> ' . count($userWorklog) . ' user'
-            . ' / ' . count($trackedDays) . ' days ';
+            . ' / ' . count($trackedDays) . ' days';
+
+        if (count($trackedDays) && count($userWorklog)) {
+            $response['subtext'] .= ' / ' . round(($totalTimeSpend/36) / (8 * count($trackedDays)
+                        * count($userWorklog)),1) . '%';
+
+        }
+
+        //$response['subtext'] .= '<br/>' . $response['startdate'] . '-' . $response['enddate'];
 
         // Cache response data
         $cache->setValue('JiraTimeTrackingWidgetBundle', $widgetId, json_encode($response));

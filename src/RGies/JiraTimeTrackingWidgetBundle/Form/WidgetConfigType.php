@@ -26,6 +26,8 @@ class WidgetConfigType extends AbstractType
     {
         $builder
             ->add('widget_id','hidden')
+            ->add('start_date','text',array('required' => false, 'label' => 'Start date (2017-01-15 / -7 days / -1 month)'))
+            ->add('end_date','text',array('required' => false))
             ->add('jql_query','text',array('attr'=>array('placeholder'=>'project=PI and created>=-30d')))
         ;
     }

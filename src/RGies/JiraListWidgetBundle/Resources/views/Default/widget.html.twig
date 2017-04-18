@@ -32,20 +32,27 @@
                 return;
             }
 
-            $('#widget-value-{{ widget.id }}').html(response['value']);
+            if (response['value']) {
+                $('#widget-value-{{ widget.id }}').html(response['value']);
+            }
 
-            if (response['total']) {
-                // More info link
+            // More info link
+            if (response['link'] != undefined) {
                 $('#widget-link-{{ widget.id }}').html(
                     '<a href="' + response['link']
                     + '" target="_blank"><i class="fa fa-arrow-circle-right"></i> More info '
                     + '</a>'
                 );
+            }
 
-                // Badge with total number of issues
+            // Badge with total number of issues
+            if (response['total'] != undefined) {
                 $('#widget-title-suffix-{{ widget.id }}').html(
                     '<span style="text-shadow: none; font-size: 10px" class="badge">' + response['total'] + '</span>'
                 );
+                if (response['total']==0) {
+                    $('#widget-value-{{ widget.id }}').html('<i>No items found</i>');
+                }
             }
         });
     </script>

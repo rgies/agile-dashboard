@@ -17,7 +17,7 @@
                 </li>
                 <!-- Copy Button -->
                 <li>
-                    <a href="javascript: copyWidget({{ widget.id }}, '{{ widget.title }}');">
+                    <a href="javascript: copyWidget({{ widget.id }}, '{{ widget.title|e('js') }}');">
                         <i class="fa fa-copy fa-fw"></i> Copy
                     </a>
                 </li>
