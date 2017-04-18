@@ -11,6 +11,7 @@ parameters:
         JiraSpendTimeWidgetBundle:  'Jira - Spend time on issues'
         JiraListWidgetBundle:       'Jira - List of top 5 issues'
         JiraHighEffortWidgetBundle: 'Jira - Highest efforts list'
+        JiraTimeTrackingWidgetBundle: 'Jira - Time Tracking'
 
     # Widget update interval in minutes
     widget_update_interval: 5

@@ -1,0 +1,41 @@
+{% extends "MetricsBundle::templates/default-widget.html.twig" %}
+
+{% block widget_body %}
+    <i class="widget-icon ion ion-android-stopwatch"></i>
+    <h3><span id="widget-value-{{ widget.id }}">###</span></h3>
+{% endblock %}
+
+{% block script %}
+    <script>
+        addDataRequest('{{ path('JiraTimeTrackingWidgetBundle-collect-data') }}', {id:{{ widget.id }}, type:'{{ widget.type }}'}, function (data) {
+            var response = JSON.parse(data);
+            $('#widget-value-{{ widget.id }}').hide('blind',null,function() {
+                var value = '';
+
+                // Set value
+                if (response['value']) {
+                    if (response['value'] / 3600 >= 1000) {
+                        value = Math.round(response['value'] / 360 / 8) / 10
+                        + '<span class="widget-value-unit">d</span>';
+                    } else {
+                        value = Math.round(response['value'] / 360) / 10
+                        + '<span class="widget-value-unit">h</span>';
+                    }
+                }
+
+                // Set subtext
+                if (response['subtext']) {
+                    value = value + '<div class="widget-value-subtext">' + response['subtext'] + '</div>';
+                }
+
+                // Set warning
+                if (response['warning']) {
+                    value = value + '<div class="widget-value-warning"><i class="fa fa-warning"></i> '
+                    + response['warning'] + '</div>';
+                }
+
+                $('#widget-value-{{ widget.id }}').html(value).show('blind');
+            });
+        });
+    </script>
+{% endblock %}

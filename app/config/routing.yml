@@ -1,3 +1,13 @@
+jira_core_widget:
+    resource: "@JiraCoreWidgetBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+jira_time_tracking_widget:
+    resource: "@JiraTimeTrackingWidgetBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 jira_high_effort_widget:
     resource: "@JiraHighEffortWidgetBundle/Controller/"
     type:     annotation

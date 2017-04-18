@@ -1,0 +1,11 @@
+# Plugin Parameters
+parameters:
+    JiraTimeTrackingWidgetBundleConfig:
+        widget_view: 'JiraTimeTrackingWidgetBundle::default/widget.html.twig'
+        edit_action: 'JiraTimeTrackingWidgetBundle_widgetconfig_edit'
+
+# Plugin Services
+services:
+    JiraTimeTrackingWidgetBundleService:
+        class: RGies\JiraTimeTrackingWidgetBundle\Services\WidgetPluginService
+        arguments: [@doctrine, %JiraTimeTrackingWidgetBundleConfig%]
