@@ -82,32 +82,21 @@ class DefaultController extends Controller
             $issueService = new IssueService($this->_getLoginCredentials());
             $issues = $issueService->search($jql, 0, 10000, ['key','created','updated','worklog']);
 
-            /*
-            foreach ($issues->getIssues() as $issue) {
-                //var_dump($issue->fields->updated->getTimestamp()); exit;
-
-                $dateTime = $issue->fields->created;
-                if ($dateTime < $startDate) {
-                    $startDate = $dateTime;
-                }
-
-                $dateTime = $issue->fields->updated;
-                if ($dateTime > $endDate) {
-                    $endDate = $dateTime;
-                }
-            }*/
-
+            // loop to found issues
             foreach ($issues->getIssues() as $issue) {
 
                 if ($issue->fields->worklog && $issue->fields->worklog->worklogs) {
-                    //var_dump($issue->fields->worklog); exit;
+
+                    $worklogs = $issue->fields->worklog->worklogs;
 
                     if ($issue->fields->worklog->total > $issue->fields->worklog->maxResults) {
-                        $response['warning'] = 'To many worklog entries';
-                        return new Response(json_encode($response), Response::HTTP_OK);
+                        $worklogs = $issueService->getWorklog($issue->key)->getWorklogs();
+
+                        //$response['warning'] = $issue->key . ': to many worklog entries (' . $issue->fields->worklog->total . ')';
+                        //return new Response(json_encode($response), Response::HTTP_OK);
                     }
 
-                    foreach ($issue->fields->worklog->worklogs as $worklog) {
+                    foreach ($worklogs as $worklog) {
 
                         $logdate = new \DateTime($worklog->updated);
                         $dateKey = $logdate->format('d-m-Y');
@@ -130,11 +119,7 @@ class DefaultController extends Controller
             return new Response(json_encode($response), Response::HTTP_OK);
         }
 
-        //exit;
-        //var_dump($z); exit;
-
         $response['issuecount'] = $issues->getTotal();
-        //$response['startdate'] = date('d-m-Y', $startDate);
         $response['startdate'] = $startDate->format('d-m-Y');
         $response['enddate'] = $endDate->format('d-m-Y');
         $response['usercount'] = count($userWorklog);
