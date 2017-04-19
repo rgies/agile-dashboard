@@ -1,0 +1,11 @@
+# Plugin Parameters
+parameters:
+    JiraHistoryWidgetBundleConfig:
+        widget_view: 'JiraHistoryWidgetBundle::default/widget.html.twig'
+        edit_action: 'JiraHistoryWidgetBundle_widgetconfig_edit'
+
+# Plugin Services
+services:
+    JiraHistoryWidgetBundleService:
+        class: RGies\JiraHistoryWidgetBundle\Services\WidgetPluginService
+        arguments: [@doctrine, %JiraHistoryWidgetBundleConfig%]

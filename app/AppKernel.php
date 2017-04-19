@@ -31,6 +31,7 @@ class AppKernel extends Kernel
             new RGies\JiraHighEffortWidgetBundle\JiraHighEffortWidgetBundle(),
             new RGies\JiraTimeTrackingWidgetBundle\JiraTimeTrackingWidgetBundle(),
             new RGies\JiraCoreWidgetBundle\JiraCoreWidgetBundle(),
+            new RGies\JiraHistoryWidgetBundle\JiraHistoryWidgetBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

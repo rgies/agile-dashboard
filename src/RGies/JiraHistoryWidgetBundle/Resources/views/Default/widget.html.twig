@@ -1,0 +1,26 @@
+{% extends "MetricsBundle::templates/default-widget.html.twig" %}
+
+{% block widget_body %}
+    <div id="chart-{{ widget.id }}" style="height: 120px;"></div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        // HERE YOU CAN GET YOUR WIDGET DATA
+        addDataRequest('{{ path('JiraHistoryWidgetBundle-collect-data') }}'
+            , {id:{{ widget.id }}, type:'{{ widget.type }}', updateInterval:'{{ widget.updateInterval }}'}
+            , function (data) {
+                var response = JSON.parse(data);
+
+                    new Morris.Line({
+                        element: 'chart-{{ widget.id }}',
+                        hideHover: 'auto',
+                        data: response['data1'],
+                        xkey: 'date',
+                        ykeys: ['value'],
+                        //xLabels: 'week',
+                        labels: ['Value']
+                    });
+        });
+    </script>
+{% endblock %}
