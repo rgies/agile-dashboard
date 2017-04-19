@@ -20,6 +20,9 @@ parameters:
     widget_cache:
         max_lifetime: 600
         default_lifetime: 10
+        level_1: 5
+        level_2: 15
+        level_3: 30
 
     # Widget icons
     widget_icons:

@@ -3,6 +3,12 @@
 {% block widget_body %}
     <i class="widget-icon ion ion-android-stopwatch"></i>
     <h3><span id="widget-value-{{ widget.id }}">###</span></h3>
+
+    <div class="widget-footer-line">
+        <span id="widget-link-{{ widget.id }}" style="font-size: 12px">
+            <a><i class="fa fa-arrow-circle-right"></i> More info</a>
+        </span>
+    </div>
 {% endblock %}
 
 {% block script %}
@@ -32,6 +38,15 @@
                 if (response['warning']) {
                     value = value + '<div class="widget-value-warning"><i class="fa fa-warning"></i> '
                     + response['warning'] + '</div>';
+                }
+
+                // More info link
+                if (response['link'] != undefined) {
+                    $('#widget-link-{{ widget.id }}').html(
+                        '<a href="' + response['link']
+                        + '" target="_blank"><i class="fa fa-arrow-circle-right"></i> More info '
+                        + '</a>'
+                    );
                 }
 
                 $('#widget-value-{{ widget.id }}').html(value).show('blind');

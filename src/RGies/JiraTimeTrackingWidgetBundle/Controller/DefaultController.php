@@ -42,7 +42,7 @@ class DefaultController extends Controller
 
         // Get data from cache
         $cache = $this->get('CacheService');
-        if ($cacheValue = $cache->getValue('JiraTimeTrackingWidgetBundle', $widgetId)) {
+        if ($cacheValue = $cache->getValue('JiraTimeTrackingWidgetBundle', $widgetId, null, 'level_2')) {
             return new Response($cacheValue, Response::HTTP_OK);
         }
 
@@ -119,6 +119,7 @@ class DefaultController extends Controller
             return new Response(json_encode($response), Response::HTTP_OK);
         }
 
+        $response['link'] = $this->getParameter('jira_host') . '/issues/?jql=' . urlencode($jql);
         $response['issuecount'] = $issues->getTotal();
         $response['startdate'] = $startDate->format('d-m-Y');
         $response['enddate'] = $endDate->format('d-m-Y');

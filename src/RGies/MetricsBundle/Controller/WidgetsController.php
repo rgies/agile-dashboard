@@ -82,8 +82,6 @@ class WidgetsController extends Controller
             'attr'   => array('id' => 'create-form'),
         ));
 
-        //$form->add('submit', 'submit', array('label' => 'Create'));
-
         return $form;
     }
 
@@ -180,8 +178,6 @@ class WidgetsController extends Controller
             'attr'   => array('id' => 'edit-form'),
         ));
 
-        //$form->add('submit', 'submit', array('label' => 'Update'));
-
         return $form;
     }
 
@@ -208,7 +204,8 @@ class WidgetsController extends Controller
 
         if ($editForm->isValid()) {
             $em->flush();
-            return $this->redirect($this->generateUrl('widgets'));
+            //return $this->redirect($this->generateUrl('widgets'));
+            return $this->redirect($this->generateUrl('start'));
         }
 
         return array(
