@@ -8,7 +8,9 @@
 {{ '{% block script %}' }}
     <script>
         // HERE YOU CAN GET YOUR WIDGET DATA
-        addDataRequest('{{ "{{ path('" }}{{ bundle }}{{ "-collect-data') }}" }}', {id:{{ '{{ widget.id }}' }}, type:'{{ '{{ widget.type }}' }}'}, function (data) {
+        addDataRequest('{{ "{{ path('" }}{{ bundle }}{{ "-collect-data') }}" }}'
+            , {id:{{ '{{ widget.id }}' }}, type:'{{ '{{ widget.type }}' }}', updateInterval:'{{ '{{ widget.updateInterval }}' }}'}
+            , function (data) {
             var response = JSON.parse(data);
             $('#widget-value-{{ '{{ widget.id }}' }}').hide('blind',null,function() {
                 $('#widget-value-{{ '{{ widget.id }}' }}').html(response['value']).show('blind');

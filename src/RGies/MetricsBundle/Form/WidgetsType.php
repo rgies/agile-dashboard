@@ -27,6 +27,7 @@ class WidgetsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $widgetPlugins = $this->_container->getParameter('widget_plugins');
+        $updateIntervals = $this->_container->getParameter('update_intervals');
 
         $dashboardChoice = array(
             'class'     => 'MetricsBundle:Dashboard',
@@ -42,6 +43,7 @@ class WidgetsType extends AbstractType
             ->add('title')
             ->add('dashboard', 'entity', $dashboardChoice)
             ->add('type', 'choice', array('choices' => $widgetPlugins))
+            ->add('update_interval', 'choice', array('choices' => $updateIntervals))
             ->add('enabled')
             ->add('pos', 'hidden')
         ;

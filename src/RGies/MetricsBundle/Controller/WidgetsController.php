@@ -204,7 +204,9 @@ class WidgetsController extends Controller
 
         if ($editForm->isValid()) {
             $em->flush();
-            //return $this->redirect($this->generateUrl('widgets'));
+
+            $this->get('CacheService')->deleteValue($entity->getType(), $entity->getId());
+
             return $this->redirect($this->generateUrl('start'));
         }
 

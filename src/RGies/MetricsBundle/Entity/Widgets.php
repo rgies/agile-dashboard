@@ -56,6 +56,13 @@ class Widgets
     private $pos;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="update_interval", type="integer", nullable=true)
+     */
+    private $update_interval=600;
+
+    /**
      * Get id
      *
      * @return integer
@@ -183,5 +190,29 @@ class Widgets
     public function getPos()
     {
         return $this->pos;
+    }
+
+    /**
+     * Set updateInterval
+     *
+     * @param integer $updateInterval
+     *
+     * @return Widgets
+     */
+    public function setUpdateInterval($updateInterval)
+    {
+        $this->update_interval = $updateInterval;
+
+        return $this;
+    }
+
+    /**
+     * Get updateInterval
+     *
+     * @return integer
+     */
+    public function getUpdateInterval()
+    {
+        return $this->update_interval;
     }
 }

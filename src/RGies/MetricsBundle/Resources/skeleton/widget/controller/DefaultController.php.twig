@@ -40,10 +40,11 @@ class DefaultController extends Controller
 
         $widgetId       = $request->get('id');
         $widgetType     = $request->get('type');
+        $updateInterval = $request->get('updateInterval');
 
         // Get data from cache
         $cache = $this->get('CacheService');
-        if ($cacheValue = $cache->getValue('{{ bundle }}', $widgetId)) {
+        if ($cacheValue = $cache->getValue('{{ bundle }}', $widgetId, null, $updateInterval)) {
             return new Response($cacheValue, Response::HTTP_OK);
         }
 

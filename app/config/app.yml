@@ -20,9 +20,14 @@ parameters:
     widget_cache:
         max_lifetime: 600
         default_lifetime: 10
-        level_1: 5
-        level_2: 15
-        level_3: 30
+
+    # Widget update interval
+    update_intervals:
+        300:    'Every 5 minutes (short)'
+        600:    'Every 10 minutes (default)'
+        900:    'Every 15 minutes'
+        3600:   'Every 1 hour'
+        28800:  'Every 8 hour'
 
     # Widget icons
     widget_icons:

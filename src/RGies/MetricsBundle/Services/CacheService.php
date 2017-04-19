@@ -71,8 +71,6 @@ class CacheService
     {
         if ($lifetime === null) {
             $lifetime = $this->_config['default_lifetime'] * 60;
-        } elseif (substr($lifetime,0,6) == 'level_') {
-            $lifetime = $this->_config[$lifetime] * 60;
         }
 
         $em = $this->_doctrine->getManager();
