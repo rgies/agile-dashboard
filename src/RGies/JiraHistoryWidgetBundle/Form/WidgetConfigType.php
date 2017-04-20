@@ -29,7 +29,7 @@ class WidgetConfigType extends AbstractType
             ->add('start_date','text',array('required' => false, 'label' => 'Start date (2017-01-15 / -7 days / -1 month)'))
             ->add('end_date','text',array('required' => false))
             ->add('label1', 'text')
-            ->add('jql_query1','textarea',array('label' => 'Jql Query 1 (type=Bug and created<=%time% and status was not in (Closed) on %time%)'))
+            ->add('jql_query1','textarea',array('label' => 'Jql Query 1 (type=Bug and created<=%date% and status was not in (Closed) on %date%)'))
         ;
     }
     

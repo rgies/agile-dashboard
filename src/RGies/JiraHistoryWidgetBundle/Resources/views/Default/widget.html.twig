@@ -1,7 +1,7 @@
 {% extends "MetricsBundle::templates/default-widget.html.twig" %}
 
 {% block widget_body %}
-    <div id="chart-{{ widget.id }}" style="height: 120px;"></div>
+    <div id="chart-{{ widget.id }}" style="height: 120px; top: -7px"></div>
 {% endblock %}
 
 {% block script %}
@@ -12,15 +12,17 @@
             , function (data) {
                 var response = JSON.parse(data);
 
-                    new Morris.Line({
-                        element: 'chart-{{ widget.id }}',
-                        hideHover: 'auto',
-                        data: response['data1'],
-                        xkey: 'date',
-                        ykeys: ['value'],
-                        //xLabels: 'week',
-                        labels: ['Value']
-                    });
+                $('#chart-{{ widget.id }}').val('');
+
+                new Morris.Line({
+                    element: 'chart-{{ widget.id }}',
+                    hideHover: 'auto',
+                    data: response['data1'],
+                    xkey: 'date',
+                    ykeys: ['value'],
+                    //xLabels: 'week',
+                    labels: ['Value']
+                });
         });
     </script>
 {% endblock %}

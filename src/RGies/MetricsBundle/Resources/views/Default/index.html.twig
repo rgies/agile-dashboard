@@ -84,6 +84,8 @@
                                 , {'widgets': items, 'dashboard_id': {{ dashboard.id }}}).done(function(data){});
                     }
                 }).disableSelection();
+                $( "#sortable" ).sortable('enable');
+
                 $( "#dashboard-nav-items" ).sortable({
                     axis: "x",
                     update: function(event, ui) {
@@ -91,6 +93,8 @@
                         $.post('{{ path('dashboard_reorder') }}', {'id_list': items}).done(function(data){});
                     }
                 }).disableSelection();
+                $( "#dashboard-nav-items" ).sortable('enable');
+
                 $( ".dashboard-nav-item" ).droppable({
                     accept: ".widget-item",
                     tolerance: "pointer",
@@ -103,6 +107,7 @@
                         $.post('{{ path('widgets_set_dashboard') }}', {widgetId: widgetId, dashboardId: dashboardId} );
                     }
                 });
+                $( ".dashboard-nav-item" ).droppable('enable');
 
             } else {
                 dashboardEditMode = false;
