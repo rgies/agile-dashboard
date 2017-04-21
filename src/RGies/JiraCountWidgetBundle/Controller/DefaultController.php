@@ -52,7 +52,7 @@ class DefaultController extends Controller
         $jql = $widgetConfig->getJqlQuery();
 
         try {
-            $issueService = new IssueService($this->_getLoginCredentials());
+            $issueService = new IssueService($this->get('JiraCoreService')->getLoginCredentials());
             $issues = $issueService->search($jql, 0, 100000, ['key']);
         } catch (JiraException $e) {
             $response['warning'] = wordwrap($e->getMessage(), 38, '<br/>');
@@ -70,17 +70,4 @@ class DefaultController extends Controller
         return new Response(json_encode($response), Response::HTTP_OK);
     }
 
-    /**
-     * @return ArrayConfiguration
-     */
-    protected function _getLoginCredentials()
-    {
-        return new ArrayConfiguration(
-            array(
-                'jiraHost' => $this->getParameter('jira_host'),
-                'jiraUser' => $this->getParameter('jira_user'),
-                'jiraPassword' => $this->getParameter('jira_password'),
-            )
-        );
-    }
 }

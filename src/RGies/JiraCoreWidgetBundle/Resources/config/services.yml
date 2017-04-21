@@ -1,8 +1,6 @@
-# Plugin Parameters
-parameters:
 
 # Plugin Services
 services:
-    JiraCoreWidgetBundleService:
+    JiraCoreService:
         class: RGies\JiraCoreWidgetBundle\Services\JiraCoreService
-        arguments: [@doctrine]
+        arguments: [@doctrine, @service_container]

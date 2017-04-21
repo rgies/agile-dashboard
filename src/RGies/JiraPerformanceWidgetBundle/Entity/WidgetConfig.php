@@ -1,6 +1,6 @@
 <?php
 
-namespace RGies\JiraListWidgetBundle\Entity;
+namespace RGies\JiraPerformanceWidgetBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Index;
@@ -8,8 +8,8 @@ use Doctrine\ORM\Mapping\Index;
 /**
  * WidgetConfig
  *
- * @ORM\Table(name="JiraListWidgetConfig")
- * @ORM\Entity(repositoryClass="RGies\JiraListWidgetBundle\Entity\WidgetConfigRepository")
+ * @ORM\Table(name="JiraPerformanceWidgetConfig")
+ * @ORM\Entity(repositoryClass="RGies\JiraPerformanceWidgetBundle\Entity\WidgetConfigRepository")
  */
 class WidgetConfig
 {
@@ -32,16 +32,16 @@ class WidgetConfig
     /**
      * @var string
      *
-     * @ORM\Column(name="jql_query", type="text")
+     * @ORM\Column(name="icon", type="string", length=100)
      */
-    private $jql_query;
+    private $icon;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="extended_info", type="text", length=100, nullable=true)
+     * @ORM\Column(name="jql_query", type="text")
      */
-    private $extended_info = 'summary';
+    private $jql_query;
 
 
     /**
@@ -79,6 +79,54 @@ class WidgetConfig
     }
 
     /**
+     * Set datarow1
+     *
+     * @param string $datarow1
+     *
+     * @return WidgetConfig
+     */
+    public function setDatarow1($datarow1)
+    {
+        $this->datarow1 = $datarow1;
+
+        return $this;
+    }
+
+    /**
+     * Get datarow1
+     *
+     * @return string
+     */
+    public function getDatarow1()
+    {
+        return $this->datarow1;
+    }
+
+    /**
+     * Set icon
+     *
+     * @param string $icon
+     *
+     * @return WidgetConfig
+     */
+    public function setIcon($icon)
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
+    /**
+     * Get icon
+     *
+     * @return string
+     */
+    public function getIcon()
+    {
+        return $this->icon;
+    }
+
+    /**
      * Set jqlQuery
      *
      * @param string $jqlQuery
@@ -100,29 +148,5 @@ class WidgetConfig
     public function getJqlQuery()
     {
         return $this->jql_query;
-    }
-
-    /**
-     * Set extendedInfo
-     *
-     * @param string $extendedInfo
-     *
-     * @return WidgetConfig
-     */
-    public function setExtendedInfo($extendedInfo)
-    {
-        $this->extended_info = $extendedInfo;
-
-        return $this;
-    }
-
-    /**
-     * Get extendedInfo
-     *
-     * @return string
-     */
-    public function getExtendedInfo()
-    {
-        return $this->extended_info;
     }
 }

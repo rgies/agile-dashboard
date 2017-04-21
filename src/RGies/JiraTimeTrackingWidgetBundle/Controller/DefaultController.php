@@ -80,7 +80,7 @@ class DefaultController extends Controller
         }
 
         try {
-            $issueService = new IssueService($this->_getLoginCredentials());
+            $issueService = new IssueService($this->get('JiraCoreService')->getLoginCredentials());
             $issues = $issueService->search($jql, 0, 10000, ['key','created','updated','worklog']);
 
             // loop to found issues
@@ -165,20 +165,6 @@ class DefaultController extends Controller
                 'timespend' => $worklog->timeSpentSeconds
             );
         }
-    }
-
-    /**
-     * @return ArrayConfiguration
-     */
-    protected function _getLoginCredentials()
-    {
-        return new ArrayConfiguration(
-            array(
-                'jiraHost' => $this->getParameter('jira_host'),
-                'jiraUser' => $this->getParameter('jira_user'),
-                'jiraPassword' => $this->getParameter('jira_password'),
-            )
-        );
     }
 
 }

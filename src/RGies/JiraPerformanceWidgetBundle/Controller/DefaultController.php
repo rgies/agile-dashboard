@@ -1,6 +1,6 @@
 <?php
 
-namespace RGies\JiraHighEffortWidgetBundle\Controller;
+namespace RGies\JiraPerformanceWidgetBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,15 +19,14 @@ use JiraRestApi\JiraException;
 /**
  * Widget controller.
  *
- * @Route("/jira_high_effort_widget")
+ * @Route("/jira_performance_widget")
  */
 class DefaultController extends Controller
 {
-
     /**
      * Collect needed widget data.
      *
-     * @Route("/collect-data/", name="JiraHighEffortWidgetBundle-collect-data")
+     * @Route("/collect-data/", name="JiraPerformanceWidgetBundle-collect-data")
      * @Method("POST")
      * @return Response
      */
@@ -44,71 +43,60 @@ class DefaultController extends Controller
 
         // Data cache
         $cache = $this->get('CacheService');
-        if ($cacheValue = $cache->getValue('JiraHighEffortWidgetBundle', $widgetId, null, $updateInterval)) {
+        if ($cacheValue = $cache->getValue('JiraPerformanceWidgetBundle', $widgetId, null, $updateInterval)) {
             return new Response($cacheValue, Response::HTTP_OK);
         }
 
         $widgetConfig = $this->get('WidgetService')->getWidgetConfig($widgetType, $widgetId);
 
-        $timeSpendArray = array();
-        $totalTimeSpend = 0;
         $response = array();
+        $response['icon'] = $widgetConfig->getIcon();
 
         $jql = $widgetConfig->getJqlQuery();
+        $spendTime = 0;
+        $spendStoryPoints = 0;
+        $totalCount = 0;
+        $issueCount = 0;
+        $storyPointField = 'customfield_10004';
 
         try {
             $issueService = new IssueService($this->get('JiraCoreService')->getLoginCredentials());
-            $issues = $issueService->search($jql, 0, 10000, ['aggregatetimespent']);
+            $issues = $issueService->search($jql, 0, 10000, ['aggregatetimespent',$storyPointField]);
+            $totalCount = $issues->getTotal();
 
             foreach ($issues->getIssues() as $issue) {
+                if (isset($issue->fields->$storyPointField)) {
+                    $issueCount++;
+                    $spendStoryPoints += $issue->fields->$storyPointField;
 
-                if ($issue->fields->aggregatetimespent) {
-                    $timeSpendArray[$issue->key] = $issue->fields->aggregatetimespent;
-                    $totalTimeSpend = $totalTimeSpend + $issue->fields->aggregatetimespent;
+                    if ($issue->fields->aggregatetimespent) {
+                        $spendTime += $issue->fields->aggregatetimespent;
+                    }
                 }
+
             }
         } catch (JiraException $e) {
             $response['warning'] = wordwrap($e->getMessage(), 38, '<br/>');
             return new Response(json_encode($response), Response::HTTP_OK);
+            //$this->createNotFoundException('Search Failed: ' . $e->getMessage());
         }
-
-        if (count($timeSpendArray)) {
-            arsort($timeSpendArray);
-
-            $z=1;
-            $response['value'] = '<table>';
-            foreach($timeSpendArray as $key=>$value) {
-                $response['value'] = $response['value'] . '<tr style="white-space: nowrap;"><td><i class="fa fa-circle"></i> '
-                    . $this->_createLink($key, '')
-                    . '&nbsp;&nbsp;</td><td>'
-                    . '<i class="ion ion-android-stopwatch"></i> <i>' . htmlentities(round($value / 3600,1) . 'h')
-                    . '</i></td></tr>';
-
-                if ($z++==5) break;
-            }
-            $response['value'] = $response['value'] . '</table>';
-        }
-
 
 
         if ($issues->getTotal() > $issues->getMaxResults()) {
             $response['warning'] = 'limit of ' . $issues->getMaxResults() . ' issues reached';
+            return new Response(json_encode($response), Response::HTTP_OK);
         }
 
-        if ($issues->getTotal()) {
-            $response['subtext'] = $issues->getTotal() . ' issues analysed / Ø '
-                . round($totalTimeSpend / $issues->getTotal() / 3600, 1) . 'h';
-        }
+        $response['sum'] = $spendStoryPoints;
+        $response['unit'] = 'SP';
+        $response['link'] = $this->getParameter('jira_host') . '/issues/?jql=' . urlencode($jql);
 
-        $cache->setValue('JiraHighEffortWidgetBundle', $widgetId, json_encode($response));
+        $response['subtext'] = $issueCount . ' issues'
+            . ' / Ø ' . round($spendTime / 3600 / $issueCount, 1) . 'h'
+            . '<br/>1SP = ' . round($spendTime / 3600 / $response['sum'], 1) . 'h';
+
+        $cache->setValue('JiraPerformanceWidgetBundle', $widgetId, json_encode($response));
 
         return new Response(json_encode($response), Response::HTTP_OK);
     }
-
-    protected function _createLink($key, $text)
-    {
-        return '<a href="' . $this->getParameter('jira_host') . '/browse/' . $key
-        . '" target="_blank" title="' . str_replace('"', '&quot;', $text) . '">' . $key . '</a>';
-    }
-
 }

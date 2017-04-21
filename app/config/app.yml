@@ -8,7 +8,8 @@ parameters:
     widget_plugins:
         SeparatorWidgetBundle:      'Separator'
         JiraCountWidgetBundle:      'Jira - Count issues'
-        JiraSpendTimeWidgetBundle:  'Jira - Spend time on issues'
+        JiraSpendTimeWidgetBundle:  'Jira - Time spend on issues'
+        JiraPerformanceWidgetBundle: 'Jira - Performance'
         JiraListWidgetBundle:       'Jira - List of top 5 issues'
         JiraHighEffortWidgetBundle: 'Jira - Highest efforts list'
         JiraTimeTrackingWidgetBundle: 'Jira - Time Tracking'

@@ -1,0 +1,63 @@
+{% extends "MetricsBundle::templates/default-widget.html.twig" %}
+
+{% block widget_body %}
+    <i id="widget-icon-{{ widget.id }}" class="widget-icon"></i>
+    <h3><span id="widget-value-{{ widget.id }}">###</span></h3>
+    <div class="widget-footer-line">
+        <span id="widget-link-{{ widget.id }}" style="font-size: 12px"></span>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        // HERE YOU CAN GET YOUR WIDGET DATA
+        addDataRequest(
+            '{{ path('JiraPerformanceWidgetBundle-collect-data') }}',
+            {id:{{ widget.id }}, type:'{{ widget.type }}', updateInterval:'{{ widget.updateInterval }}'},
+            function (data) {
+                var response = JSON.parse(data);
+                $('#widget-value-{{ widget.id }}').hide('blind',null,function() {
+                    var value = '';
+
+                    // Set sum
+                    if (response['sum']) {
+                        value = response['sum']
+                            + '<span class="widget-value-unit">' + response['unit'] + '</span>';
+                    }
+
+                    // Set value
+                    if (response['value']) {
+                        if (response['value'] / 3600 >= 1000) {
+                            value = Math.round(response['value'] / 360 / 8) / 10
+                                + '<span class="widget-value-unit">d</span>';
+                        } else {
+                            value = Math.round(response['value'] / 360) / 10
+                                + '<span class="widget-value-unit">h</span>';
+                        }
+                    }
+
+                    // Set subtext
+                    if (response['subtext']) {
+                        value = value + '<div class="widget-value-subtext">' + response['subtext'] + '</div>';
+                    }
+
+                    // Set warning
+                    if (response['warning']) {
+                        value = value + '<div class="widget-value-warning"><i class="fa fa-warning"></i> '
+                            + response['warning'] + '</div>';
+                    }
+
+                    $('#widget-value-{{ widget.id }}').html(value).show('blind');
+                });
+
+                // Set more info link
+                $('#widget-link-{{ widget.id }}').html(
+                    '<a href="' + response['link']
+                    + '" target="_blank"><i class="fa fa-arrow-circle-right"></i> More info'
+                    + '</a>'
+                );
+
+                $('#widget-icon-{{ widget.id }}').attr('class', 'widget-icon '+response['icon']);
+        });
+    </script>
+{% endblock %}

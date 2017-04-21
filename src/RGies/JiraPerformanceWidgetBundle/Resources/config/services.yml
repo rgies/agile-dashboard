@@ -1,0 +1,11 @@
+# Plugin Parameters
+parameters:
+    JiraPerformanceWidgetBundleConfig:
+        widget_view: 'JiraPerformanceWidgetBundle::default/widget.html.twig'
+        edit_action: 'JiraPerformanceWidgetBundle_widgetconfig_edit'
+
+# Plugin Services
+services:
+    JiraPerformanceWidgetBundleService:
+        class: RGies\JiraPerformanceWidgetBundle\Services\WidgetPluginService
+        arguments: [@doctrine, %JiraPerformanceWidgetBundleConfig%]

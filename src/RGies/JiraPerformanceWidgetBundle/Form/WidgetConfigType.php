@@ -1,6 +1,6 @@
 <?php
 
-namespace RGies\JiraListWidgetBundle\Form;
+namespace RGies\JiraPerformanceWidgetBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -24,16 +24,12 @@ class WidgetConfigType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $icons = array_flip($this->_container->getParameter('widget_icons'));
+
         $builder
             ->add('widget_id','hidden')
-            ->add('jql_query','textarea',array('attr'=>array('placeholder'=>'type=Bug AND resolution=Unresolved ORDER BY created')))
-            ->add('extended_info','choice',array(
-                'choices' => array(
-                    'summary' => 'Issue summary',
-                    'assignee_invest' => 'Assignee + time spend',
-                    'age_invest' => 'Issue age + time spend'
-                )
-            ))
+            ->add('icon', 'choice', array('choices' => $icons))
+            ->add('jql_query','text',array('attr'=>array('placeholder'=>'project=PI and resolutiondate>=startOfDay(-7) and type=Bug')))
         ;
     }
     
@@ -43,7 +39,7 @@ class WidgetConfigType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'RGies\JiraListWidgetBundle\Entity\WidgetConfig'
+            'data_class' => 'RGies\JiraPerformanceWidgetBundle\Entity\WidgetConfig'
         ));
     }
 
@@ -52,6 +48,6 @@ class WidgetConfigType extends AbstractType
      */
     public function getName()
     {
-        return 'jira_list_widget_widgetconfig';
+        return 'jira_performance_widget_widgetconfig';
     }
 }

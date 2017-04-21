@@ -12,7 +12,7 @@
             , function (data) {
                 var response = JSON.parse(data);
 
-                $('#chart-{{ widget.id }}').val('');
+                $('#chart-{{ widget.id }}').html('');
 
                 new Morris.Line({
                     element: 'chart-{{ widget.id }}',
@@ -23,6 +23,16 @@
                     //xLabels: 'week',
                     labels: ['Value']
                 });
+
+                if (response['need-update']) {
+                    dataRequestHandler.retryQueue.push(
+                        {
+                            'url':'{{ path('JiraHistoryWidgetBundle-collect-data') }}',
+                            'params': {id:{{ widget.id }}, type:'{{ widget.type }}', updateInterval:'{{ widget.updateInterval }}'},
+                            'callback': arguments.callee
+                        }
+                    );
+                }
         });
     </script>
 {% endblock %}

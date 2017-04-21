@@ -57,7 +57,7 @@ class DefaultController extends Controller
         $totalCount = 0;
 
         try {
-            $issueService = new IssueService($this->_getLoginCredentials());
+            $issueService = new IssueService($this->get('JiraCoreService')->getLoginCredentials());
             $issues = $issueService->search($jql, 0, 10000, ['aggregatetimespent']);
             $totalCount = $issues->getTotal();
 
@@ -87,20 +87,5 @@ class DefaultController extends Controller
         $cache->setValue('JiraSpendTimeWidget', $widgetId, json_encode($response));
 
         return new Response(json_encode($response), Response::HTTP_OK);
-    }
-
-
-    /**
-     * @return ArrayConfiguration
-     */
-    protected function _getLoginCredentials()
-    {
-        return new ArrayConfiguration(
-            array(
-                'jiraHost' => $this->getParameter('jira_host'),
-                'jiraUser' => $this->getParameter('jira_user'),
-                'jiraPassword' => $this->getParameter('jira_password'),
-            )
-        );
     }
 }

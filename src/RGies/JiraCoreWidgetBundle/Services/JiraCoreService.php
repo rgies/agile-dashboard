@@ -5,7 +5,13 @@
 
 namespace RGies\JiraCoreWidgetBundle\Services;
 
-use RGies\JiraCoreWidgetBundle\Entity\Config;
+//use RGies\JiraCoreWidgetBundle\Entity\Config;
+use JiraRestApi\Issue\IssueService;
+use JiraRestApi\Issue;
+use JiraRestApi\Configuration\ArrayConfiguration;
+use JiraRestApi\Issue\TimeTracking;
+use JiraRestApi\JiraException;
+
 
 /**
  * Class WidgetService.
@@ -33,9 +39,20 @@ class JiraCoreService
         $this->_config      = $config;
     }
 
+    /**
+     * Get Jira login credentials.
+     *
+     * @return ArrayConfiguration Jira login credentials
+     */
     public function getLoginCredentials()
     {
-
+        return new ArrayConfiguration(
+            array(
+                'jiraHost' => $this->_config->getParameter('jira_host'),
+                'jiraUser' => $this->_config->getParameter('jira_user'),
+                'jiraPassword' => $this->_config->getParameter('jira_password'),
+            )
+        );
     }
 
 }

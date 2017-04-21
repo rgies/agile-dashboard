@@ -50,7 +50,6 @@ class DefaultController extends Controller
 
         $widgetConfig = $this->get('WidgetService')->getWidgetConfig($widgetType, $widgetId);
         $em = $this->getDoctrine()->getManager();
-        $dataRepository = $em->getRepository('JiraHistoryWidgetBundle:WidgetData');
 
         $response = array();
         $response['data1'] = array();
@@ -89,7 +88,7 @@ class DefaultController extends Controller
 
         // auto calculate interval
         if ($days > 200) {
-            $interval = '-4 month';
+            $interval = '-3 month';
             $now = new \DateTime('first day of this month');
         } elseif ($days > 60) {
             $interval = '-1 month';
@@ -99,14 +98,15 @@ class DefaultController extends Controller
             $now = new \DateTime('friday last week');
         }
 
-        $issueService = new IssueService($this->_getLoginCredentials());
+        $issueService = new IssueService($this->get('JiraCoreService')->getLoginCredentials());
 
 
         for ($date = $now; $date > $startDate; $date->modify($interval))
         {
             $keyDate = new \DateTime($date->format('Y-m-d 12:00:00'));
+            $dateTs= $keyDate->getTimestamp();
 
-            if (!isset($data[$keyDate->getTimestamp()])) {
+            if (!isset($data[$dateTs]) && $updateCounter<1) {
                 $updateCounter++;
                 $jqlQuery = str_replace('%date%', $date->format('Y-m-d'), $jql1);
 
@@ -127,12 +127,10 @@ class DefaultController extends Controller
                     $response['warning'] = wordwrap($e->getMessage(), 38, '<br/>');
                     return new Response(json_encode($response), Response::HTTP_OK);
                 }
-            } else {
+            } elseif (isset($data[$dateTs])) {
                 $response['data1'][] = array('date' => $keyDate->format('Y-m-d'), 'value' => $data[$keyDate->getTimestamp()]);
-            }
-
-            if ($updateCounter>1) {
-                break;
+            } else {
+                $response['need-update'] = true;
             }
         }
 
@@ -166,20 +164,6 @@ class DefaultController extends Controller
         }
 
         return $result;
-    }
-
-    /**
-     * @return ArrayConfiguration
-     */
-    protected function _getLoginCredentials()
-    {
-        return new ArrayConfiguration(
-            array(
-                'jiraHost' => $this->getParameter('jira_host'),
-                'jiraUser' => $this->getParameter('jira_user'),
-                'jiraPassword' => $this->getParameter('jira_password'),
-            )
-        );
     }
 
 }

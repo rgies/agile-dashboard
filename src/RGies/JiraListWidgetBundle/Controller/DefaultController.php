@@ -54,8 +54,8 @@ class DefaultController extends Controller
         $jql = $widgetConfig->getJqlQuery();
 
         try {
-            $issueService = new IssueService($this->_getLoginCredentials());
-            $issues = $issueService->search($jql, 0, 5, ['key', 'summary','created']);
+            $issueService = new IssueService($this->get('JiraCoreService')->getLoginCredentials());
+            $issues = $issueService->search($jql, 0, 5, ['key','summary','created','resolutiondate','aggregatetimespent']);
         } catch (JiraException $e) {
             $response['warning'] = wordwrap($e->getMessage(), 38, '<br/>');
             return new Response(json_encode($response), Response::HTTP_OK);
@@ -68,10 +68,38 @@ class DefaultController extends Controller
             foreach ($issues->getIssues() as $issue) {
                 $value = $value . '<tr style="white-space: nowrap;"><td><i class="fa fa-circle"></i> '
                     . $this->_createLink($issue->key,$issue->fields->summary)
-                    . '&nbsp;&nbsp;</td><td>'
-                    . '<i><span title="' . str_replace('"', '&quot;', $issue->fields->summary)
-                    . '">' . htmlentities(substr($issue->fields->summary, 0, 18))
-                    . '...</span></i></td></tr>';
+                    . '&nbsp;&nbsp;</td>';
+
+                // calc issue age
+                $issueAge = ($issue->fields->resolutiondate) ? new \DateTime($issue->fields->resolutiondate) : new \DateTime();
+                $issueAge = $issueAge->diff($issue->fields->created);
+                $issueAgeDays = $issueAge->format('%a');
+
+                $timeSpend = '0h';
+                if ($issue->fields->aggregatetimespent) {
+                    if ($issue->fields->aggregatetimespent / 3600 > 600) {
+                        $timeSpend = round($issue->fields->aggregatetimespent / 3600 / 8,1) . 'd';
+                    } else {
+                        $timeSpend = round($issue->fields->aggregatetimespent / 3600,1) . 'h';
+                    }
+                }
+
+                switch ($widgetConfig->getExtendedInfo())
+                {
+                    case 'age_invest':
+                        $value .= '<td><i class="fa fa-coffee"></i> ' . $issueAgeDays . 'd</td>'
+                            . '<td>&nbsp;&nbsp;<i class="ion ion-android-stopwatch"></i> ' . $timeSpend . '</td>';
+                        break;
+
+                    case 'summery':
+                    default:
+                        $value .= '<td><i><span title="' . str_replace('"', '&quot;', $issue->fields->summary)
+                            . '">' . htmlentities(substr($issue->fields->summary, 0, 18))
+                            . '...</span></i></td>';
+                        break;
+                }
+
+                $value .= '</tr>';
             }
             $value .= '</table>';
         }
@@ -90,20 +118,5 @@ class DefaultController extends Controller
     {
         return '<a href="' . $this->getParameter('jira_host') . '/browse/' . $key
             . '" target="_blank" title="' . str_replace('"', '&quot;', $text) . '">' . $key . '</a>';
-    }
-
-
-    /**
-     * @return ArrayConfiguration
-     */
-    protected function _getLoginCredentials()
-    {
-        return new ArrayConfiguration(
-            array(
-                'jiraHost' => $this->getParameter('jira_host'),
-                'jiraUser' => $this->getParameter('jira_user'),
-                'jiraPassword' => $this->getParameter('jira_password'),
-            )
-        );
     }
 }
