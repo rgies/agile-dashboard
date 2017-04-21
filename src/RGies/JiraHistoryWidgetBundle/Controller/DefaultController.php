@@ -84,7 +84,7 @@ class DefaultController extends Controller
         $data = $this->_getDataArray($widgetId);
 
         $now = new \DateTime();
-        $interval = '-1 day';
+        $interval = '1 day';
 
         // auto calculate interval
         if ($days > 200) {
@@ -120,7 +120,11 @@ class DefaultController extends Controller
                     $em->persist($entity);
                     $em->flush();
 
-                    $response['data1'][] = array('date' => $keyDate->format('Y-m-d'), 'value' => $entity->getValue());
+                    array_unshift(
+                        $response['data1'],
+                        array('date' => $keyDate->format('Y-m-d'), 'value' => $entity->getValue())
+                    );
+                    //$response['data1'][] = array('date' => $keyDate->format('Y-m-d'), 'value' => $entity->getValue());
 
 
                 } catch (JiraException $e) {
@@ -128,7 +132,11 @@ class DefaultController extends Controller
                     return new Response(json_encode($response), Response::HTTP_OK);
                 }
             } elseif (isset($data[$dateTs])) {
-                $response['data1'][] = array('date' => $keyDate->format('Y-m-d'), 'value' => $data[$keyDate->getTimestamp()]);
+                array_unshift(
+                    $response['data1'],
+                    array('date' => $keyDate->format('Y-m-d'), 'value' => $data[$keyDate->getTimestamp()])
+                );
+                //$response['data1'][] = array('date' => $keyDate->format('Y-m-d'), 'value' => $data[$keyDate->getTimestamp()]);
             } else {
                 $response['need-update'] = true;
             }
