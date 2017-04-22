@@ -1,7 +1,7 @@
 {% extends "MetricsBundle::templates/default-widget.html.twig" %}
 
 {% block widget_body %}
-    <div id="chart-{{ widget.id }}" style="height: 120px; top: -7px"></div>
+    <div id="chart-{{ widget.id }}" style="height: {% if (widget.size=='2x2') or (widget.size=='1x2') %}270{% else %}122{% endif %}px; top: -7px"></div>
 {% endblock %}
 
 {% block script %}
@@ -20,14 +20,14 @@
                         return;
                     }
 
-                    new Morris.Area({
+                    new Morris.{{ config.chartType }}({
                         element: 'chart-{{ widget.id }}',
                         hideHover: 'auto',
-                        data: response['data1'],
+                        data: response['data'],
                         xkey: 'date',
-                        ykeys: ['value'],
+                        ykeys: response['keys'],
                         parseTime: false,
-                        labels: [response['label1']],
+                        labels: response['labels'],
                         fillOpacity: 0.5
                     });
 

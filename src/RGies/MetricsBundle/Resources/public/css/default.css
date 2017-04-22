@@ -60,16 +60,44 @@ label.error {
     /*color: #555555 !important;*/
     /*opacity: 0.8;*/
 }
+
 .widget-panel {
     position: relative;
     width: 220px;
+    height: 142px;
+    float: left;
+    margin-right: 15px;
+    margin-bottom: 15px;
+}
+
+.widget-panel-1x2 {
+    position: relative;
+    width: 220px;
+    height: 299px;
+    float: left;
+    margin-right: 15px;
+    margin-bottom: 15px;
+}
+
+.widget-panel-2x1 {
+    position: relative;
+    width: 455px;
+    height: 142px;
+    float: left;
+    margin-right: 15px;
+    margin-bottom: 15px;
+}
+
+.widget-panel-2x2 {
+    position: relative;
+    width: 455px;
+    height: 299px;
     float: left;
     margin-right: 15px;
     margin-bottom: 15px;
 }
 
 .widget-panel-body {
-    height: 110px;
     padding-top: 0px;
     padding-bottom: 3px;
     padding-left: 10px;

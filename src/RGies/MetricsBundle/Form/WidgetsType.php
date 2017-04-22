@@ -35,6 +35,13 @@ class WidgetsType extends AbstractType
             'property'  => 'title',
         );
 
+        $templateChoices = array(
+            '' => 'Default 1x1 (S)',
+            '2x1' => 'Wide 2x1 (M)',
+            '1x2' => 'Height 1x2 (M)',
+            '2x2' => 'Large 2x2 (XL)',
+        );
+
         if ($this->_lastVisitedDashboardEntity) {
             $dashboardChoice['data'] = $this->_lastVisitedDashboardEntity;
         }
@@ -43,6 +50,11 @@ class WidgetsType extends AbstractType
             ->add('title')
             ->add('dashboard', 'entity', $dashboardChoice)
             ->add('type', 'choice', array('choices' => $widgetPlugins))
+            ->add('size', 'choice', array(
+                'label'=>'Widget size',
+                'required' => false,
+                'choices' => $templateChoices
+            ))
             ->add('update_interval', 'choice', array('choices' => $updateIntervals))
             ->add('enabled')
             ->add('pos', 'hidden')

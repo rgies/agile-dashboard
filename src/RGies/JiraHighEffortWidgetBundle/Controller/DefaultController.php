@@ -41,6 +41,7 @@ class DefaultController extends Controller
         $widgetId       = $request->get('id');
         $widgetType     = $request->get('type');
         $updateInterval = $request->get('updateInterval');
+        $size           = $request->get('size');
 
         // Data cache
         $cache = $this->get('CacheService');
@@ -51,20 +52,24 @@ class DefaultController extends Controller
         $widgetConfig = $this->get('WidgetService')->getWidgetConfig($widgetType, $widgetId);
 
         $timeSpendArray = array();
+        $summaryArray = array();
         $totalTimeSpend = 0;
         $response = array();
+        $colSpacer = str_repeat('&nbsp;',5);
+        $maxLines = ($size=='1x2'||$size=='2x2') ? 15 : 5;
 
         $jql = $widgetConfig->getJqlQuery();
 
         try {
             $issueService = new IssueService($this->get('JiraCoreService')->getLoginCredentials());
-            $issues = $issueService->search($jql, 0, 10000, ['aggregatetimespent']);
+            $issues = $issueService->search($jql, 0, 10000, ['aggregatetimespent','summary']);
 
             foreach ($issues->getIssues() as $issue) {
 
                 if ($issue->fields->aggregatetimespent) {
                     $timeSpendArray[$issue->key] = $issue->fields->aggregatetimespent;
                     $totalTimeSpend = $totalTimeSpend + $issue->fields->aggregatetimespent;
+                    $summaryArray[$issue->key] = $issue->fields->summary;
                 }
             }
         } catch (JiraException $e) {
@@ -78,13 +83,19 @@ class DefaultController extends Controller
             $z=1;
             $response['value'] = '<table>';
             foreach($timeSpendArray as $key=>$value) {
-                $response['value'] = $response['value'] . '<tr style="white-space: nowrap;"><td><i class="fa fa-circle"></i> '
-                    . $this->_createLink($key, '')
-                    . '&nbsp;&nbsp;</td><td>'
+                $response['value'] .= '<tr style="white-space: nowrap;"><td><i class="fa fa-circle"></i> '
+                    . $this->_createLink($key, $summaryArray[$key])
+                    . $colSpacer . '</td><td>'
                     . '<i class="ion ion-android-stopwatch"></i> <i>' . htmlentities(round($value / 3600,1) . 'h')
-                    . '</i></td></tr>';
+                    . '</i></td>';
 
-                if ($z++==5) break;
+                if ($size == '2x1' || $size == '2x2') {
+                    $response['value'] .= '<td>' . $colSpacer. substr($summaryArray[$key],0,50) . '...</td>';
+                }
+
+                $response['value'] .= '</tr>';
+
+                if ($z++==$maxLines) break;
             }
             $response['value'] = $response['value'] . '</table>';
         }
@@ -105,6 +116,13 @@ class DefaultController extends Controller
         return new Response(json_encode($response), Response::HTTP_OK);
     }
 
+    /**
+     * Creates link to jira issue.
+     *
+     * @param $key
+     * @param $text
+     * @return string
+     */
     protected function _createLink($key, $text)
     {
         return '<a href="' . $this->getParameter('jira_host') . '/browse/' . $key

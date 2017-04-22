@@ -30,6 +30,13 @@ class WidgetData
     private $widget_id;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="data_row", type="integer")
+     */
+    private $data_row;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="date", type="datetime")
@@ -123,5 +130,29 @@ class WidgetData
     public function getValue()
     {
         return $this->value;
+    }
+
+    /**
+     * Set dataRow
+     *
+     * @param integer $dataRow
+     *
+     * @return WidgetData
+     */
+    public function setDataRow($dataRow)
+    {
+        $this->data_row = $dataRow;
+
+        return $this;
+    }
+
+    /**
+     * Get dataRow
+     *
+     * @return integer
+     */
+    public function getDataRow()
+    {
+        return $this->data_row;
     }
 }

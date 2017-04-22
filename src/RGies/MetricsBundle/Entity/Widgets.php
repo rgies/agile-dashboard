@@ -63,6 +63,13 @@ class Widgets
     private $update_interval=600;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="size", type="string", length=100)
+     */
+    private $size;
+
+    /**
      * Get id
      *
      * @return integer
@@ -214,5 +221,29 @@ class Widgets
     public function getUpdateInterval()
     {
         return $this->update_interval;
+    }
+
+    /**
+     * Set size
+     *
+     * @param string $size
+     *
+     * @return Widgets
+     */
+    public function setSize($size)
+    {
+        $this->size = $size;
+
+        return $this;
+    }
+
+    /**
+     * Get size
+     *
+     * @return string
+     */
+    public function getSize()
+    {
+        return $this->size;
     }
 }

@@ -25,8 +25,9 @@
     {% if widgets|length %}
         <div id="sortable">
         {% for widget in widgets %}
+            {% set config = widgetService.getWidgetConfig(widget.type, widget.id) %}
             {% if widget.enabled %}
-            {% include widgetService.getWidgetIncludePath(widget.type) with {'widget': widget} %}
+            {% include widgetService.getWidgetIncludePath(widget.type) with {'widget': widget, 'config': config} %}
             {% endif %}
         {% endfor %}
         </div>

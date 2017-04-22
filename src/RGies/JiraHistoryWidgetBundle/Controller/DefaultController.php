@@ -45,19 +45,19 @@ class DefaultController extends Controller
         // Get data from cache
         $cache = $this->get('CacheService');
         if ($cacheValue = $cache->getValue('JiraHistoryWidgetBundle', $widgetId, null, $updateInterval)) {
-            //return new Response($cacheValue, Response::HTTP_OK);
+            return new Response($cacheValue, Response::HTTP_OK);
         }
 
         $widgetConfig = $this->get('WidgetService')->getWidgetConfig($widgetType, $widgetId);
         $em = $this->getDoctrine()->getManager();
 
         $response = array();
-        $response['data1'] = array();
+        $response['data'] = array();
         $startDate = new \DateTime();
         $endDate = new \DateTime();
 
-        $label1 = $widgetConfig->getLabel1();
-        $jql1 = $widgetConfig->getJqlQuery1();
+        $labels = explode(',', $widgetConfig->getLabel1());
+        $jqls = explode("\n", $widgetConfig->getJqlQuery1());
 
         if ($widgetConfig->getStartDate()) {
             try {
@@ -80,70 +80,74 @@ class DefaultController extends Controller
         }
 
         $updateCounter = 0;
+        $response['rows'] = [];
+        $response['labels'] = [];
+        $response['keys'] = [];
         $days = $startDate->diff($endDate)->format('%a');
-        $data = $this->_getDataArray($widgetId);
-
-        $now = new \DateTime();
-        $interval = '1 day';
-
-        // auto calculate interval
-        if ($days > 200) {
-            $interval = '-3 month';
-            $now = new \DateTime('first day of this month');
-        } elseif ($days > 60) {
-            $interval = '-1 month';
-            $now = new \DateTime('first day of this month');
-        } elseif ($days > 10) {
-            $interval = '-1 week';
-            $now = new \DateTime('friday last week');
-        }
 
         $issueService = new IssueService($this->get('JiraCoreService')->getLoginCredentials());
 
-
-        for ($date = $now; $date > $startDate; $date->modify($interval))
+        $row = 1;
+        foreach ($labels as $label)
         {
-            $keyDate = new \DateTime($date->format('Y-m-d 12:00:00'));
-            $dateTs= $keyDate->getTimestamp();
+            $now = new \DateTime();
+            $interval = '1 day';
 
-            if (!isset($data[$dateTs]) && $updateCounter<1) {
-                $updateCounter++;
-                $jqlQuery = str_replace('%date%', $date->format('Y-m-d'), $jql1);
-
-                try {
-                    $issues = $issueService->search($jqlQuery, 0, 10000, ['key','created','updated']);
-
-                    $entity = new WidgetData();
-                    $entity->setWidgetId($widgetId);
-                    $entity->setDate($keyDate);
-                    $entity->setValue($issues->getTotal());
-                    $em->persist($entity);
-                    $em->flush();
-
-                    array_unshift(
-                        $response['data1'],
-                        array('date' => $keyDate->format('Y-m-d'), 'value' => $entity->getValue())
-                    );
-                    //$response['data1'][] = array('date' => $keyDate->format('Y-m-d'), 'value' => $entity->getValue());
-
-
-                } catch (JiraException $e) {
-                    $response['warning'] = wordwrap($e->getMessage(), 38, '<br/>');
-                    return new Response(json_encode($response), Response::HTTP_OK);
-                }
-            } elseif (isset($data[$dateTs])) {
-                array_unshift(
-                    $response['data1'],
-                    array('date' => $keyDate->format('Y-m-d'), 'value' => $data[$keyDate->getTimestamp()])
-                );
-                //$response['data1'][] = array('date' => $keyDate->format('Y-m-d'), 'value' => $data[$keyDate->getTimestamp()]);
-            } else {
-                $response['need-update'] = true;
+            // auto calculate interval
+            if ($days > 200) {
+                $interval = '-3 month';
+                $now = new \DateTime('first day of this month');
+            } elseif ($days > 60) {
+                $interval = '-1 month';
+                $now = new \DateTime('first day of this month');
+            } elseif ($days > 10) {
+                $interval = '-1 week';
+                $now = new \DateTime('friday last week');
             }
+
+            $data = $this->_getDataArray($widgetId, $row);
+            $rowKey = 'y' . $row;
+            $response['labels'][] = $label;
+            $response['keys'][] = $rowKey;
+            $jql = $jqls[$row-1];
+
+            for ($date = $now; $date > $startDate; $date->modify($interval))
+            {
+                $keyDate = new \DateTime($date->format('Y-m-d 12:00:00'));
+                $dateTs= $keyDate->getTimestamp();
+
+                if (!isset($data[$dateTs]) && $updateCounter<1) {
+                    $updateCounter++;
+                    $jqlQuery = str_replace('%date%', $date->format('Y-m-d'), $jql);
+
+                    try {
+                        $issues = $issueService->search($jqlQuery, 0, 10000, ['key','created','updated']);
+
+                        $entity = new WidgetData();
+                        $entity->setWidgetId($widgetId);
+                        $entity->setDataRow($row);
+                        $entity->setDate($keyDate);
+                        $entity->setValue($issues->getTotal());
+                        $em->persist($entity);
+                        $em->flush();
+
+                        $this->_addData($response['data'], $keyDate->format('Y-m-d'), $rowKey, $entity->getValue(), $row);
+                    } catch (JiraException $e) {
+                        $response['warning'] = wordwrap($e->getMessage(), 38, '<br/>');
+                        return new Response(json_encode($response), Response::HTTP_OK);
+                    }
+                } elseif (isset($data[$dateTs])) {
+                    $this->_addData($response['data'], $keyDate->format('Y-m-d'), $rowKey, $data[$keyDate->getTimestamp()], $row);
+                } else {
+                    $response['need-update'] = true;
+                }
+            }
+
+            $row++;
         }
 
+        $response['data'] = array_reverse(array_values($response['data']));
         $response['days'] = $days;
-        $response['label1'] = $label1;
 
         // Cache response data
         $cache->setValue('JiraHistoryWidgetBundle', $widgetId, json_encode($response));
@@ -151,7 +155,24 @@ class DefaultController extends Controller
         return new Response(json_encode($response), Response::HTTP_OK);
     }
 
-    protected function _getDataArray($widgetId)
+    protected function _addData(&$dataSource, $date, $rowKey, $value, $num)
+    {
+        if (isset($dataSource[$date])) {
+            $dataSource[$date][$rowKey] = $value;
+        } else {
+            //array_unshift($dataSource, [$date => ['date' => $date, $rowKey => $value]]);
+            $dataSource[$date] = ['date' => $date, $rowKey => $value];
+        }
+    }
+
+    /**
+     * Gets stored graph data.
+     *
+     * @param integer $widgetId Widget id
+     * @param integer $dataRowId Data row id
+     * @return array Data
+     */
+    protected function _getDataArray($widgetId, $dataRowId)
     {
         $result = array();
 
@@ -161,8 +182,10 @@ class DefaultController extends Controller
         $data = $dataRepository
             ->createQueryBuilder('d')
             ->where('d.widget_id = :id')
+            ->andWhere('d.data_row = :row')
             //->orderBy('d.date', 'ASC')
             ->setParameter('id', $widgetId)
+            ->setParameter('row', $dataRowId)
             ->getQuery()->getResult();
 
         if ($data) {

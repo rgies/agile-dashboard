@@ -32,10 +32,16 @@ class WidgetConfig
     /**
      * @var string
      *
+     * @ORM\Column(name="chart_type", type="text", length=100, nullable=true)
+     */
+    private $chart_type='Area';
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="start_date", type="text", length=100, nullable=true)
      */
     private $start_date;
-
 
     /**
      * @var string
@@ -188,5 +194,29 @@ class WidgetConfig
     public function getJqlQuery1()
     {
         return $this->jql_query1;
+    }
+
+    /**
+     * Set chartType
+     *
+     * @param string $chartType
+     *
+     * @return WidgetConfig
+     */
+    public function setChartType($chartType)
+    {
+        $this->chart_type = $chartType;
+
+        return $this;
+    }
+
+    /**
+     * Get chartType
+     *
+     * @return string
+     */
+    public function getChartType()
+    {
+        return $this->chart_type;
     }
 }

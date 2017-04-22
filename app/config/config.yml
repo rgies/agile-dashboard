@@ -30,7 +30,9 @@ twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
     form:
-        resources:    ["::base_form_theme.html.twig"]
+        #resources:    ["::base_form_theme.html.twig"]
+        resources: ['bootstrap_3_horizontal_layout.html.twig']
+
     globals:
         platform:
             name:        "%platform_name%"
