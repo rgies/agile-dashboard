@@ -1,4 +1,4 @@
-# agile-dashboard
+# Agile Dashboard
 Dashboard with agile metrics based on Atlassian Jira.
 
 ## How to install
