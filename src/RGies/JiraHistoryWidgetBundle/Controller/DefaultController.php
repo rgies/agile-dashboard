@@ -94,18 +94,18 @@ class DefaultController extends Controller
         foreach ($labels as $label)
         {
             $now = new \DateTime();
-            $interval = '1 day';
+            $interval = '-1 day';
 
             // auto calculate interval
-            if ($days > 200) {
+            if ($days > 300) {
                 $interval = '-3 month';
                 $now = new \DateTime('first day of this month');
-            } elseif ($days > 60) {
+            } elseif ($days > 100) {
                 $interval = '-1 month';
                 $now = new \DateTime('first day of this month');
             } elseif ($days > 10) {
                 $interval = '-1 week';
-                $now = new \DateTime('friday last week');
+                $now = new \DateTime('last week friday');
             }
 
             $data = $this->_getDataArray($widgetId, $row);
@@ -114,14 +114,18 @@ class DefaultController extends Controller
             $response['keys'][] = $rowKey;
             $jql = $jqls[$row-1];
 
-            for ($date = $now; $date > $startDate; $date->modify($interval))
+            for ($now; $now > $startDate; $now->modify($interval))
             {
-                $keyDate = new \DateTime($date->format('Y-m-d 12:00:00'));
+                $keyDate = new \DateTime($now->format('Y-m-d 12:00:00'));
                 $dateTs= $keyDate->getTimestamp();
 
                 if (!isset($data[$dateTs]) && $updateCounter<1) {
                     $updateCounter++;
-                    $jqlQuery = str_replace('%date%', $date->format('Y-m-d'), $jql);
+                    $start = clone $now;
+                    $start->modify($interval);
+                    $jqlQuery = str_replace('%date%', $now->format('Y-m-d'), $jql);
+                    $jqlQuery = str_replace('%start%', $start->format('Y-m-d'), $jqlQuery);
+                    $jqlQuery = str_replace('%end%', $now->format('Y-m-d'), $jqlQuery);
 
                     try {
                         $issues = $issueService->search($jqlQuery, 0, 10000, ['key','created','updated']);
