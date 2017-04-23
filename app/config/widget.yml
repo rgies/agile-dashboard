@@ -8,4 +8,4 @@ parameters:
         JiraListWidgetBundle:       'Jira - List of top 5 issues'
         JiraHighEffortWidgetBundle: 'Jira - Highest efforts list'
         JiraTimeTrackingWidgetBundle: 'Jira - Time Tracking'
-        JiraHistoryWidgetBundle: 'Jira - History'
+        JiraHistoryWidgetBundle: 'Jira - History Chart (Line, Bar Area)'

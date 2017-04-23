@@ -18,6 +18,7 @@ parameters:
         600:    'Every 10 minutes (default)'
         900:    'Every 15 minutes'
         3600:   'Every 1 hour'
+        14400:  'Every 4 hour'
         28800:  'Every 8 hour'
 
     # Widget icons

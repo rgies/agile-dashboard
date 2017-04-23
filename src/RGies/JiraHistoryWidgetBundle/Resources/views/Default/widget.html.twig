@@ -35,7 +35,7 @@
                         dataRequestHandler.retryQueue.push(
                             {
                                 'url':'{{ path('JiraHistoryWidgetBundle-collect-data') }}',
-                                'params': {id:{{ widget.id }}, type:'{{ widget.type }}', updateInterval:'{{ widget.updateInterval }}'},
+                                'params': {id:{{ widget.id }}, type:'{{ widget.type }}', needUpdate: 1, updateInterval:'{{ widget.updateInterval }}'},
                                 'callback': arguments.callee
                             }
                         );

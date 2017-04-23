@@ -41,11 +41,14 @@ class DefaultController extends Controller
         $widgetId       = $request->get('id');
         $widgetType     = $request->get('type');
         $updateInterval = $request->get('updateInterval');
+        $needUpdate     = $request->get('needUpdate');
 
         // Get data from cache
         $cache = $this->get('CacheService');
-        if ($cacheValue = $cache->getValue('JiraHistoryWidgetBundle', $widgetId, null, $updateInterval)) {
-            return new Response($cacheValue, Response::HTTP_OK);
+        if ($needUpdate === null) {
+            if ($cacheValue = $cache->getValue('JiraHistoryWidgetBundle', $widgetId, null, $updateInterval)) {
+                return new Response($cacheValue, Response::HTTP_OK);
+            }
         }
 
         $widgetConfig = $this->get('WidgetService')->getWidgetConfig($widgetType, $widgetId);
