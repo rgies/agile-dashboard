@@ -1,6 +1,8 @@
 # Agile Dashboard
 Dashboard with agile metrics based on Atlassian Jira.
 
+![Sample Dashboard](http://www.rgies.de/images/agile-dashboard.jpg)
+
 ## How to install
 
 1. Download and install **[Composer](http://getcomposer.org/download)**.
