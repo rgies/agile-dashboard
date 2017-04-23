@@ -32,11 +32,11 @@ Dashboard with metrics for agile companies
         
 2. Add generated widget name to config 
 
-    _app/config/app.yml_
+    _app/config/widget.yml_
 
         # Widget plugins
         widget_plugins:
-            'MyWidgetBundle': 'My Widget'
+            'MyWidgetBundle': 'My widget name'
 
 3. Insert view and controller code
 
@@ -57,6 +57,11 @@ Dashboard with metrics for agile companies
         );
         // ======================================================
 
-4. Update database schema
+4. Optional change data model
+
+    Adapt entity file _Entity/WidgetConfig.php_
+    Adapt form file _Form/WidgetConfigType.php_
+
+5. Update database schema
 
 		$ app/console doctrine:schema:update --force

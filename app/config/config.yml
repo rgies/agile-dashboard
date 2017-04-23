@@ -1,6 +1,7 @@
 imports:
-    - { resource: parameters.yml }
+    - { resource: widget.yml }
     - { resource: app.yml }
+    - { resource: parameters.yml }
     - { resource: security.yml }
 
 framework:
