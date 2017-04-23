@@ -59,8 +59,9 @@ Dashboard with metrics for agile companies
 
 4. Optional change data model
 
-    Adapt entity file _Entity/WidgetConfig.php_
-    Adapt form file _Form/WidgetConfigType.php_
+    1. Adapt entity file _Entity/WidgetConfig.php_
+    
+    2. Adapt form file _Form/WidgetConfigType.php_
 
 5. Update database schema
 
