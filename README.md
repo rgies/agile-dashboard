@@ -5,7 +5,7 @@ Dashboard with agile metrics based on Atlassian Jira.
 
 1. Download and install **[Composer](http://getcomposer.org/download)**.
 
-2. Clone the repository:
+2. Clone or [download](https://github.com/rgies/agile-dashboard/archive/master.zip) the repository:
 
 		$ git clone https://github.com/rgies/agile-dashboard.git
 		$ cd agile-dashboard
