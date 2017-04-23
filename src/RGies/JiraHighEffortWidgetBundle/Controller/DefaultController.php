@@ -90,7 +90,7 @@ class DefaultController extends Controller
                     . '</i></td>';
 
                 if ($size == '2x1' || $size == '2x2') {
-                    $response['value'] .= '<td>' . $colSpacer. substr($summaryArray[$key],0,50) . '...</td>';
+                    $response['value'] .= '<td>' . $colSpacer. $this->_getShortSummery($summaryArray[$key], 50) . '</td>';
                 }
 
                 $response['value'] .= '</tr>';
@@ -114,6 +114,24 @@ class DefaultController extends Controller
         $cache->setValue('JiraHighEffortWidgetBundle', $widgetId, json_encode($response));
 
         return new Response(json_encode($response), Response::HTTP_OK);
+    }
+
+    /**
+     * Get shorten summary.
+     *
+     * @param $summery
+     * @param int $len
+     * @return string
+     */
+    protected function _getShortSummery($summery, $len = 30)
+    {
+        if (strlen($summery) > ($len-1)) {
+            $shortName = mb_substr($summery, 0, ($len-1)) . '...';
+        } else {
+            $shortName = $summery;
+        }
+
+        return '<span title="' . str_replace('"', '&quot;', $summery) . '">' . htmlentities($shortName) . '</span>';
     }
 
     /**

@@ -40,6 +40,7 @@ class DefaultController extends Controller
         $widgetId       = $request->get('id');
         $widgetType     = $request->get('type');
         $updateInterval = $request->get('updateInterval');
+        $size           = $request->get('size');
 
         // Get data from cache
         $cache = $this->get('CacheService');
@@ -50,12 +51,14 @@ class DefaultController extends Controller
         $widgetConfig = $this->get('WidgetService')->getWidgetConfig($widgetType, $widgetId);
 
         $response = array();
+        $colSpacer = str_repeat('&nbsp;',5);
+        $maxLines = ($size=='1x2'||$size=='2x2') ? 15 : 5;
 
         $jql = $widgetConfig->getJqlQuery();
 
         try {
             $issueService = new IssueService($this->get('JiraCoreService')->getLoginCredentials());
-            $issues = $issueService->search($jql, 0, 5, ['key','summary','created','resolutiondate','aggregatetimespent']);
+            $issues = $issueService->search($jql, 0, $maxLines, ['key','summary','assignee','created','resolutiondate','aggregatetimespent']);
         } catch (JiraException $e) {
             $response['warning'] = wordwrap($e->getMessage(), 38, '<br/>');
             return new Response(json_encode($response), Response::HTTP_OK);
@@ -68,36 +71,59 @@ class DefaultController extends Controller
             foreach ($issues->getIssues() as $issue) {
                 $value = $value . '<tr style="white-space: nowrap;"><td><i class="fa fa-circle"></i> '
                     . $this->_createLink($issue->key,$issue->fields->summary)
-                    . '&nbsp;&nbsp;</td>';
+                    . $colSpacer . '</td>';
 
                 // calc issue age
                 $issueAge = ($issue->fields->resolutiondate) ? new \DateTime($issue->fields->resolutiondate) : new \DateTime();
                 $issueAge = $issueAge->diff($issue->fields->created);
                 $issueAgeDays = $issueAge->format('%a');
+                if ($issue->fields->assignee) {
+                    $assignee = $this->_getShortName($issue->fields->assignee->displayName);
+                } else {
+                    $assignee = 'Unassigned';
+                }
 
                 $timeSpend = '0h';
                 if ($issue->fields->aggregatetimespent) {
                     if ($issue->fields->aggregatetimespent / 3600 > 600) {
-                        $timeSpend = round($issue->fields->aggregatetimespent / 3600 / 8,1) . 'd';
+                        $timeSpend = round($issue->fields->aggregatetimespent / 3600 / 8, 1) . 'd';
                     } else {
-                        $timeSpend = round($issue->fields->aggregatetimespent / 3600,1) . 'h';
+                        $timeSpend = round($issue->fields->aggregatetimespent / 3600, 1) . 'h';
                     }
                 }
 
                 switch ($widgetConfig->getExtendedInfo())
                 {
                     case 'age_invest':
-                        $value .= '<td><i class="fa fa-coffee"></i> ' . $issueAgeDays . 'd</td>'
-                            . '<td>&nbsp;&nbsp;<i class="ion ion-android-stopwatch"></i> ' . $timeSpend . '</td>';
+                        $value .= '<td><i title="Issue age" class="fa fa-coffee"></i> <i>' . $issueAgeDays . 'd</i></td>'
+                            . '<td>' . $colSpacer . '<i title="Time spend" class="ion ion-android-stopwatch"></i> <i>'
+                            . $timeSpend . '</i></td>';
+
+                        if ($size == '2x1' or $size == '2x2') {
+                            $value .= '<td><i>' . $colSpacer . $this->_getShortSummery($issue->fields->summary, 30)
+                                . '</i></td>';
+                        }
+                        break;
+
+                    case 'assignee_invest':
+                        $value .= '<td><i title="Assigned to" class="fa fa-user"></i> <i>' . $assignee . '</i></td>'
+                            . '<td>&nbsp;&nbsp;<i title="Time spend" class="ion ion-android-stopwatch"></i> <i>'
+                            . $timeSpend . '</i></td>';
+
+                        if ($size == '2x1' or $size == '2x2') {
+                            $value .= '<td><i>' . $colSpacer . $this->_getShortSummery($issue->fields->summary, 40)
+                                . '</i></td>';
+                        }
                         break;
 
                     case 'summery':
                     default:
                         $value .= '<td><i><span title="' . str_replace('"', '&quot;', $issue->fields->summary)
-                            . '">' . htmlentities(substr($issue->fields->summary, 0, 18))
-                            . '...</span></i></td>';
+                            . '">' . $this->_getShortSummery($issue->fields->summary, 15)
+                            . '</span></i></td>';
                         break;
                 }
+
 
                 $value .= '</tr>';
             }
@@ -114,6 +140,50 @@ class DefaultController extends Controller
         return new Response(json_encode($response), Response::HTTP_OK);
     }
 
+    /**
+     * Get shorten summary.
+     *
+     * @param $summery
+     * @param int $len
+     * @return string
+     */
+    protected function _getShortSummery($summery, $len = 30)
+    {
+        if (strlen($summery) > ($len-1)) {
+            $shortName = mb_substr($summery, 0, ($len-1)) . '...';
+        } else {
+            $shortName = $summery;
+        }
+
+        return '<span title="' . str_replace('"', '&quot;', $summery) . '">' . htmlentities($shortName) . '</span>';
+    }
+
+    /**
+     * Get shorten user name.
+     *
+     * @param $name
+     * @param int $len
+     * @return string
+     */
+    protected function _getShortName($name, $len = 10)
+    {
+        $split = explode(' ', $name, 2);
+        $shortName = substr($split[0], 0, 1) . '.' . $split[1];
+
+        if (strlen($shortName) > ($len-1)) {
+            $shortName = mb_substr($shortName, 0, ($len-1)) . '...';
+        }
+
+        return '<span title="' . str_replace('"', '&quot;', $name) . '">' . htmlentities($shortName) . '</span>';
+    }
+
+    /**
+     * Create link.
+     *
+     * @param $key
+     * @param $text
+     * @return string
+     */
     protected function _createLink($key, $text)
     {
         return '<a href="' . $this->getParameter('jira_host') . '/browse/' . $key

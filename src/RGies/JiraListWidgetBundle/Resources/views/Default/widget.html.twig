@@ -21,7 +21,7 @@
 {% block script %}
     <script>
         addDataRequest('{{ path('JiraListWidgetBundle-collect-data') }}'
-            , {id:{{ widget.id }}, type:'{{ widget.type }}', updateInterval:{{ widget.updateInterval }}}
+            , {id:{{ widget.id }}, type:'{{ widget.type }}', size: '{{ widget.size }}', updateInterval:{{ widget.updateInterval }}}
             , function (data) {
             var response = JSON.parse(data);
 

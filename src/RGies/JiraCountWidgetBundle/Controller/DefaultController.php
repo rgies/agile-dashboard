@@ -37,6 +37,8 @@ class DefaultController extends Controller
         $widgetId       = $request->get('id');
         $widgetType     = $request->get('type');
         $updateInterval = $request->get('updateInterval');
+        $size           = $request->get('size');
+
 
         // Data cache
         $cache = $this->get('CacheService');
