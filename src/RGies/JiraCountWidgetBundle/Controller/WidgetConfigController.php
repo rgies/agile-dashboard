@@ -9,6 +9,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use RGies\JiraCountWidgetBundle\Entity\WidgetConfig;
 use RGies\JiraCountWidgetBundle\Form\WidgetConfigType;
+use RGies\MetricsBundle\Entity\Widgets;
+
 
 /**
  * WidgetConfig controller.
@@ -107,8 +109,10 @@ class WidgetConfigController extends Controller
         $entity = $items[0];
 
         $editForm = $this->createEditForm($entity);
+        $widget = $em->getRepository('MetricsBundle:Widgets')->find($id);
 
         return array(
+            'widget'      => $widget,
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
         );

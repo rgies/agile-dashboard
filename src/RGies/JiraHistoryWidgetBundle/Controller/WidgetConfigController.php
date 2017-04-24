@@ -10,6 +10,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use RGies\JiraHistoryWidgetBundle\Entity\WidgetConfig;
 use RGies\JiraHistoryWidgetBundle\Form\WidgetConfigType;
 use RGies\JiraHistoryWidgetBundle\Entity\WidgetData;
+use RGies\MetricsBundle\Entity\Widgets;
+
 
 /**
  * WidgetConfig controller.
@@ -108,8 +110,10 @@ class WidgetConfigController extends Controller
         $entity = $items[0];
 
         $editForm = $this->createEditForm($entity);
+        $widget = $em->getRepository('MetricsBundle:Widgets')->find($id);
 
         return array(
+            'widget'      => $widget,
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
         );

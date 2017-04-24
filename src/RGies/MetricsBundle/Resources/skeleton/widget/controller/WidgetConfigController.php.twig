@@ -10,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use {{ namespace }}\Entity\WidgetConfig;
 use {{ namespace }}\Form\WidgetConfigType;
+use RGies\MetricsBundle\Entity\Widgets;
 {% endblock use_statements %}
 
 {% block class_definition %}
@@ -112,8 +113,10 @@ class WidgetConfigController extends Controller
         $entity = $items[0];
 
         $editForm = $this->createEditForm($entity);
+        $widget = $em->getRepository('MetricsBundle:Widgets')->find($id);
 
         return array(
+            'widget'      => $widget,
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
         );
