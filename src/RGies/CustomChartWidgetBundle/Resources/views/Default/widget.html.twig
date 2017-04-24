@@ -1,0 +1,30 @@
+{% extends "MetricsBundle::templates/default-widget.html.twig" %}
+
+{% block widget_body %}
+    <div id="chart-{{ widget.id }}" style="height: {% if (widget.size=='2x2') or (widget.size=='1x2') %}270{% else %}122{% endif %}px; top: -7px"></div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        // HERE YOU CAN GET YOUR WIDGET DATA
+        addDataRequest('{{ path('CustomChartWidgetBundle-collect-data') }}'
+            , {id:{{ widget.id }}, type:'{{ widget.type }}', updateInterval:'{{ widget.updateInterval }}'}
+            , function (data) {
+                    var response = JSON.parse(data);
+
+                    $('#chart-{{ widget.id }}').html('');
+
+                    new Morris.{{ config.chartType }}({
+                        element: 'chart-{{ widget.id }}',
+                        hideHover: 'auto',
+                        data: response['data'],
+                        xkey: 'date',
+                        ykeys: response['keys'],
+                        parseTime: false,
+                        labels: response['labels'],
+                        fillOpacity: 0.5
+                    });
+                }
+        );
+    </script>
+{% endblock %}

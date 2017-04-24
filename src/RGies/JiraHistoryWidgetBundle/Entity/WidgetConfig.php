@@ -32,28 +32,28 @@ class WidgetConfig
     /**
      * @var string
      *
-     * @ORM\Column(name="chart_type", type="text", length=100, nullable=true)
+     * @ORM\Column(name="chart_type", type="string", length=100, nullable=true)
      */
     private $chart_type='Area';
 
     /**
      * @var string
      *
-     * @ORM\Column(name="start_date", type="text", length=100, nullable=true)
+     * @ORM\Column(name="start_date", type="string", length=100, nullable=true)
      */
     private $start_date;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="end_date", type="text", length=100, nullable=true)
+     * @ORM\Column(name="end_date", type="string", length=100, nullable=true)
      */
     private $end_date;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="label1", type="text", length=100, nullable=true)
+     * @ORM\Column(name="label1", type="string", length=255, nullable=true)
      */
     private $label1;
 

@@ -2,6 +2,7 @@ parameters:
     # Widget plugins
     widget_plugins:
         SeparatorWidgetBundle:      'Separator'
+        # JIRA
         JiraCountWidgetBundle:      'Jira - Count issues'
         JiraSpendTimeWidgetBundle:  'Jira - Time spend on issues'
         JiraPerformanceWidgetBundle: 'Jira - Performance'
@@ -9,3 +10,5 @@ parameters:
         JiraHighEffortWidgetBundle: 'Jira - Highest efforts list'
         JiraTimeTrackingWidgetBundle: 'Jira - Time Tracking'
         JiraHistoryWidgetBundle: 'Jira - History Chart (Line, Bar Area)'
+        # Custom
+        CustomChartWidgetBundle: 'Custom - Chart'

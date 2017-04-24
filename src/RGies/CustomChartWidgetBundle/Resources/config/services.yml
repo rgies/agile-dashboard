@@ -1,0 +1,11 @@
+# Plugin Parameters
+parameters:
+    CustomChartWidgetBundleConfig:
+        widget_view: 'CustomChartWidgetBundle::default/widget.html.twig'
+        edit_action: 'CustomChartWidgetBundle_widgetconfig_edit'
+
+# Plugin Services
+services:
+    CustomChartWidgetBundleService:
+        class: RGies\CustomChartWidgetBundle\Services\WidgetPluginService
+        arguments: [@doctrine, %CustomChartWidgetBundleConfig%]
