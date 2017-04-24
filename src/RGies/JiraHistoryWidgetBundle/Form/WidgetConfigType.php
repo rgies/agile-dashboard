@@ -26,7 +26,10 @@ class WidgetConfigType extends AbstractType
     {
         $builder
             ->add('widget_id','hidden')
-            ->add('chart_type','choice', array('choices' => array('Area'=>'Area Chart', 'Line'=>'Line Chart', 'Bar'=>'Bar Chart')))
+            ->add('chart_type','choice', array('choices' => array(
+                'Area'=>'Area Chart (stacked)',
+                'Line'=>'Line Chart (combined)',
+                'Bar'=>'Bar Chart (separated)')))
             ->add('start_date','text',array('required' => false, 'label' => 'Start date (2017-01-15 / -7 days / -1 month)'))
             ->add('end_date','text',array('required' => false))
             ->add('label1', 'text',array('label' => 'Label'))

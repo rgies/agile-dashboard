@@ -74,7 +74,7 @@ class DefaultController extends Controller
 
         if ($widgetConfig->getEndDate()) {
             try {
-                $endDate = new \DateTime($widgetConfig->getEndDate());
+                $endDate = new \DateTime($widgetConfig->getEndDate() . ' 23:59:59');
             } catch (Exception $e)
             {
                 $response['warning'] = wordwrap('Wrong end date format: ' . $e->getMessage(), 38, '<br/>');
