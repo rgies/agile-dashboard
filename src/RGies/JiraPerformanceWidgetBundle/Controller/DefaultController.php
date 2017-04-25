@@ -58,10 +58,11 @@ class DefaultController extends Controller
         $totalCount = 0;
         $issueCount = 0;
         $storyPointField = 'customfield_10004';
+        $workDays = array();
 
         try {
             $issueService = new IssueService($this->get('JiraCoreService')->getLoginCredentials());
-            $issues = $issueService->search($jql, 0, 10000, ['aggregatetimespent',$storyPointField]);
+            $issues = $issueService->search($jql, 0, 10000, ['updated','aggregatetimespent',$storyPointField]);
             $totalCount = $issues->getTotal();
 
             foreach ($issues->getIssues() as $issue) {
@@ -72,6 +73,14 @@ class DefaultController extends Controller
                     if ($issue->fields->aggregatetimespent) {
                         $spendTime += $issue->fields->aggregatetimespent;
                     }
+                }
+
+                if ($issue->fields->updated) {
+                    $updatedKey = $issue->fields->updated->format('Y-m-d');
+                    if (!isset($workDays[$updatedKey])) {
+                        $workDays[$updatedKey] = 0;
+                    }
+                    $workDays[$updatedKey]++;
                 }
 
             }
@@ -87,13 +96,25 @@ class DefaultController extends Controller
             return new Response(json_encode($response), Response::HTTP_OK);
         }
 
+        $response['days'] = count($workDays);
         $response['sum'] = $spendStoryPoints;
         $response['unit'] = 'SP';
         $response['link'] = $this->getParameter('jira_host') . '/issues/?jql=' . urlencode($jql);
+        $response['subtext'] = '';
 
-        $response['subtext'] = $issueCount . ' issues'
-            . ' / Ø ' . round($spendTime / 3600 / $issueCount, 1) . 'h'
-            . '<br/>1SP = ' . round($spendTime / 3600 / $response['sum'], 1) . 'h';
+        if (count($workDays)) {
+            $response['subtext'] .= count($workDays) . ' days / '
+                . round($spendStoryPoints / count($workDays), 1) . ' SP/d<br/>';
+        }
+
+        $response['subtext'] .= $issueCount . ' issues';
+        if ($issueCount) {
+            $response['subtext'] .= ' / Ø ' . round($spendTime / 3600 / $issueCount, 1) . 'h';
+        }
+
+        if ($response['sum']) {
+            $response['subtext'] .= ' (1SP = ' . round($spendTime / 3600 / $response['sum'], 1) . 'h)';
+        }
 
         $cache->setValue('JiraPerformanceWidgetBundle', $widgetId, json_encode($response));
 

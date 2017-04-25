@@ -31,6 +31,21 @@
                         ykeys: response['keys'],
                         parseTime: false,
                         labels: response['labels'],
+                        {% if (config.chartType=='Area') or (config.chartType=='Bar') %}
+                        hoverCallback: function (index, options, content, row) {
+                            var i=0, sum = 0;
+                            for (var key in row) {
+                                if (row.hasOwnProperty(key)) {
+                                    i++;
+                                    if (key.charAt(0) == 'y') {
+                                        sum = sum + row[key];
+                                    }
+                                }
+                            }
+                            if (i>2) content = content + '\nΣ: ' + sum;
+                            return content;
+                        },
+                        {% endif %}
                         fillOpacity: 0.5
                     });
 

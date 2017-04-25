@@ -29,7 +29,7 @@ class WidgetConfigType extends AbstractType
         $builder
             ->add('widget_id','hidden')
             ->add('icon', 'choice', array('choices' => $icons))
-            ->add('jql_query','text',array('attr'=>array('placeholder'=>'project=PI and resolution=Unresolved and type=Bug')))
+            ->add('jql_query','textarea',array('attr'=>array('placeholder'=>'project=PI and resolution=Unresolved and type=Bug')))
         ;
     }
     

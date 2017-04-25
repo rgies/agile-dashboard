@@ -108,6 +108,7 @@ class WidgetConfigController extends Controller
 
         $entity = $items[0];
 
+        $editForm = $this->createEditForm($entity);
         $widget = $em->getRepository('MetricsBundle:Widgets')->find($id);
 
         return array(

@@ -93,19 +93,25 @@ class DefaultController extends Controller
         $row = 1;
         foreach ($labels as $label)
         {
-            $now = new \DateTime();
+            $now = clone $endDate;
             $interval = '-1 day';
 
             // auto calculate interval
             if ($days > 300) {
                 $interval = '-3 month';
-                $now = new \DateTime('first day of this month');
+                if (!$widgetConfig->getEndDate()) {
+                    $now = new \DateTime('first day of this month');
+                }
             } elseif ($days > 100) {
                 $interval = '-1 month';
-                $now = new \DateTime('first day of this month');
-            } elseif ($days > 10) {
+                if (!$widgetConfig->getEndDate()) {
+                    $now = new \DateTime('first day of this month');
+                }
+            } elseif ($days > 14) {
                 $interval = '-1 week';
-                $now = new \DateTime('last week friday');
+                if (!$widgetConfig->getEndDate()) {
+                    $now = new \DateTime('last week sunday');
+                }
             }
 
             $data = $this->_getDataArray($widgetId, $row);
