@@ -2,6 +2,7 @@
 
 {% block widget_body %}
     <div id="chart-{{ widget.id }}" style="height: {% if (widget.size=='2x2') or (widget.size=='1x2') %}270{% else %}122{% endif %}px; top: -7px"></div>
+    <div id="chart-legend-{{ widget.id }}" style="position: absolute; right:35px; top:28px; font-size: 9px"></div>
 {% endblock %}
 
 {% block script %}
@@ -48,6 +49,10 @@
                         {% endif %}
                         fillOpacity: 0.5
                     });
+
+                    if (response['legend']) {
+                        $('#chart-legend-{{ widget.id }}').html(response['legend']);
+                    }
 
                     if (response['need-update']) {
                         dataRequestHandler.retryQueue.push(

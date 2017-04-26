@@ -87,6 +87,7 @@ class DefaultController extends Controller
         $response['labels'] = [];
         $response['keys'] = [];
         $days = $startDate->diff($endDate)->format('%a');
+        $colors = ['#0b62a4', '#7A92A3', '#4da74d', '#afd8f8', '#edc240', '#cb4b4b', '#9440ed'];
 
         $issueService = new IssueService($this->get('JiraCoreService')->getLoginCredentials());
 
@@ -157,6 +158,11 @@ class DefaultController extends Controller
             }
 
             $row++;
+        }
+
+        $response['legend'] = '';
+        foreach ($response['labels'] as $key=>$label) {
+            $response['legend'] .= '&nbsp;&nbsp;<i style="color:' . $colors[$key] . '" class="fa fa-circle"></i> ' . $label;
         }
 
         $response['data'] = array_reverse(array_values($response['data']));
