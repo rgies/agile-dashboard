@@ -1,5 +1,5 @@
 # Agile Dashboard
-Dashboard with agile metrics based on Atlassian Jira.
+Dashboard with agile metrics connected to Atlassian Jira.
 
 ![Sample Dashboard](http://www.rgies.de/images/agile-dashboard.jpg)
 
