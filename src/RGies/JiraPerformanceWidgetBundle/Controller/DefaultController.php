@@ -102,18 +102,23 @@ class DefaultController extends Controller
         $response['link'] = $this->getParameter('jira_host') . '/issues/?jql=' . urlencode($jql);
         $response['subtext'] = '';
 
-        if (count($workDays)) {
-            $response['subtext'] .= count($workDays) . ' days / '
-                . round($spendStoryPoints / count($workDays), 1) . ' SP/d<br/>';
+        if ($widgetConfig->getExtendedInfo() == 'velocity') {
+            if (count($workDays)) {
+                $response['subtext'] .= count($workDays) . ' days / '
+                    . round($spendStoryPoints / count($workDays), 1) . ' SP/d<br/>';
+            }
         }
 
         $response['subtext'] .= $issueCount . ' issues';
-        if ($issueCount) {
-            $response['subtext'] .= ' / Ø ' . round($spendTime / 3600 / $issueCount, 1) . 'h';
-        }
 
-        if ($response['sum']) {
-            $response['subtext'] .= ' (1SP = ' . round($spendTime / 3600 / $response['sum'], 1) . 'h)';
+        if ($widgetConfig->getExtendedInfo() == 'velocity') {
+            if ($issueCount) {
+                $response['subtext'] .= ' / Ø ' . round($spendTime / 3600 / $issueCount, 1) . 'h';
+            }
+
+            if ($response['sum']) {
+                $response['subtext'] .= ' (1SP = ' . round($spendTime / 3600 / $response['sum'], 1) . 'h)';
+            }
         }
 
         $cache->setValue('JiraPerformanceWidgetBundle', $widgetId, json_encode($response));

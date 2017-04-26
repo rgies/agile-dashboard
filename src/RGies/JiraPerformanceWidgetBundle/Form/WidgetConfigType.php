@@ -29,6 +29,13 @@ class WidgetConfigType extends AbstractType
         $builder
             ->add('widget_id','hidden')
             ->add('icon', 'choice', array('choices' => $icons))
+            ->add('extended_info','choice',array(
+                'required' => false,
+                'choices' => array(
+                    '' => 'Issue count',
+                    'velocity' => 'Calculated velocity',
+                )
+            ))
             ->add('jql_query','text',array('attr'=>array('placeholder'=>'project=PI and resolutiondate>=startOfDay(-7) and type=Bug')))
         ;
     }

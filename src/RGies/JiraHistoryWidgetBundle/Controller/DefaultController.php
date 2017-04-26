@@ -122,7 +122,7 @@ class DefaultController extends Controller
 
             for ($now; $now > $startDate; $now->modify($interval))
             {
-                $keyDate = new \DateTime($now->format('Y-m-d 12:00:00'));
+                $keyDate = new \DateTime($now->format('Y-m-d'));
                 $dateTs= $keyDate->getTimestamp();
 
                 if (!isset($data[$dateTs]) && $updateCounter<1) {
@@ -131,7 +131,7 @@ class DefaultController extends Controller
                     $start->modify($interval);
                     $jqlQuery = str_replace('%date%', $now->format('Y-m-d'), $jql);
                     $jqlQuery = str_replace('%start%', $start->format('Y-m-d'), $jqlQuery);
-                    $jqlQuery = str_replace('%end%', $now->format('Y-m-d'), $jqlQuery);
+                    $jqlQuery = str_replace('%end%', $now->format('Y-m-d 23:59'), $jqlQuery);
 
                     try {
                         $issues = $issueService->search($jqlQuery, 0, 10000, ['key','created','updated']);

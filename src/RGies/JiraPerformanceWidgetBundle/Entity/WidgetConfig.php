@@ -43,6 +43,13 @@ class WidgetConfig
      */
     private $jql_query;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="extended_info", type="text", length=100, nullable=true)
+     */
+    private $extended_info = '';
+
 
     /**
      * Get id
@@ -148,5 +155,29 @@ class WidgetConfig
     public function getJqlQuery()
     {
         return $this->jql_query;
+    }
+
+    /**
+     * Set extendedInfo
+     *
+     * @param string $extendedInfo
+     *
+     * @return WidgetConfig
+     */
+    public function setExtendedInfo($extendedInfo)
+    {
+        $this->extended_info = $extendedInfo;
+
+        return $this;
+    }
+
+    /**
+     * Get extendedInfo
+     *
+     * @return string
+     */
+    public function getExtendedInfo()
+    {
+        return $this->extended_info;
     }
 }
