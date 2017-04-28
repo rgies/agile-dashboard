@@ -403,7 +403,7 @@ class DashboardController extends Controller
 
         // persist dashboard
         $dashboard = new Dashboard($data->dashboard);
-        $dashboard->setTitle($dashboard->getTitle() . '-Copy');
+        $dashboard->setTitle($dashboard->getTitle() . '-new');
         $em->persist($dashboard);
         $em->flush();
 
