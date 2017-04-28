@@ -18,6 +18,14 @@ interface WidgetPluginInterface
     public function getWidgetConfig($widgetType, $widgetId = null, $toArray = false);
 
     /**
+     * Set configuration by given widget id.
+     *
+     * @param string $widgetType Type name of the widget
+     * @param array $data Config data
+     */
+    public function setWidgetConfig($widgetType, $data);
+
+    /**
      * Gets path to include the widget at the dashboard.
      *
      * @param string $widgetType Type name of the widget

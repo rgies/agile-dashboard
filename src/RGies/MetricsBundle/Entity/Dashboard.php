@@ -40,6 +40,22 @@ class Dashboard
      */
     private $widgets;
 
+    /**
+     * Constructor
+     */
+    public function __construct($init = null)
+    {
+        if ($init !== null)
+        {
+            foreach ((array)$init as $key=>$value)
+            {
+                $this->$key = $value;
+            }
+            $this->id = null;
+        }
+
+        $this->widget = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Get id
@@ -97,15 +113,6 @@ class Dashboard
     public function getPos()
     {
         return $this->pos;
-    }
-
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->widget = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**

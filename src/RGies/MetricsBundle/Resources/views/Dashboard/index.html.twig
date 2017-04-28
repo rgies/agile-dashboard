@@ -1,13 +1,28 @@
 {% extends "MetricsBundle::layout.html.twig" %}
 
 {% block content -%}
-<div class="container" xmlns="http://www.w3.org/1999/html">
+    <!-- Upload Dialog -->
+    {% set content %}
+        <form id="upload-form" method="post" action="{{ path('dashboard_import') }}" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="filebutton-upl" class="control-label">File</label>
+                <input id="filebutton-upl" name="file[]" multiple="multiple" type="file" class="filestyle" data-buttonText="Select file" data-iconName="glyphicon-import" data-input="true" data-buttonName="btn-default">
+            </div>
+        </form>
+    {% endset %}
+    {% include 'MetricsBundle::Templates/modal.html.twig' with {'id': 'upload-modal', 'title': 'Import', 'submit': 'Import', 'content': content} only %}
+
+    <div class="container" xmlns="http://www.w3.org/1999/html">
     <div class="page-header">
         <h1>Dashboard list</h1>
     </div>
     <div>
-        <button type="button" class="btn btn-primary" onclick="location.href='{{ path('dashboard_new') }}'">
+        <button type="button" class="btn btn-primary pull-left" onclick="location.href='{{ path('dashboard_new') }}'">
             <i class="fa fa-plus"></i> Add dashboard
+        </button>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#upload-modal">
+            <i class="glyphicon glyphicon-import"></i> Import dashboard
         </button>
     </div>
     <br/>
@@ -16,7 +31,6 @@
             <tr>
                 <th>Id</th>
                 <th>Title</th>
-                <th>Pos</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -25,7 +39,6 @@
             <tr>
                 <td>{{ entity.id }}</td>
                 <td><a href="{{ path('dashboard_edit', { 'id': entity.id }) }}">{{ entity.title }}</a></td>
-                <td>{{ entity.pos }}</td>
                 <td>
                     <a href="{{ path('home', { 'id': entity.id }) }}"><i class="fa fa-dashboard"></i> View</a>
                     &nbsp;&nbsp;

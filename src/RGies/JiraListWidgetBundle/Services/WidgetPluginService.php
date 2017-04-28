@@ -67,6 +67,22 @@ class WidgetPluginService implements WidgetPluginInterface
     }
 
     /**
+     * Set configuration by given widget id.
+     *
+     * @param string $widgetType Type name of the widget
+     * @param array $data Config data
+     */
+    public function setWidgetConfig($widgetType, $data)
+    {
+        $em = $this->_doctrine->getManager();
+
+        $widgetConfig = new WidgetConfig($data);
+
+        $em->persist($widgetConfig);
+        $em->flush();
+    }
+
+    /**
      * Deletes widget configuration.
      *
      * @param integer $widgetId

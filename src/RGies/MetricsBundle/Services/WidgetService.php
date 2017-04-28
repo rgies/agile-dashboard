@@ -69,6 +69,18 @@ class WidgetService
     }
 
     /**
+     * Set configuration by given widget id.
+     *
+     * @param string $widgetType Type name of the widget
+     * @param array $data Config value
+     */
+    public function setWidgetConfig($widgetType, $data)
+    {
+        $widgetService = $this->_loadPluginService($widgetType);
+        $widgetService->setWidgetConfig($widgetType, (array)$data);
+    }
+
+    /**
      * Deletes configuration by given widget id.
      *
      * @param string $widgetType Type name of the widget

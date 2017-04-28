@@ -2,6 +2,7 @@
 
 namespace RGies\MetricsBundle\Controller;
 
+use RGies\MetricsBundle\Entity\Widgets;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -30,7 +31,10 @@ class DashboardController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('MetricsBundle:Dashboard')->findAll();
+        $entities = $em->getRepository('MetricsBundle:Dashboard')->findBy(
+            array(),
+            array('pos'=>'ASC')
+        );
 
         return array(
             'entities' => $entities,
@@ -259,7 +263,6 @@ class DashboardController extends Controller
     {
         $data = array();
         $em = $this->getDoctrine()->getManager();
-        //$entity = $em->getRepository('MetricsBundle:Dashboard')->find($id);
 
         $dashboard = $em->getRepository('MetricsBundle:Dashboard')
             ->createQueryBuilder('d')
@@ -267,7 +270,11 @@ class DashboardController extends Controller
             ->setParameter('id', $id)
             ->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
 
-        $data['dashboard'] = $dashboard;
+        if (!$dashboard) {
+            throw $this->createNotFoundException('Dashboard not found');
+        }
+
+        $data['dashboard'] = $dashboard[0];
 
         $widgets = $em->getRepository('MetricsBundle:Widgets')
             ->createQueryBuilder('w')
@@ -353,6 +360,66 @@ class DashboardController extends Controller
         );
 
         return $response;
+    }
+
+    /**
+     * Import dashboard.
+     *
+     * @Route("/dashboard-import/", name="dashboard_import")
+     * @Template()
+     */
+    public function importDashboardAction(Request $request)
+    {
+        foreach ($request->files->get('file') as $file) {
+            $filename = 'uploads/' . $file->getClientOriginalName();
+
+            if (!move_uploaded_file($file->getPathname(), $filename)) {
+                throw $this->createNotFoundException('Error on file upload');
+            }
+
+            if (substr($file->getClientOriginalName(), -5) != '.json') {
+                throw $this->createNotFoundException('Only *.json files allowed');
+            }
+
+            //$title = basename($file->getClientOriginalName(), '.json');
+            $import = json_decode(file_get_contents($filename));
+
+            $this->_persistArray($import);
+
+            @unlink($filename);
+        }
+
+        return $this->forward('MetricsBundle:Dashboard:index');
+    }
+
+    /**
+     * Creates new dashboard database entry with given data.
+     *
+     * @param array $data Dashboard data
+     */
+    protected function _persistArray($data)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        // persist dashboard
+        $dashboard = new Dashboard($data->dashboard);
+        $dashboard->setTitle($dashboard->getTitle() . '-Copy');
+        $em->persist($dashboard);
+        $em->flush();
+
+        // persist widgets
+        foreach ($data->widgets as $widget) {
+            $id = $widget->id;
+            $widget->dashboard = $dashboard;
+            $widget = new Widgets($widget);
+            $em->persist($widget);
+            $em->flush();
+
+            // persist config
+            $config = $data->configs->$id;
+            $config->widget_id = $widget->getId();
+            $this->get('WidgetService')->setWidgetConfig($widget->getType(), $config);
+        }
     }
 
 

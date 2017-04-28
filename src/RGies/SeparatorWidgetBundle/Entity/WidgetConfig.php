@@ -36,6 +36,20 @@ class WidgetConfig
      */
     private $icon='';
 
+    /**
+     * Constructor
+     */
+    public function __construct($init = null)
+    {
+        if ($init !== null)
+        {
+            foreach ((array)$init as $key=>$value)
+            {
+                $this->$key = $value;
+            }
+            $this->id = null;
+        }
+    }
 
     /**
      * Get id

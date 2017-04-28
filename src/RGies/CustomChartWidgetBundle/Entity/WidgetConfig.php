@@ -57,6 +57,20 @@ class WidgetConfig
      */
     private $datarows="23,26,25\n45,50,51";
 
+    /**
+     * Constructor
+     */
+    public function __construct($init = null)
+    {
+        if ($init !== null)
+        {
+            foreach ((array)$init as $key=>$value)
+            {
+                $this->$key = $value;
+            }
+            $this->id = null;
+        }
+    }
 
     /**
      * Get id

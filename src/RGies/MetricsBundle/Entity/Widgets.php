@@ -70,6 +70,21 @@ class Widgets
     private $size;
 
     /**
+     * Constructor
+     */
+    public function __construct($init = null)
+    {
+        if ($init !== null)
+        {
+            foreach ((array)$init as $key=>$value)
+            {
+                $this->$key = $value;
+            }
+            $this->id = null;
+        }
+    }
+
+    /**
      * Get id
      *
      * @return integer

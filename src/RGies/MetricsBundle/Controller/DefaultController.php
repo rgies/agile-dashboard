@@ -58,6 +58,10 @@ class DefaultController extends Controller
 
         if (!$dashboard && $id) {
             $dashboard = $em->getRepository('MetricsBundle:Dashboard')->find($id);
+            if (!$dashboard) {
+                $result = $em->getRepository('MetricsBundle:Dashboard')->findBy(array(), array('pos'=>'ASC'));
+                $dashboard = $result[0];
+            }
         }
 
         // get widgets
