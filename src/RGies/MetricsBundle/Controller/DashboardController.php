@@ -382,9 +382,10 @@ class DashboardController extends Controller
             }
 
             //$title = basename($file->getClientOriginalName(), '.json');
-            $import = json_decode(file_get_contents($filename));
+            $import = json_decode(file_get_contents($filename), true);
+            $title = $import['dashboard']['title'] . '-new';
 
-            $this->_persistArray($import);
+            $this->_persistArray($import, $title);
 
             @unlink($filename);
         }
@@ -393,31 +394,56 @@ class DashboardController extends Controller
     }
 
     /**
+     * Copy dashboard.
+     *
+     * @Route("/dashboard-copy/", name="dashboard_copy")
+     * @Template()
+     */
+    public function copyDashboardAction(Request $request)
+    {
+        $id = $request->get('id');
+        $title = $request->get('title', 'Untitled copy');
+
+        if (!$id) {
+            throw $this->createNotFoundException('No dashboard id given.');
+        }
+
+        $dashboard = $this->_toArray($id);
+        $dashboard['dashboard']['title'] = $title;
+
+        $this->_persistArray($dashboard, $title);
+
+        return $this->forward('MetricsBundle:Dashboard:index');
+    }
+
+    /**
      * Creates new dashboard database entry with given data.
      *
      * @param array $data Dashboard data
+     * @param string $title Dashboard title
      */
-    protected function _persistArray($data)
+    protected function _persistArray($data, $title)
     {
         $em = $this->getDoctrine()->getManager();
 
         // persist dashboard
-        $dashboard = new Dashboard($data->dashboard);
-        $dashboard->setTitle($dashboard->getTitle() . '-new');
+        $dashboard = new Dashboard($data['dashboard']);
+        $dashboard->setTitle($title);
+
         $em->persist($dashboard);
         $em->flush();
 
         // persist widgets
-        foreach ($data->widgets as $widget) {
-            $id = $widget->id;
-            $widget->dashboard = $dashboard;
+        foreach ($data['widgets'] as $widget) {
+            $id = $widget['id'];
+            $widget['dashboard'] = $dashboard;
             $widget = new Widgets($widget);
             $em->persist($widget);
             $em->flush();
 
             // persist config
-            $config = $data->configs->$id;
-            $config->widget_id = $widget->getId();
+            $config = $data['configs'][$id];
+            $config['widget_id'] = $widget->getId();
             $this->get('WidgetService')->setWidgetConfig($widget->getType(), $config);
         }
     }

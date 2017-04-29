@@ -1,6 +1,18 @@
 {% extends "MetricsBundle::layout.html.twig" %}
 
 {% block content -%}
+    {#== Copy Dialog =====================================================================================#}
+    {% set content %}
+        <form id="copy-form" method="post" action="{{ path('dashboard_copy') }}" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="copy-title">Title</label>
+                <input id="copy-title" name="title" type="text" class="form-control" required="required">
+            </div>
+            <input id="copy-id" type="hidden" name="id" value="">
+        </form>
+    {% endset %}
+    {% include 'MetricsBundle::Templates/modal.html.twig' with {'id': 'copy-modal', 'title': 'Copy Dashboard', 'submit': 'Copy', 'content': content} only %}
+    {# END dialog #}
     <!-- Upload Dialog -->
     {% set content %}
         <form id="upload-form" method="post" action="{{ path('dashboard_import') }}" enctype="multipart/form-data">
@@ -44,6 +56,8 @@
                     &nbsp;&nbsp;
                     <a href="{{ path('dashboard_edit', { 'id': entity.id }) }}"><i class="fa fa-edit"></i> Edit</a>
                     &nbsp;&nbsp;
+                    <a href="javascript: copyDashboard({{ entity.id }}, '{{ entity.title }}')"><i class="fa fa-copy"></i> Copy</a>
+                    &nbsp;&nbsp;
                     <a href="{{ path('dashboard_export', { 'id': entity.id }) }}"><i class="fa fa-download"></i> Export</a>
                 </td>
             </tr>
@@ -55,4 +69,22 @@
         <i class="fa fa-arrow-circle-left"></i> Return to dashboard
     </a>
 </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        /**
+         * Copy dashboard.
+         *
+         * @param id
+         * @param title
+         */
+        function copyDashboard(id, title)
+        {
+            $('#copy-title').val(title + '-copy');
+            $('#copy-id').val(id);
+            $('#copy-modal').modal();
+        }
+
+    </script>
 {% endblock %}
