@@ -1,0 +1,54 @@
+{% extends "MetricsBundle::templates/default-widget.html.twig" %}
+
+{% block widget_body %}
+    <div id="chart-{{ widget.id }}" style="height: {% if (widget.size=='2x2') or (widget.size=='1x2') %}270{% else %}122{% endif %}px; top: -7px"></div>
+    <div id="chart-legend-{{ widget.id }}" style="position: absolute; right:35px; top:28px; font-size: 9px"></div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        // HERE YOU CAN GET YOUR WIDGET DATA
+        addDataRequest(
+            '{{ path('JiraBurnDownWidgetBundle-collect-data') }}',
+            {id:{{ widget.id }}, type:'{{ widget.type }}', updateInterval:'{{ widget.updateInterval }}'},
+            function (data) {
+                var response = JSON.parse(data);
+
+                $('#chart-{{ widget.id }}').html('');
+
+                if (response['warning']) {
+                    $('#chart-{{ widget.id }}').html(
+                        '<div class="widget-value-warning"><i class="fa fa-warning"></i> ' +
+                        response['warning'] + '</div>'
+                    );
+                    return;
+                }
+
+                new Morris.Line({
+                    element: 'chart-{{ widget.id }}',
+                    hideHover: 'auto',
+                    data: response['data'],
+                    xkey: 'date',
+                    ykeys: response['keys'],
+                    //parseTime: false,
+                    labels: response['labels'],
+                    fillOpacity: 0.5
+                });
+
+                if (response['legend']) {
+                    $('#chart-legend-{{ widget.id }}').html(response['legend']);
+                }
+
+                if (response['need-update']) {
+                    dataRequestHandler.retryQueue.push(
+                        {
+                            'url':'{{ path('JiraBurnDownWidgetBundle-collect-data') }}',
+                            'params': {id:{{ widget.id }}, type:'{{ widget.type }}', needUpdate: 1, updateInterval:'{{ widget.updateInterval }}'},
+                            'callback': arguments.callee
+                        }
+                    );
+                }
+            }
+        );
+    </script>
+{% endblock %}

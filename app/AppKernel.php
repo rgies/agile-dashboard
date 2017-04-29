@@ -34,6 +34,7 @@ class AppKernel extends Kernel
             new RGies\JiraHistoryWidgetBundle\JiraHistoryWidgetBundle(),
             new RGies\JiraPerformanceWidgetBundle\JiraPerformanceWidgetBundle(),
             new RGies\CustomChartWidgetBundle\CustomChartWidgetBundle(),
+            new RGies\JiraBurnDownWidgetBundle\JiraBurnDownWidgetBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

@@ -145,13 +145,13 @@ class DefaultController extends Controller
                         $em->persist($entity);
                         $em->flush();
 
-                        $this->_addData($response['data'], $keyDate->format('Y-m-d'), $rowKey, $entity->getValue(), $row);
+                        $this->_addData($response['data'], $keyDate->format('Y-m-d'), $rowKey, $entity->getValue());
                     } catch (JiraException $e) {
                         $response['warning'] = wordwrap($e->getMessage(), 38, '<br/>');
                         return new Response(json_encode($response), Response::HTTP_OK);
                     }
                 } elseif (isset($data[$dateTs])) {
-                    $this->_addData($response['data'], $keyDate->format('Y-m-d'), $rowKey, $data[$keyDate->getTimestamp()], $row);
+                    $this->_addData($response['data'], $keyDate->format('Y-m-d'), $rowKey, $data[$keyDate->getTimestamp()]);
                 } else {
                     $response['need-update'] = true;
                 }
@@ -174,12 +174,19 @@ class DefaultController extends Controller
         return new Response(json_encode($response), Response::HTTP_OK);
     }
 
-    protected function _addData(&$dataSource, $date, $rowKey, $value, $num)
+    /**
+     * Add new entry to data array.
+     *
+     * @param array $dataSource Reference to data source array.
+     * @param string $date Date of new dataset
+     * @param string $rowKey Data row key
+     * @param integer $value Data value
+     */
+    protected function _addData(&$dataSource, $date, $rowKey, $value)
     {
         if (isset($dataSource[$date])) {
             $dataSource[$date][$rowKey] = $value;
         } else {
-            //array_unshift($dataSource, [$date => ['date' => $date, $rowKey => $value]]);
             $dataSource[$date] = ['date' => $date, $rowKey => $value];
         }
     }

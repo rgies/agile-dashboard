@@ -1,0 +1,11 @@
+# Plugin Parameters
+parameters:
+    JiraBurnDownWidgetBundleConfig:
+        widget_view: 'JiraBurnDownWidgetBundle::default/widget.html.twig'
+        edit_action: 'JiraBurnDownWidgetBundle_widgetconfig_edit'
+
+# Plugin Services
+services:
+    JiraBurnDownWidgetBundleService:
+        class: RGies\JiraBurnDownWidgetBundle\Services\WidgetPluginService
+        arguments: [@doctrine, %JiraBurnDownWidgetBundleConfig%]
