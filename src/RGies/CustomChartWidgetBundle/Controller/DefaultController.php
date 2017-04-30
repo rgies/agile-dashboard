@@ -49,7 +49,7 @@ class DefaultController extends Controller
         $labels = explode(',', $widgetConfig->getLabels());
         $dates = explode(',', $widgetConfig->getDates());
         $rows = explode("\n", $widgetConfig->getDatarows());
-
+        
         $z = 0;
         foreach ($rows as $row)
         {
@@ -75,6 +75,13 @@ class DefaultController extends Controller
 
             $response['data'][] = $data;
             $r++;
+        }
+
+        if ($widgetConfig->getChartType() == 'Donut') {
+            $response['data'] = [];
+            foreach ($labels as $key=>$label) {
+                $response['data'][] = array('label' => $label, 'value' => 20);
+            }
         }
 
         $response['labels'] = $labels;

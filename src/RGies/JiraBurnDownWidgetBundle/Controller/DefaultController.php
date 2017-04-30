@@ -15,6 +15,7 @@ use JiraRestApi\Configuration\ArrayConfiguration;
 use JiraRestApi\Issue\TimeTracking;
 use JiraRestApi\JiraException;
 use RGies\JiraBurnDownWidgetBundle\Entity\WidgetData;
+use RGies\MetricsBundle\Entity\Widgets;
 
 
 /**
@@ -61,10 +62,17 @@ class DefaultController extends Controller
         $response['keys'] = ['y1', 'y2'];
 
         $jql = $widgetConfig->getJqlQuery();
+        $calcBase = $widgetConfig->getCalcBase();
         $startDate = new \DateTime($widgetConfig->getStartDate());
         $endDate = new \DateTime($widgetConfig->getEndDate() . ' 23:59:59');
         $days = $startDate->diff($endDate)->format('%a');
         $colors = ['#0b62a4', '#7A92A3', '#4da74d', '#afd8f8', '#edc240', '#cb4b4b', '#9440ed'];
+        $storyPointField = 'customfield_10004';
+
+        $widget = $em->getRepository('MetricsBundle:Widgets')->find($widgetId);
+        $size = $widget->getSize();
+        //var_dump($widget); exit;
+        //$scaling = 1 / substr($size, -1);
 
         // Burn down line
         $response['data'][$startDate->format('Y-m-d')]['date'] = $startDate->format('Y-m-d');
@@ -78,26 +86,17 @@ class DefaultController extends Controller
         $row = 1;
         $updateCounter = 0;
         $interval = '-1 day';
-        //$now = new \DateTime();
-
         $now = clone $endDate;
 
         // auto calculate interval
         if ($days > 300) {
             $interval = '-3 month';
-            if (!$widgetConfig->getEndDate()) {
-                $now = new \DateTime('first day of this month');
-            }
         } elseif ($days > 100) {
             $interval = '-1 month';
-            if (!$widgetConfig->getEndDate()) {
-                $now = new \DateTime('first day of this month');
-            }
         } elseif ($days > 30) {
             $interval = '-1 week';
-            if (!$widgetConfig->getEndDate()) {
-                $now = new \DateTime('last week sunday');
-            }
+        } elseif ($days > 14) {
+            $interval = '-1 week';
         }
 
         $data = $this->_getDataArray($widgetId, 1);
@@ -120,13 +119,38 @@ class DefaultController extends Controller
                 $jqlQuery = str_replace('%end%', $now->format('Y-m-d 23:59'), $jqlQuery);
 
                 try {
-                    $issues = $issueService->search($jqlQuery, 0, 10000, ['key','created','updated']);
+                    $issues = $issueService->search($jqlQuery, 0, 10000, ['key','created','updated',$storyPointField,'aggregatetimespent']);
 
                     $entity = new WidgetData();
                     $entity->setWidgetId($widgetId);
                     $entity->setDataRow($row);
                     $entity->setDate($keyDate);
-                    $entity->setValue($issues->getTotal());
+
+                    switch($calcBase)
+                    {
+                        case 'points':
+                            $storyPoints = 0;
+                            foreach ($issues->getIssues() as $issue) {
+                                if (isset($issue->fields->$storyPointField)) {
+                                    $storyPoints += $issue->fields->$storyPointField;
+                                }
+                            }
+                            $entity->setValue($storyPoints);
+                            break;
+                        case 'hours':
+                            $estimate = 0;
+                            foreach ($issues->getIssues() as $issue) {
+                                if ($issue->fields->aggregatetimeestimate) {
+                                    $estimate += $issue->fields->aggregatetimeestimate;
+                                }
+                            }
+                            $entity->setValue($estimate / 3600);
+                            break;
+                        case 'count':
+                        default:
+                            $entity->setValue($issues->getTotal());
+                    }
+
                     $em->persist($entity);
                     $em->flush();
 

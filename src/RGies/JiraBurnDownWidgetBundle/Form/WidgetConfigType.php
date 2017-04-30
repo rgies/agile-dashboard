@@ -33,7 +33,7 @@ class WidgetConfigType extends AbstractType
             ->add('start_date','text',array('label' => 'Start date (2017-01-15 / -7 days / -1 month)'))
             ->add('end_date','text',array())
             ->add('velocity', 'integer',array('required'=>false, 'label' => '[Optional] Current team velocity'))
-            ->add('jql_query','textarea',array('label' => 'Unresolved Jql Query (project = myProject and Sprint in openSprints() and resolutiondate<%end%)'))
+            ->add('jql_query','textarea',array('label' => 'Remaining Jql Query'))
         ;
     }
     

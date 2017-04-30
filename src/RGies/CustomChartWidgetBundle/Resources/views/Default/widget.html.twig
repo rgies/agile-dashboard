@@ -14,7 +14,7 @@
 
                     $('#chart-{{ widget.id }}').html('');
 
-                    new Morris.{{ config.chartType }}({
+                    var chart=new Morris.{{ config.chartType }}({
                         element: 'chart-{{ widget.id }}',
                         hideHover: 'auto',
                         data: response['data'],
@@ -24,6 +24,7 @@
                         labels: response['labels'],
                         fillOpacity: 0.5
                     });
+
                 }
         );
     </script>

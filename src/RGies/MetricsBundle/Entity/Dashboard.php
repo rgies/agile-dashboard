@@ -29,6 +29,13 @@ class Dashboard
     private $title;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="description", type="string", length=255, nullable=true)
+     */
+    private $description;
+
+    /**
      * @var integer
      *
      * @ORM\Column(name="pos", type="integer")
@@ -147,5 +154,43 @@ class Dashboard
     public function getWidgets()
     {
         return $this->widgets;
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     *
+     * @return Dashboard
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Add widget
+     *
+     * @param \RGies\MetricsBundle\Entity\Widgets $widget
+     *
+     * @return Dashboard
+     */
+    public function addWidget(\RGies\MetricsBundle\Entity\Widgets $widget)
+    {
+        $this->widgets[] = $widget;
+
+        return $this;
     }
 }

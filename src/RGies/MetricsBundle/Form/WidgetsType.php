@@ -36,10 +36,10 @@ class WidgetsType extends AbstractType
         );
 
         $templateChoices = array(
-            '' => 'Default 1x1 (S)',
+            '1x1' => 'Default 1x1 (S)',
             '2x1' => 'Wide 2x1 (M)',
             '1x2' => 'Height 1x2 (M)',
-            '2x2' => 'Large 2x2 (XL)',
+            '2x2' => 'Large 2x2 (L)',
         );
 
         if ($this->_lastVisitedDashboardEntity) {

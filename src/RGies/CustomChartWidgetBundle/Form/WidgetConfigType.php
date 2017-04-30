@@ -28,8 +28,9 @@ class WidgetConfigType extends AbstractType
             ->add('widget_id','hidden')
             ->add('chart_type','choice', array('choices' => array(
                 'Area'=>'Area Chart (stacked)',
-                'Line'=>'Line Chart (combined)',
-                'Bar'=>'Bar Chart (separated)')))
+                'Line'=>'Line Chart',
+                'Donut'=>'Pie Chart',
+                'Bar'=>'Bar Chart')))
             ->add('labels', 'text', array('label' => 'Labels (Label1,Label2)'))
             ->add('dates', 'text', array('label' => 'Dates (2017-03-01,2017-04-01)'))
             ->add('datarows', 'textarea', array('label' => 'Data values (e.g. 23,45)'))

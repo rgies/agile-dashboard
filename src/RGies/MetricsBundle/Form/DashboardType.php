@@ -16,7 +16,8 @@ class DashboardType extends AbstractType
     {
         $builder
             ->add('title')
-            ->add('pos','hidden')
+            ->add('description', 'textarea', array('required' => false))
+            ->add('pos', 'hidden')
         ;
     }
     
