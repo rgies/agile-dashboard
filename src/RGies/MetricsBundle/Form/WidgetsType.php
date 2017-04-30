@@ -36,7 +36,8 @@ class WidgetsType extends AbstractType
         );
 
         $templateChoices = array(
-            '1x1' => 'Default 1x1 (S)',
+            '' => 'Default',
+            '1x1' => 'Small 1x1 (S)',
             '2x1' => 'Wide 2x1 (M)',
             '1x2' => 'Height 1x2 (M)',
             '2x2' => 'Large 2x2 (L)',

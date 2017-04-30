@@ -65,7 +65,7 @@ class Widgets
     /**
      * @var string
      *
-     * @ORM\Column(name="size", type="string", length=100)
+     * @ORM\Column(name="size", type="string", length=100, nullable=true)
      */
     private $size;
 
