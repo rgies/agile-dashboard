@@ -1,7 +1,7 @@
 # Agile Dashboard
 Dashboard with agile metrics connected to Atlassian Jira.
 
-![Sample Dashboard](http://www.rgies.de/images/agile-dashboard2.jpg)
+![Sample Dashboard](http://www.rgies.de/images/agile-dashboard3.jpg)
 
 ## How to install
 
