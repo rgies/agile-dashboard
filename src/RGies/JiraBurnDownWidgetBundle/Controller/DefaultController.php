@@ -48,7 +48,7 @@ class DefaultController extends Controller
         $cache = $this->get('CacheService');
         if ($needUpdate === null) {
             if ($cacheValue = $cache->getValue('JiraBurnDownWidgetBundle', $widgetId, null, $updateInterval)) {
-                //return new Response($cacheValue, Response::HTTP_OK);
+                return new Response($cacheValue, Response::HTTP_OK);
             }
         }
 
@@ -58,28 +58,23 @@ class DefaultController extends Controller
         $response = array();
         $response['data'] = array();
         $response['rows'] = [];
-        $response['labels'] = ['Remaining', 'Ideal'];
+        $response['labels'] = ['Remaining', 'Ideal', 'Forecast'];
         $response['keys'] = ['y1', 'y2'];
 
         $jql = $widgetConfig->getJqlQuery();
+        $velocity = $widgetConfig->getVelocity();
         $calcBase = $widgetConfig->getCalcBase();
         $startDate = new \DateTime($widgetConfig->getStartDate());
         $endDate = new \DateTime($widgetConfig->getEndDate() . ' 23:59:59');
         $days = $startDate->diff($endDate)->format('%a');
+        $doneDays = $startDate->diff(new \DateTime())->format('%a');
         $colors = ['#0b62a4', '#7A92A3', '#4da74d', '#afd8f8', '#edc240', '#cb4b4b', '#9440ed'];
         $storyPointField = 'customfield_10004';
 
-        $widget = $em->getRepository('MetricsBundle:Widgets')->find($widgetId);
-        $size = $widget->getSize();
+        //$widget = $em->getRepository('MetricsBundle:Widgets')->find($widgetId);
+        //$size = $widget->getSize();
         //var_dump($widget); exit;
         //$scaling = 1 / substr($size, -1);
-
-        // Burn down line
-        $response['data'][$startDate->format('Y-m-d')]['date'] = $startDate->format('Y-m-d');
-        $response['data'][$startDate->format('Y-m-d')]['y2'] = 70;
-        $response['data'][$endDate->format('Y-m-d')]['date'] = $endDate->format('Y-m-d');
-        $response['data'][$endDate->format('Y-m-d')]['y2'] = 0;
-
 
         $issueService = new IssueService($this->get('JiraCoreService')->getLoginCredentials());
 
@@ -89,6 +84,7 @@ class DefaultController extends Controller
         $now = clone $endDate;
 
         // auto calculate interval
+        /*
         if ($days > 300) {
             $interval = '-3 month';
         } elseif ($days > 100) {
@@ -97,16 +93,17 @@ class DefaultController extends Controller
             $interval = '-1 week';
         } elseif ($days > 14) {
             $interval = '-1 week';
-        }
+        }*/
 
         $data = $this->_getDataArray($widgetId, 1);
 
         for ($now; $now > $startDate; $now->modify($interval))
         {
             $keyDate = new \DateTime($now->format('Y-m-d'));
-            $dateTs= $keyDate->getTimestamp();
+            //$dateTs= $keyDate->getTimestamp();
+            $dateTs = $keyDate->format('Y-m-d');
 
-            if ($dateTs>time()) {
+            if ($keyDate->getTimestamp()>time()) {
                 continue;
             }
 
@@ -148,31 +145,78 @@ class DefaultController extends Controller
                             break;
                         case 'count':
                         default:
-                            $entity->setValue($issues->getTotal());
                     }
 
                     $em->persist($entity);
                     $em->flush();
 
-                    $this->_addData($response['data'], $keyDate->format('Y-m-d'), 'y1', $entity->getValue());
+                    $this->_addData($response['data'], $dateTs, 'y1', $entity->getValue());
                 } catch (JiraException $e) {
                     $response['warning'] = wordwrap($e->getMessage(), 38, '<br/>');
                     return new Response(json_encode($response), Response::HTTP_OK);
                 }
             } elseif (isset($data[$dateTs])) {
-                $this->_addData($response['data'], $keyDate->format('Y-m-d'), 'y1', $data[$keyDate->getTimestamp()]);
+                $this->_addData($response['data'], $dateTs, 'y1', $data[$dateTs]);
             } else {
                 $response['need-update'] = true;
             }
         }
 
+        // add estimated end date
+        $currentDate = new \DateTime();
+        $restDays = 0;
+        $performance = 0;
+        $finishDate = $endDate->format('Y-m-d');
+        if (!isset($response['need-update']) && isset($data[$currentDate->format('Y-m-d')])) {
+
+            $response['data'][$currentDate->format('Y-m-d')]['y3'] =
+                $data[$currentDate->format('Y-m-d')];
+
+            if ($velocity) {
+                $performance = $velocity;
+            } else {
+                $performance = ($data[$startDate->format('Y-m-d')]
+                        - $data[$currentDate->format('Y-m-d')]) / $doneDays;
+            }
+
+            $restDays = ceil($data[$currentDate->format('Y-m-d')] / $performance);
+            $finishDate = $currentDate->modify('+' . $restDays . ' days')->format('Y-m-d');
+
+            if ($restDays - ($days - $doneDays) > 0) {
+                $colors[2] = '#FF0000';
+            }
+
+            if (!isset($response['data'][$finishDate])) {
+                $response['data'][$finishDate] = array();
+            }
+
+            $response['data'][$finishDate]['date'] = $finishDate;
+            $response['data'][$finishDate]['y3'] = 0;
+            $response['keys'][] = 'y3';
+        }
+
+        // generate burn down line
+        if (!isset($response['need-update']) && isset($response['data'][$startDate->format('Y-m-d')]['y1'])) {
+            $response['data'][$startDate->format('Y-m-d')]['y2'] = $response['data'][$startDate->format('Y-m-d')]['y1'];
+            $response['data'][$endDate->format('Y-m-d')]['date'] = $endDate->format('Y-m-d');
+            $response['data'][$endDate->format('Y-m-d')]['y2'] = 0;
+        }
+
+        // generate chart legend
         $response['legend'] = '';
         foreach ($response['labels'] as $key=>$label) {
             $response['legend'] .= '&nbsp;&nbsp;<i style="color:' . $colors[$key] . '" class="fa fa-circle"></i> ' . $label;
         }
 
+        $response['colors'] = $colors;
         $response['data'] = array_values($response['data']);
-        $response['days'] = $days;
+        $response['total-days'] = $days;
+        $response['done-days'] = $doneDays;
+        $response['rest-days'] = $restDays;
+        $response['diff-days'] = $restDays - ($days - $doneDays);
+        $response['sprint-end'] = $endDate->format('Y-m-d');
+        $response['estimated-end-date'] = $finishDate;
+        $response['performance'] = $performance;
 
         // Cache response data
         $cache->setValue('JiraBurnDownWidgetBundle', $widgetId, json_encode($response));
@@ -222,7 +266,7 @@ class DefaultController extends Controller
 
         if ($data) {
             foreach ($data as $entity) {
-                $result[$entity->getDate()->getTimestamp()] = $entity->getValue();
+                $result[$entity->getDate()->format('Y-m-d')] = $entity->getValue();
             }
         }
 

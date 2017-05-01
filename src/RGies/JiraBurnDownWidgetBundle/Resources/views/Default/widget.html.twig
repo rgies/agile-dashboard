@@ -3,19 +3,22 @@
 {% block widget_body %}
     <div id="chart-{{ widget.id }}" style="height: {% if (widget.size=='2x2') or (widget.size=='1x2') %}270{% else %}122{% endif %}px; top: -7px"></div>
     <div id="chart-legend-{{ widget.id }}" style="position: absolute; right:35px; top:28px; font-size: 9px"></div>
+    <div id="chart-sprint-end-{{ widget.id }}" style="position: absolute; right: 15px; bottom: 5%"></div>
 {% endblock %}
 
 {% block script %}
     <script>
-        // HERE YOU CAN GET YOUR WIDGET DATA
+        // GET WIDGET DATA
         addDataRequest(
             '{{ path('JiraBurnDownWidgetBundle-collect-data') }}',
             {id:{{ widget.id }}, type:'{{ widget.type }}', updateInterval:'{{ widget.updateInterval }}'},
             function (data) {
                 var response = JSON.parse(data);
 
+                // Clear chart
                 $('#chart-{{ widget.id }}').html('');
 
+                // Warning message
                 if (response['warning']) {
                     $('#chart-{{ widget.id }}').html(
                         '<div class="widget-value-warning"><i class="fa fa-warning"></i> ' +
@@ -24,6 +27,7 @@
                     return;
                 }
 
+                // Line chart
                 new Morris.Line({
                     element: 'chart-{{ widget.id }}',
                     hideHover: 'auto',
@@ -32,13 +36,33 @@
                     ykeys: response['keys'],
                     //parseTime: false,
                     labels: response['labels'],
-                    fillOpacity: 0.5
+                    lineColors: response['colors']
                 });
 
+                // Title line badge
+                if (response['diff-days'] && response['diff-days']>0) {
+                    $('#widget-title-suffix-{{ widget.id }}').html(
+                        '<span style="text-shadow: none; font-size: 10px" class="badge badge-warning">+' + response['diff-days'] + 'd</span>'
+                    );
+                }
+
+                // Sprint goal badge
+                if (response['sprint-end']) {
+                    var additionalStyles = '';
+                    if (response['diff-days'] && response['diff-days']>0) {
+                        additionalStyles = 'badge-warning'
+                    }
+                    $('#chart-sprint-end-{{ widget.id }}').html(
+                        '<span class="badge ' + additionalStyles + '">' + response['estimated-end-date'] + '</span>'
+                    );
+                }
+
+                // Chart legend line
                 if (response['legend']) {
                     $('#chart-legend-{{ widget.id }}').html(response['legend']);
                 }
 
+                // Further update trigger
                 if (response['need-update']) {
                     dataRequestHandler.retryQueue.push(
                         {

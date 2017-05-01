@@ -54,7 +54,7 @@ class DefaultController extends Controller
         $trackedDays = array();
         $totalTimeSpend = 0;
         $startDate = new \DateTime('-5 years');
-        $endDate = new \DateTime('+1 day');
+        $endDate = new \DateTime();
 
         $jql = $widgetConfig->getJqlQuery();
 
@@ -135,7 +135,7 @@ class DefaultController extends Controller
 
         }
 
-        //$response['subtext'] .= '<br/>' . $response['startdate'] . '-' . $response['enddate'];
+        $response['subtext'] .= '<br/>' . $response['startdate'] . ' - ' . $response['enddate'];
 
         // Cache response data
         $cache->setValue('JiraTimeTrackingWidgetBundle', $widgetId, json_encode($response));
@@ -143,6 +143,12 @@ class DefaultController extends Controller
         return new Response(json_encode($response), Response::HTTP_OK);
     }
 
+    /**
+     * Updates worklog item.
+     *
+     * @param $storage
+     * @param $worklog
+     */
     protected function _updateWorklogItem(&$storage, $worklog)
     {
         if ($worklog->updateAuthor) {
@@ -150,8 +156,7 @@ class DefaultController extends Controller
         } elseif ($worklog->author) {
             $userData = $worklog->author;
         } else {
-            echo 'NO USER DATA';
-            var_dump($worklog); exit;
+            return;
         }
 
         $userKey = $userData->key;
