@@ -49,7 +49,8 @@ class DefaultController extends Controller
             $cookie = new Cookie(self::LAST_VISITED_DASHBOARD, $id, $expire);
             $response = new Response();
             $response->headers->setCookie($cookie);
-            $response->send();
+            //$response->send();
+            $response->sendHeaders();
         } else if ($request->cookies->has(self::LAST_VISITED_DASHBOARD)) {
             $id = $request->cookies->get(self::LAST_VISITED_DASHBOARD);
         } else {
