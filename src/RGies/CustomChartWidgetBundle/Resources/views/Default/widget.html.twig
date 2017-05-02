@@ -1,4 +1,4 @@
-{% extends "MetricsBundle::templates/default-widget.html.twig" %}
+{% extends "MetricsBundle::Templates/default-widget.html.twig" %}
 
 {% block widget_body %}
     <div id="chart-{{ widget.id }}" style="height: {% if (widget.size=='2x2') or (widget.size=='1x2') %}270{% else %}122{% endif %}px; top: -7px"></div>
