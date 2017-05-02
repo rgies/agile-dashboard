@@ -1,7 +1,7 @@
 # Plugin Parameters
 parameters:
     JiraPerformanceWidgetBundleConfig:
-        widget_view: 'JiraPerformanceWidgetBundle::default/widget.html.twig'
+        widget_view: 'JiraPerformanceWidgetBundle::Default/widget.html.twig'
         edit_action: 'JiraPerformanceWidgetBundle_widgetconfig_edit'
 
 # Plugin Services

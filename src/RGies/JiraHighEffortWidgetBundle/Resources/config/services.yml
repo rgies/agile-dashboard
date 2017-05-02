@@ -1,7 +1,7 @@
 # Plugin Parameters
 parameters:
     JiraHighEffortWidgetBundleConfig:
-        widget_view: 'JiraHighEffortWidgetBundle::default/widget.html.twig'
+        widget_view: 'JiraHighEffortWidgetBundle::Default/widget.html.twig'
         edit_action: 'JiraHighEffortWidgetBundle_widgetconfig_edit'
 
 # Plugin Services
