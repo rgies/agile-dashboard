@@ -126,7 +126,16 @@ class DefaultController extends Controller
                 $keyDate = new \DateTime($now->format('Y-m-d'));
                 $dateTs= $keyDate->getTimestamp();
 
-                if (!isset($data[$dateTs]) && $updateCounter<1) {
+                // jump over days in future
+                if ($dateTs>time()) {
+                    continue;
+                }
+
+                // check for not persisted data in cache
+                if ($now->format('Y-m-d') == date('Y-m-d')
+                    && $cacheValue = $cache->getValue('JiraHistoryWidgetBundle_today' . $rowKey, $widgetId, null, 60)) {
+                    $this->_addData($response['data'], $keyDate->format('Y-m-d'), $rowKey, $cacheValue);
+                } elseif (!isset($data[$dateTs]) && $updateCounter<1) {
                     $updateCounter++;
                     $start = clone $now;
                     $start->modify($interval);
@@ -142,8 +151,14 @@ class DefaultController extends Controller
                         $entity->setDataRow($row);
                         $entity->setDate($keyDate);
                         $entity->setValue($issues->getTotal());
-                        $em->persist($entity);
-                        $em->flush();
+
+                        // don't persists data which are not final
+                        if ($now->format('Y-m-d') == date('Y-m-d')) {
+                            $cache->setValue('JiraHistoryWidgetBundle_today' . $rowKey, $widgetId, $entity->getValue());
+                        } else {
+                            $em->persist($entity);
+                            $em->flush();
+                        }
 
                         $this->_addData($response['data'], $keyDate->format('Y-m-d'), $rowKey, $entity->getValue());
                     } catch (JiraException $e) {

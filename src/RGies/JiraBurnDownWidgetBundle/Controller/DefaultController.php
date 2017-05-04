@@ -100,14 +100,18 @@ class DefaultController extends Controller
         for ($now; $now > $startDate; $now->modify($interval))
         {
             $keyDate = new \DateTime($now->format('Y-m-d'));
-            //$dateTs= $keyDate->getTimestamp();
             $dateTs = $keyDate->format('Y-m-d');
 
             if ($keyDate->getTimestamp()>time()) {
                 continue;
             }
 
-            if (!isset($data[$dateTs]) && $updateCounter<1) {
+            // check for not persisted data in cache
+            if ($now->format('Y-m-d') == date('Y-m-d')
+                && $cacheValue = $cache->getValue('JiraBurnDownWidgetBundle_today', $widgetId, null, 60)) {
+                $this->_addData($response['data'], $dateTs, 'y1', $cacheValue);
+            } elseif (!isset($data[$dateTs]) && $updateCounter<1) {
+                // get new data and persist
                 $updateCounter++;
                 $start = clone $now;
                 $start->modify($interval);
@@ -147,8 +151,13 @@ class DefaultController extends Controller
                         default:
                     }
 
-                    $em->persist($entity);
-                    $em->flush();
+                    // don't persists data which are not final
+                    if ($now->format('Y-m-d') == date('Y-m-d')) {
+                        $cache->setValue('JiraBurnDownWidgetBundle_today', $widgetId, $entity->getValue());
+                    } else {
+                        $em->persist($entity);
+                        $em->flush();
+                    }
 
                     $this->_addData($response['data'], $dateTs, 'y1', $entity->getValue());
                 } catch (JiraException $e) {
@@ -167,19 +176,21 @@ class DefaultController extends Controller
         $restDays = 0;
         $performance = 0;
         $finishDate = $endDate->format('Y-m-d');
-        if (!isset($response['need-update']) && isset($data[$currentDate->format('Y-m-d')])) {
+        if (!isset($response['need-update'])
+            && isset($response['data'][$currentDate->format('Y-m-d')])
+            && isset($response['data'][$currentDate->format('Y-m-d')]['y1'])) {
 
-            $response['data'][$currentDate->format('Y-m-d')]['y3'] =
-                $data[$currentDate->format('Y-m-d')];
+            $valueToday = $response['data'][$currentDate->format('Y-m-d')]['y1'];
+
+            $response['data'][$currentDate->format('Y-m-d')]['y3'] = $valueToday;
 
             if ($velocity) {
                 $performance = $velocity;
             } else {
-                $performance = ($data[$startDate->format('Y-m-d')]
-                        - $data[$currentDate->format('Y-m-d')]) / $doneDays;
+                $performance = ($data[$startDate->format('Y-m-d')] - $valueToday) / $doneDays;
             }
 
-            $restDays = ceil($data[$currentDate->format('Y-m-d')] / $performance);
+            $restDays = ceil($valueToday / $performance);
             $finishDate = $currentDate->modify('+' . $restDays . ' days')->format('Y-m-d');
 
             if ($restDays - ($days - $doneDays) > 0) {
@@ -193,6 +204,8 @@ class DefaultController extends Controller
             $response['data'][$finishDate]['date'] = $finishDate;
             $response['data'][$finishDate]['y3'] = 0;
             $response['keys'][] = 'y3';
+            $response['rest-days'] = $restDays;
+            $response['diff-days'] = $restDays - ($days - $doneDays);
         }
 
         // generate burn down line
@@ -212,8 +225,6 @@ class DefaultController extends Controller
         $response['data'] = array_values($response['data']);
         $response['total-days'] = $days;
         $response['done-days'] = $doneDays;
-        $response['rest-days'] = $restDays;
-        $response['diff-days'] = $restDays - ($days - $doneDays);
         $response['sprint-end'] = $endDate->format('Y-m-d');
         $response['estimated-end-date'] = $finishDate;
         $response['performance'] = $performance;
