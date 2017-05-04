@@ -108,6 +108,24 @@ label.error {
     margin-bottom: 15px;
 }
 
+.widget-panel-3x2 {
+    position: relative;
+    width: 705px;
+    height: 299px;
+    float: left;
+    margin-right: 15px;
+    margin-bottom: 15px;
+}
+
+.widget-panel-Xx2 {
+    position: relative;
+    width: 100%;
+    height: 299px;
+    /*float: left;*/
+    margin-right: 15px;
+    margin-bottom: 15px;
+}
+
 .widget-panel-body {
     padding-top: 0px;
     padding-bottom: 3px;

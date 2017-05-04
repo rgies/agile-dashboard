@@ -41,6 +41,8 @@ class WidgetsType extends AbstractType
             '2x1' => 'Wide 2x1 (M)',
             '1x2' => 'Height 1x2 (M)',
             '2x2' => 'Large 2x2 (L)',
+            '3x2' => 'X-Large 3x2 (XL)',
+            'Xx2' => 'Full width (Full)',
         );
 
         if ($this->_lastVisitedDashboardEntity) {
