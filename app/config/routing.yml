@@ -1,3 +1,8 @@
+custom_timeline_widget:
+    resource: "@CustomTimelineWidgetBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 jira_burn_down_widget:
     resource: "@JiraBurnDownWidgetBundle/Controller/"
     type:     annotation

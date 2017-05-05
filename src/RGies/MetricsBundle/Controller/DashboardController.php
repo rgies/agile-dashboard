@@ -40,6 +40,7 @@ class DashboardController extends Controller
             'entities' => $entities,
         );
     }
+
     /**
      * Creates a new Dashboard entity.
      *

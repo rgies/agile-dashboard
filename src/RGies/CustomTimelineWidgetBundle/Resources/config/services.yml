@@ -1,0 +1,11 @@
+# Plugin Parameters
+parameters:
+    CustomTimelineWidgetBundleConfig:
+        widget_view: 'CustomTimelineWidgetBundle::Default/widget.html.twig'
+        edit_action: 'CustomTimelineWidgetBundle_widgetconfig_list'
+
+# Plugin Services
+services:
+    CustomTimelineWidgetBundleService:
+        class: RGies\CustomTimelineWidgetBundle\Services\WidgetPluginService
+        arguments: [@doctrine, %CustomTimelineWidgetBundleConfig%]

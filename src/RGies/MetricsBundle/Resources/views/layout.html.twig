@@ -2,6 +2,7 @@
 {% block stylesheets %}
     <link href="{{ asset('bundles/metrics/css/default.css') }}" rel="stylesheet">
     <!-- individual page stylesheets -->
+    <link rel="stylesheet" href="{{ asset('bundles/customtimelinewidget/css/default.css') }}"> <!-- Resource style -->
     {% block css %}{% endblock %}
 {% endblock %}
 {% block body %}
@@ -37,6 +38,8 @@
             timeout: 9000
         });
     </script>
+
     <!-- individual page java scripts -->
+    <script src="{{ asset('bundles/customtimelinewidget/js/default.js') }}"></script>
     {% block js %}{% endblock %}
 {% endblock %}

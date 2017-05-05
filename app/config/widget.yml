@@ -15,4 +15,5 @@ parameters:
         JiraHistoryWidgetBundle:      'Jira - History Chart (Line, Bar Area)'
 
         # Custom
-        CustomChartWidgetBundle: 'Custom - Chart'
+        CustomChartWidgetBundle:      'Custom - Chart with manually entered data'
+        CustomTimelineWidgetBundle:    'Custom - Timeline with manually entered data'

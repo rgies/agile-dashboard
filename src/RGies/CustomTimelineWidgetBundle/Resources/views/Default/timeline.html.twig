@@ -1,0 +1,35 @@
+<section id="timeline-{{ id }}" class="cd-horizontal-timeline">
+    <div class="timeline">
+        <div class="events-wrapper">
+            <div class="events">
+                <ol>
+                    {% for item in items %}
+                    <li>
+                        <a href="#0" data-date="{{ item.date|date('d/m/Y') }}" {% if item.date == selectedDate %}class="selected"{% endif %}>
+                            {{ item.title }}<br/>
+                            {{ item.date|date('d M') }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ol>
+
+                <span class="filling-line" aria-hidden="true"></span>
+            </div> <!-- .events -->
+        </div> <!-- .events-wrapper -->
+
+        <ul class="cd-timeline-navigation">
+            <li><a href="#0" class="prev inactive">Prev</a></li>
+            <li><a href="#0" class="next">Next</a></li>
+        </ul> <!-- .cd-timeline-navigation -->
+    </div> <!-- .timeline -->
+
+    <div class="events-content">
+        <ol>
+            {% for item in items %}
+            <li {% if item.date == selectedDate %}class="selected" {% endif %}data-date="{{ item.date|date('d/m/Y') }}">
+                <p>{{ item.description }}</p>
+            </li>
+            {% endfor %}
+        </ol>
+    </div> <!-- .events-content -->
+</section>

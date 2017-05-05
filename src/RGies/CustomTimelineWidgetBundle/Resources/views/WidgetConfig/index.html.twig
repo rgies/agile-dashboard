@@ -1,0 +1,44 @@
+{% extends "MetricsBundle::layout.html.twig" %}
+
+{% block content -%}
+<div class="container">
+    <div class="page-header">
+        <h1>Timeline</h1>
+    </div>
+
+    <div>
+        <button type="button" class="btn btn-primary" onclick="location.href='{{ path('CustomTimelineWidgetBundle_widgetconfig_new', {'id': widget_id}) }}'">
+            <i class="fa fa-plus"></i> Add timeline item
+        </button>
+    </div><br/>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td>{{ entity.date|date('Y-m-d') }}</td>
+                <td><a href="{{ path('CustomTimelineWidgetBundle_widgetconfig_edit', { 'id': entity.id }) }}">{{ entity.title }}</a></td>
+                <td>{{ entity.description }}</td>
+                <td>
+                    <a href="{{ path('CustomTimelineWidgetBundle_widgetconfig_edit', { 'id': entity.id }) }}"><i class="fa fa-edit"></i> Edit</a>
+                    &nbsp;&nbsp;
+                    <a href="{{ path('CustomTimelineWidgetBundle_widgetconfig_delete', { 'widgetId': widget_id, 'id': entity.id }) }}"><i class="fa fa-trash"></i> Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('home') }}">
+        <i class="fa fa-arrow-circle-left"></i> Return to dashboard
+    </a>
+</div>
+{% endblock %}
