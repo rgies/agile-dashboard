@@ -38,7 +38,7 @@ class DefaultController extends Controller
         // Get data from cache
         $cache = $this->get('CacheService');
         if ($cacheValue = $cache->getValue('CustomTimelineWidgetBundle', $widgetId, null, $updateInterval)) {
-            //return new Response($cacheValue, Response::HTTP_OK);
+            return new Response($cacheValue, Response::HTTP_OK);
         }
 
         $widgetConfig = $this->get('WidgetService')->getWidgetConfig($widgetType, $widgetId);
@@ -57,9 +57,6 @@ class DefaultController extends Controller
                 break;
             }
         }
-
-
-
 
         $html = $this->renderView(
             'CustomTimelineWidgetBundle:Default:timeline.html.twig',
