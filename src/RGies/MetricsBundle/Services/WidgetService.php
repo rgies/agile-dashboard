@@ -123,5 +123,23 @@ class WidgetService
         return $service;
     }
 
+    /**
+     * Gets the widget size configuration.
+     *
+     * @param $widgetType
+     * @return array
+     */
+    public function getWidgetSizes($widgetType)
+    {
+        if ($conf = $this->_serviceContainer->getParameter($widgetType . 'Config'))
+        {
+            if (isset($conf['widget_sizes'])) {
+                return explode(',', $conf['widget_sizes']);
+            };
+        }
+
+        return array('1x1');
+    }
+
 
 }

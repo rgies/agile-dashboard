@@ -3,6 +3,7 @@ parameters:
     JiraBurnDownWidgetBundleConfig:
         widget_view: 'JiraBurnDownWidgetBundle::Default/widget.html.twig'
         edit_action: 'JiraBurnDownWidgetBundle_widgetconfig_edit'
+        widget_sizes: '2x2,3x2,Xx2,1x1,2x1'
 
 # Plugin Services
 services:
