@@ -7,7 +7,7 @@
                     <li>
                         <a href="#0" data-date="{{ item.date|date('d/m/Y') }}" {% if item.date == selectedDate %}class="selected"{% endif %}>
                             {{ item.title }}<br/>
-                            {{ item.date|date('d M') }}
+                            <i class="fa fa-calendar"></i> {{ item.date|date('d M') }}
                         </a>
                     </li>
                     {% endfor %}
