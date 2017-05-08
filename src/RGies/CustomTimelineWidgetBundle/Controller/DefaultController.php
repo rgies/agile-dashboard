@@ -38,7 +38,7 @@ class DefaultController extends Controller
         // Get data from cache
         $cache = $this->get('CacheService');
         if ($cacheValue = $cache->getValue('CustomTimelineWidgetBundle', $widgetId, null, $updateInterval)) {
-            return new Response($cacheValue, Response::HTTP_OK);
+            //return new Response($cacheValue, Response::HTTP_OK);
         }
 
         $widgetConfig = $this->get('WidgetService')->getWidgetConfig($widgetType, $widgetId);
@@ -70,6 +70,13 @@ class DefaultController extends Controller
         $response = array(
             'html' => $html
         );
+
+        if ($selectedDate) {
+            $today = new \DateTime();
+            $dayDiff = $today->diff($selectedDate);
+            $response['days-to-milestone'] = $dayDiff->days;
+        }
+
 
         // Cache response data
         $cache->setValue('CustomTimelineWidgetBundle', $widgetId, json_encode($response));

@@ -27,7 +27,7 @@ class WidgetConfigType extends AbstractType
         $builder
             ->add('widget_id','hidden')
             ->add('date')
-            ->add('title')
+            ->add('title', 'text', array('max_length' => 10))
             ->add('description', 'textarea', array('required'=>false))
         ;
     }

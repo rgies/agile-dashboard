@@ -121,19 +121,22 @@ Main Components
     -ms-transform: translateX(-50%);
     -o-transform: translateX(-50%);
     transform: translateX(-50%);
-    bottom: -5px;
-    height: 12px;
-    width: 12px;
+    bottom: -8px;
+    height: 20px;
+    width: 20px;
     border-radius: 50%;
-    border: 2px solid #dfdfdf;
+    border: 2px solid #f8f8f8;
     background-color: #f8f8f8;
     -webkit-transition: background-color 0.3s, border-color 0.3s;
     -moz-transition: background-color 0.3s, border-color 0.3s;
     transition: background-color 0.3s, border-color 0.3s;
 }
-.no-touch .cd-horizontal-timeline .events a:hover::after {
-    background-color: #497597;
-    border-color: #497597;
+.cd-horizontal-timeline .events a:hover::after {
+    bottom: -11px;
+    width: 26px;
+    height: 26px;
+    background-color: #249708;
+    border-color: #249708;
 }
 .cd-horizontal-timeline .events a.selected {
     pointer-events: none;
@@ -198,7 +201,7 @@ Main Components
 .cd-timeline-navigation a.next {
     right: 0;
 }
-.no-touch .cd-timeline-navigation a:hover {
+.cd-timeline-navigation a:hover {
     border-color: #7a8288;
 }
 .cd-timeline-navigation a.inactive {
@@ -207,7 +210,7 @@ Main Components
 .cd-timeline-navigation a.inactive::after {
     background-position: 0 -16px;
 }
-.no-touch .cd-timeline-navigation a.inactive:hover {
+.cd-timeline-navigation a.inactive:hover {
     border-color: #7a8288;
 }
 

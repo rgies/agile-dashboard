@@ -6,8 +6,13 @@
                     {% for item in items %}
                     <li>
                         <a href="#0" data-date="{{ item.date|date('d/m/Y') }}" {% if item.date == selectedDate %}class="selected"{% endif %}>
-                            {{ item.title }}<br/>
-                            <i class="fa fa-calendar"></i> {{ item.date|date('d M') }}
+                            {{ item.title }}<br/><br/>
+                            <i class="fa fa-calendar-o" style="font-size: 14pt"></i>
+                            <span style="font-size: 8pt; margin-left: -18px; padding-top: 2px">{{ item.date|date('d') }}</span>
+                            <div>{{ item.date|date('M') }}</div>
+                            <div style="position: absolute; bottom: -32px" title="{{ item.description }}">
+                                {{ item.title }}
+                            </div>
                         </a>
                     </li>
                     {% endfor %}
@@ -23,7 +28,7 @@
         </ul> <!-- .cd-timeline-navigation -->
     </div> <!-- .timeline -->
 
-    <div class="events-content">
+    <div class="events-content" style="display: none">
         <ol>
             {% for item in items %}
             <li {% if item.date == selectedDate %}class="selected" {% endif %}data-date="{{ item.date|date('d/m/Y') }}">
