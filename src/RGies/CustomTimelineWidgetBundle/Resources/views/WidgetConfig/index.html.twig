@@ -26,7 +26,7 @@
             <tr>
                 <td>{{ entity.date|date('Y-m-d') }}</td>
                 <td><a href="{{ path('CustomTimelineWidgetBundle_widgetconfig_edit', { 'id': entity.id }) }}">{{ entity.title }}</a></td>
-                <td>{{ entity.description }}</td>
+                <td>{{ entity.description|length > 60 ? entity.description[:60] ~ '...' : entity.description }}</td>
                 <td>
                     <a href="{{ path('CustomTimelineWidgetBundle_widgetconfig_edit', { 'id': entity.id }) }}"><i class="fa fa-edit"></i> Edit</a>
                     &nbsp;&nbsp;

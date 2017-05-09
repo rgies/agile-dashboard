@@ -28,6 +28,7 @@ class WidgetConfigType extends AbstractType
             ->add('widget_id','hidden')
             ->add('date')
             ->add('title', 'text', array('max_length' => 10))
+            ->add('link', 'text', array('required'=>false, 'label'=>'External link (Optional)'))
             ->add('description', 'textarea', array('required'=>false))
         ;
     }

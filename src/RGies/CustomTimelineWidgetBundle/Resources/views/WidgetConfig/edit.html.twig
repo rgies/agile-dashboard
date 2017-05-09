@@ -25,18 +25,29 @@
 {% endblock %}
 
 {% block js -%}
-        <script type="text/javascript">
+    <script src="{{ asset('js/ckeditor/ckeditor.js') }}"></script>
+    <script type="text/javascript">
+        function formSave()
+        {
+            var form = $("#edit-form");
 
-            function formSave()
+            if (form.validate())
             {
-                var form = $("#edit-form");
-
-                if (form.validate())
-                {
-                    form.submit();
-                }
+                form.submit();
             }
+        }
 
-            $("#edit-form").validate();
-        </script>
+        $("#edit-form").validate();
+
+        $(document).ready(function() {
+            CKEDITOR.replace('custom_timeline_widget_widgetconfig_description', {
+                contentsCss: ['{{ asset('css/bootstrap.min.css') }}', CKEDITOR.basePath + 'contents.css'],
+                customConfig: 'config-comment.js',
+                allowedContent: true,
+                enterMode: CKEDITOR.ENTER_BR
+            });
+
+        });
+
+    </script>
 {% endblock %}

@@ -4,13 +4,27 @@
             <div class="events">
                 <ol>
                     {% for item in items %}
+                        {% if item.link %}{% set uri = item.link %}{% else %}{% set uri = '#0' %}{% endif %}
                     <li>
-                        <a href="#0" data-date="{{ item.date|date('d/m/Y') }}" {% if item.date == selectedDate %}class="selected"{% endif %}>
+                        {% if (dayDiff) and (item.date == selectedDate) %}
+                            <a href="#0" data-date="{{ 'now'|date('d/m/Y') }}" {% if dayDiff %}data-content="{{ dayDiff }} days left" data-toggle="popover" data-placement="bottom"{% endif %} class="today">Today</a>
+                        {% endif %}
+                        <a href="{{ uri }}" {% if item.link %}target="_blank" {% endif %}
+                           data-toggle="popover"
+                           data-placement="bottom"
+                           title="<strong>Milestone: {{ item.title }}</strong>"
+                           data-content="{{ item.description|raw }}"
+                           data-date="{{ item.date|date('d/m/Y') }}"
+                           class="
+                           {%- if item.date == selectedDate %}selected {% endif -%}
+                           {%- if item.date < date('-1 days') %}older-event{% endif -%}
+                           "
+                        >
                             {{ item.title }}<br/><br/>
                             <i class="fa fa-calendar-o" style="font-size: 14pt"></i>
                             <span style="font-size: 8pt; margin-left: -18px; padding-top: 2px">{{ item.date|date('d') }}</span>
                             <div>{{ item.date|date('M') }}</div>
-                            <div style="position: absolute; padding-top: 10px; bottom: -32px" title="{{ item.description }}">
+                            <div style="position: absolute; padding-top: 10px; bottom: -32px">
                                 {{ item.title }}
                             </div>
                         </a>

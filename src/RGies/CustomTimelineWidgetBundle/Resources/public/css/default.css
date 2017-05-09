@@ -33,6 +33,7 @@ Main Components
     width: 100%;
     /*max-width: 800px;*/
     margin: 0 auto;
+    margin-top: 10px;
 }
 .cd-horizontal-timeline .events-wrapper {
     position: relative;
@@ -67,7 +68,7 @@ Main Components
     top: 49px;
     height: 3px;
     /* width will be set using JavaScript */
-    background: #dfdfdf;
+    background: #3a3f44;
     -webkit-transition: -webkit-transform 0.4s;
     -moz-transition: -moz-transform 0.4s;
     transition: transform 0.4s;
@@ -102,13 +103,16 @@ Main Components
     text-align: center;
     font-size: 1.3rem;
     padding-bottom: 15px;
-    color: #c8c8c8;
+    color: #555555;
     /* fix bug on Safari - text flickering while timeline translates */
     -webkit-transform: translateZ(0);
     -moz-transform: translateZ(0);
     -ms-transform: translateZ(0);
     -o-transform: translateZ(0);
     transform: translateZ(0);
+}
+.cd-horizontal-timeline .events a:hover {
+    color: #cccccc;
 }
 .cd-horizontal-timeline .events a::after {
     /* this is used to create the event spot */
@@ -125,28 +129,46 @@ Main Components
     height: 20px;
     width: 20px;
     border-radius: 50%;
-    border: 2px solid #f8f8f8;
-    background-color: #f8f8f8;
+    border: 2px solid #3a3f44;
+    background-color: #3a3f44;
     -webkit-transition: background-color 0.3s, border-color 0.3s;
     -moz-transition: background-color 0.3s, border-color 0.3s;
     transition: background-color 0.3s, border-color 0.3s;
 }
 .cd-horizontal-timeline .events a:hover::after {
-    bottom: -11px;
-    width: 26px;
-    height: 26px;
-    background-color: #249708;
-    border-color: #249708;
+    background-color: #cccccc;
+    border-color: #cccccc;
 }
 .cd-horizontal-timeline .events a.selected {
-    pointer-events: none;
+    /*pointer-events: none;*/
+    color: #cccccc;
 }
 .cd-horizontal-timeline .events a.selected::after {
     background-color: #497597;
     border-color: #497597;
 }
+.cd-horizontal-timeline .events a.older-event {
+    color: #555555;
+}
+.cd-horizontal-timeline .events a.older-event:hover {
+    color: #cccccc;
+}
+.cd-horizontal-timeline .events a.older-event:hover::after {
+    background-color: #cccccc;
+}
 .cd-horizontal-timeline .events a.older-event::after {
+    background-color: #3a3f44;
     border-color: #497597;
+}
+.cd-horizontal-timeline .events a.today {
+    color: #497597;
+}
+.cd-horizontal-timeline .events a.today::after {
+    bottom: -5px;
+    height: 12px;
+    width: 12px;
+    background-color: #497597;
+    border: hidden;
 }
 
 .cd-timeline-navigation a {

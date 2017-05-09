@@ -58,6 +58,9 @@ class WidgetConfigController extends Controller
             $em->persist($entity);
             $em->flush();
 
+            $this->get('CacheService')->deleteValue('CustomTimelineWidgetBundle', $entity->getWidgetId());
+
+
             return $this->redirect($this->generateUrl(
                 'CustomTimelineWidgetBundle_widgetconfig_list', array('id'=>$entity->getWidgetId())
             ));
@@ -99,7 +102,7 @@ class WidgetConfigController extends Controller
         $entity = new WidgetConfig();
         $entity->setWidgetId($id);
 
-        $form   = $this->createCreateForm($entity);
+        $form = $this->createCreateForm($entity);
 
         return array(
             'entity' => $entity,
@@ -123,13 +126,7 @@ class WidgetConfigController extends Controller
                    ->setParameter('id', $id);
         $items = $query->getQuery()->getResult();
 
-
-        //if (!$items) {
-        //    return $this->forward('CustomTimelineWidgetBundle:WidgetConfig:new', array('id' => $id));
-        //}
-
         $entity = $items[0];
-
         $editForm = $this->createEditForm($entity);
         $widget = $em->getRepository('MetricsBundle:Widgets')->find($entity->getWidgetId());
 

@@ -34,6 +34,10 @@ class DefaultController extends Controller
         $widgetId       = $request->get('id');
         $widgetType     = $request->get('type');
         $updateInterval = $request->get('updateInterval');
+        $selectedDate   = null;
+        $html           = null;
+        $response       = array();
+        $days           = null;
 
         // Get data from cache
         $cache = $this->get('CacheService');
@@ -41,7 +45,7 @@ class DefaultController extends Controller
             return new Response($cacheValue, Response::HTTP_OK);
         }
 
-        $widgetConfig = $this->get('WidgetService')->getWidgetConfig($widgetType, $widgetId);
+        //$widgetConfig = $this->get('WidgetService')->getWidgetConfig($widgetType, $widgetId);
 
         $em = $this->getDoctrine()->getManager();
         $query = $em->getRepository('CustomTimelineWidgetBundle:WidgetConfig')->createQueryBuilder('i')
@@ -50,33 +54,33 @@ class DefaultController extends Controller
             ->setParameter('id', $widgetId);
         $items = $query->getQuery()->getResult();
 
-        $selectedDate = null;
-        foreach ($items as $item) {
-            $selectedDate = $item->getDate();
-            if ($item->getDate()->getTimestamp()>time()) {
-                break;
+        if ($items) {
+            foreach ($items as $item) {
+                $selectedDate = $item->getDate();
+                if ($item->getDate()->getTimestamp()>time()-(3600*24)) {
+                    break;
+                }
             }
+
+            if ($selectedDate && $selectedDate->getTimestamp()>time()) {
+                $today = new \DateTime();
+                $dayDiff = $today->diff($selectedDate);
+                $days = $dayDiff->days + 1;
+                $response['days-to-milestone'] = $days;
+            }
+
+            $html = $this->renderView(
+                'CustomTimelineWidgetBundle:Default:timeline.html.twig',
+                array(
+                    'id' => $widgetId,
+                    'selectedDate' => $selectedDate,
+                    'items' => $items,
+                    'dayDiff' => $days
+                )
+            );
+
+            $response['html'] = $html;
         }
-
-        $html = $this->renderView(
-            'CustomTimelineWidgetBundle:Default:timeline.html.twig',
-            array(
-                'id' => $widgetId,
-                'selectedDate' => $selectedDate,
-                'items' => $items
-            )
-        );
-
-        $response = array(
-            'html' => $html
-        );
-
-        if ($selectedDate) {
-            $today = new \DateTime();
-            $dayDiff = $today->diff($selectedDate);
-            $response['days-to-milestone'] = $dayDiff->days;
-        }
-
 
         // Cache response data
         $cache->setValue('CustomTimelineWidgetBundle', $widgetId, json_encode($response));

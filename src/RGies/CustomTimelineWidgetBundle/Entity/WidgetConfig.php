@@ -46,6 +46,13 @@ class WidgetConfig
     /**
      * @var string
      *
+     * @ORM\Column(name="link", type="string", length=255, nullable=true)
+     */
+    private $link;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="description", type="text", nullable=true)
      */
     private $description;
@@ -194,5 +201,29 @@ class WidgetConfig
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Set link
+     *
+     * @param string $link
+     *
+     * @return WidgetConfig
+     */
+    public function setLink($link)
+    {
+        $this->link = $link;
+
+        return $this;
+    }
+
+    /**
+     * Get link
+     *
+     * @return string
+     */
+    public function getLink()
+    {
+        return $this->link;
     }
 }

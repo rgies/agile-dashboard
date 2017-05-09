@@ -19,6 +19,7 @@
 {% endblock %}
 
 {% block js -%}
+    <script src="{{ asset('js/ckeditor/ckeditor.js') }}"></script>
     <script type="text/javascript">
         function formSave()
         {
@@ -33,6 +34,13 @@
         $( document ).ready(function() {
             $('input:text:visible:first').focus();
             $("#create-form").validate();
+
+            CKEDITOR.replace('custom_timeline_widget_widgetconfig_description', {
+                contentsCss: ['{{ asset('css/bootstrap.min.css') }}', CKEDITOR.basePath + 'contents.css'],
+                customConfig: 'config-comment.js',
+                allowedContent: true,
+                enterMode: CKEDITOR.ENTER_BR
+            });
         });
     </script>
 {% endblock %}

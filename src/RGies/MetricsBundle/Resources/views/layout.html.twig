@@ -37,6 +37,29 @@
         $.ajaxSetup({
             timeout: 9000
         });
+
+        $(document).ready(function() {
+            if (core.isTouchDevice() == false)
+            {
+                /*
+                $("body").tooltip({
+                    selector: '[data-toggle="tooltip"]',
+                    //selector: '[title]',
+                    container: 'body',
+                    html:true,
+                    placement: 'auto top',
+                    delay:{ show: 1000, hide: 100 }
+                });*/
+                $("body").popover({
+                    selector: '[data-toggle="popover"]',
+                    container: 'body',
+                    html:true,
+                    trigger: 'hover',
+                    //placement: 'auto top',
+                    delay:{ show: 1000, hide: 100 }
+                });
+            }
+        });
     </script>
 
     <!-- individual page java scripts -->

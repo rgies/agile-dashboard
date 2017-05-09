@@ -1,7 +1,8 @@
 (function() {
     var $,
         timelines,
-        eventsMinDistance = 60;
+        eventsMinDistance = 60,
+        eventsMaxDistance = 120;
 
     $ = jQuery;
 
@@ -32,7 +33,7 @@
             timelineComponents['eventsContent'] = timeline.children('.events-content');
 
             //assign a left postion to the single events along the timeline
-            setDatePosition(timelineComponents, eventsMinDistance);
+            setDatePosition(timelineComponents, eventsMinDistance, eventsMaxDistance);
             //assign a width to the timeline
             var timelineTotWidth = setTimelineWidth(timelineComponents, eventsMinDistance);
             //the timeline has been initialize - show it
@@ -49,6 +50,7 @@
                 updateSlide(timelineComponents, timelineTotWidth, 'prev');
             });
             //detect click on the a single event - show new event content
+            /*
             timelineComponents['eventsWrapper'].on('click', 'a', function(event){
                 event.preventDefault();
                 timelineComponents['timelineEvents'].removeClass('selected');
@@ -56,7 +58,7 @@
                 updateOlderEvents($(this));
                 updateFilling($(this), timelineComponents['fillingLine'], timelineTotWidth);
                 updateVisibleContent($(this), timelineComponents['eventsContent']);
-            });
+            });*/
 
             //on swipe, show next/prev event content
             timelineComponents['eventsContent'].on('swipeleft', function(){
@@ -69,6 +71,7 @@
             });
 
             //keyboard navigation
+            /*
             $(document).keyup(function(event){
                 if(event.which=='37' && elementInViewport(timeline.get(0)) ) {
                     showNewContent(timelineComponents, timelineTotWidth, 'prev');
@@ -76,6 +79,7 @@
                     showNewContent(timelineComponents, timelineTotWidth, 'next');
                 }
             });
+            */
         });
     }
 
@@ -140,11 +144,22 @@
         setTransformValue(filling.get(0), 'scaleX', scaleValue);
     }
 
-    function setDatePosition(timelineComponents, min) {
+    function setDatePosition(timelineComponents, min, max) {
+        var lastDistance = 0;
+        var corr = 0;
         for (i = 0; i < timelineComponents['timelineDates'].length; i++) {
             var distance = daydiff(timelineComponents['timelineDates'][0], timelineComponents['timelineDates'][i]),
                 distanceNorm = Math.round(distance/timelineComponents['eventsMinLapse']) + 2;
-            timelineComponents['timelineEvents'].eq(i).css('left', distanceNorm*min+'px');
+
+            var distanceValue = distanceNorm * min - corr;
+
+            if (distanceValue - lastDistance > max) {
+                corr = corr + distanceValue - (lastDistance + max);
+                distanceValue = lastDistance + max;
+            }
+
+            timelineComponents['timelineEvents'].eq(i).css('left', distanceValue + 'px');
+            lastDistance = distanceValue;
         }
     }
 
@@ -245,8 +260,10 @@
         var dateDistances = [];
         for (i = 1; i < dates.length; i++) {
             var distance = daydiff(dates[i-1], dates[i]);
+
             dateDistances.push(distance);
         }
+
         return Math.min.apply(null, dateDistances);
     }
 

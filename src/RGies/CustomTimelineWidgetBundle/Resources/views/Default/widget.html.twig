@@ -18,12 +18,15 @@
                     var timeline = new Timeline({
                         element: 'timeline-{{ widget.id }}'
                     });
+                } else {
+                    $('#widget-value-{{ widget.id }}').html('<i>No timeline created</i>');
                 }
 
                 // Badge with total number of issues
                 if (response['days-to-milestone'] != undefined) {
                     $('#widget-title-suffix-{{ widget.id }}').html(
-                        '<span style="text-shadow: none; font-size: 10px" class="badge">' + response['days-to-milestone'] + 'd</span>'
+                        '<span style="text-shadow: none; font-size: 10px" class="badge">'
+                        + response['days-to-milestone'] + 'd left</span>'
                     );
                 }
 
