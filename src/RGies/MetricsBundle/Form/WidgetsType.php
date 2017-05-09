@@ -39,10 +39,11 @@ class WidgetsType extends AbstractType
             '' => 'Default',
             '1x1' => 'Small 1x1 (S)',
             '2x1' => 'Wide 2x1 (M)',
+            'Xx1' => 'Stretched x1 (F)',
             '1x2' => 'Height 1x2 (M)',
             '2x2' => 'Large 2x2 (L)',
             '3x2' => 'X-Large 3x2 (XL)',
-            'Xx2' => 'Full width (Full)',
+            'Xx2' => 'Stretched x2 (F)',
         );
 
         if ($this->_lastVisitedDashboardEntity) {

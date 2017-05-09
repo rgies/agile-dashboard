@@ -99,6 +99,15 @@ label.error {
     margin-bottom: 15px;
 }
 
+.widget-panel-Xx1 {
+    position: relative;
+    width: 100%;
+    height: 142px;
+    /*float: left;*/
+    margin-right: 15px;
+    margin-bottom: 15px;
+}
+
 .widget-panel-2x2 {
     position: relative;
     width: 455px;
