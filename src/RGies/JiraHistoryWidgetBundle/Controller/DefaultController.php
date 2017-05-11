@@ -86,7 +86,7 @@ class DefaultController extends Controller
         $response['rows'] = [];
         $response['labels'] = [];
         $response['keys'] = [];
-        $days = $startDate->diff($endDate)->format('%a');
+        $days = (int)$startDate->diff($endDate)->format('%a');
         $colors = ['#0b62a4', '#7A92A3', '#4da74d', '#afd8f8', '#edc240', '#cb4b4b', '#9440ed'];
 
         $issueService = new IssueService($this->get('JiraCoreService')->getLoginCredentials());
@@ -200,9 +200,9 @@ class DefaultController extends Controller
     protected function _addData(&$dataSource, $date, $rowKey, $value)
     {
         if (isset($dataSource[$date])) {
-            $dataSource[$date][$rowKey] = $value;
+            $dataSource[$date][$rowKey] = (float)$value;
         } else {
-            $dataSource[$date] = ['date' => $date, $rowKey => $value];
+            $dataSource[$date] = ['date' => $date, $rowKey => (float)$value];
         }
     }
 

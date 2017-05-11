@@ -37,6 +37,11 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span> Options <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
+                            <li>
+                                <a href="javascript:if (screenfull.enabled) {$('#sortable').css('background-color', $('body').css('background-color'));screenfull.toggle($('#sortable')[0])}">
+                                    <i class="fa fa-television fa-fw"></i> TV - full screen mode
+                                </a>
+                            </li>
                             <li><a href="javascript:toggleDashboardEditMode();"><i class="fa fa-arrows fa-fw"></i> Reorganize&nbsp;<span class="badge">e-key</span></a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="{{ path("dashboard") }}"><i class="fa fa-dashboard fa-fw"></i> Manage Dashboards</a></li>

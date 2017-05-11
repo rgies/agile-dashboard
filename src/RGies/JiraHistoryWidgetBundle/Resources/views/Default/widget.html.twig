@@ -18,13 +18,13 @@
 
                     if (response['warning']) {
                         $('#chart-{{ widget.id }}').html(
-                                '<div class="widget-value-warning"><i class="fa fa-warning"></i> ' +
-                                response['warning'] + '</div>'
+                            '<div class="widget-value-warning"><i class="fa fa-warning"></i> ' +
+                            response['warning'] + '</div>'
                         );
                         return;
                     }
 
-                    new Morris.{{ config.chartType }}({
+                    var chart{{ widget.id }} = new Morris.{{ config.chartType }}({
                         element: 'chart-{{ widget.id }}',
                         hideHover: 'auto',
                         data: response['data'],
@@ -37,13 +37,13 @@
                             var i=0, sum = 0;
                             for (var key in row) {
                                 if (row.hasOwnProperty(key)) {
-                                    i++;
-                                    if (key.charAt(0) == 'y') {
+                                    if (key.charAt(0) == 'y' && typeof(row[key]) == 'number') {
+                                        i++;
                                         sum = sum + row[key];
                                     }
                                 }
                             }
-                            if (i>2) content = content + '\nΣ: ' + sum;
+                            if (i>1) content = content + '\nΣ: ' + sum.toString();
                             return content;
                         },
                         {% endif %}

@@ -52,6 +52,7 @@
 
         // Catch key events
         $( document ).keypress(function( event ) {
+            //console.log(event.keyCode);
 
             if ( $('input:focus, textarea:focus').length === 0 ) {
                 // create new task <n>-key
@@ -61,6 +62,12 @@
                 // edit tasklist <e>-key
                 else if (event.keyCode == 101) {
                     toggleDashboardEditMode();
+                }
+                // fullscreen mode
+                else if (event.keyCode == 102) {
+                    if (screenfull.enabled) {
+                        screenfull.toggle();
+                    }
                 }
             }
         });

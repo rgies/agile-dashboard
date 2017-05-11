@@ -66,8 +66,8 @@ class DefaultController extends Controller
         $calcBase = $widgetConfig->getCalcBase();
         $startDate = new \DateTime($widgetConfig->getStartDate());
         $endDate = new \DateTime($widgetConfig->getEndDate() . ' 23:59:59');
-        $days = $startDate->diff($endDate)->format('%a');
-        $doneDays = $startDate->diff(new \DateTime())->format('%a');
+        $days = (int)$startDate->diff($endDate)->format('%a');
+        $doneDays = (int)$startDate->diff(new \DateTime())->format('%a');
         $colors = ['#0b62a4', '#7A92A3', '#4da74d', '#afd8f8', '#edc240', '#cb4b4b', '#9440ed'];
         $storyPointField = 'customfield_10004';
 
@@ -82,19 +82,6 @@ class DefaultController extends Controller
         $updateCounter = 0;
         $interval = '-1 day';
         $now = clone $endDate;
-
-        // auto calculate interval
-        /*
-        if ($days > 300) {
-            $interval = '-3 month';
-        } elseif ($days > 100) {
-            $interval = '-1 month';
-        } elseif ($days > 30) {
-            $interval = '-1 week';
-        } elseif ($days > 14) {
-            $interval = '-1 week';
-        }*/
-
         $data = $this->_getDataArray($widgetId, 1);
 
         for ($now; $now > $startDate; $now->modify($interval))
@@ -225,6 +212,7 @@ class DefaultController extends Controller
         $response['data'] = array_values($response['data']);
         $response['total-days'] = $days;
         $response['done-days'] = $doneDays;
+        $response['left-days'] = $days - $doneDays;
         $response['sprint-end'] = $endDate->format('Y-m-d');
         $response['estimated-end-date'] = $finishDate;
         $response['performance'] = $performance;
@@ -246,9 +234,9 @@ class DefaultController extends Controller
     protected function _addData(&$dataSource, $date, $rowKey, $value)
     {
         if (isset($dataSource[$date])) {
-            $dataSource[$date][$rowKey] = $value;
+            $dataSource[$date][$rowKey] = (float)$value;
         } else {
-            $dataSource[$date] = ['date' => $date, $rowKey => $value];
+            $dataSource[$date] = ['date' => $date, $rowKey => (float)$value];
         }
     }
 

@@ -44,16 +44,22 @@
                     $('#widget-title-suffix-{{ widget.id }}').html(
                         '<span style="text-shadow: none; font-size: 10px" class="badge badge-warning">+' + response['diff-days'] + 'd</span>'
                     );
+                } else if (response['left-days']) {
+                    $('#widget-title-suffix-{{ widget.id }}').html(
+                        '<span style="text-shadow: none; font-size: 10px" class="badge">' + response['left-days'] + 'd left</span>'
+                    );
                 }
 
                 // Sprint goal badge
                 if (response['sprint-end']) {
                     var additionalStyles = '';
+                    var endDate = response['sprint-end'];
                     if (response['diff-days'] && response['diff-days']>0) {
-                        additionalStyles = 'badge-warning'
+                        additionalStyles = 'badge-warning';
+                        endDate = response['estimated-end-date'];
                     }
                     $('#chart-sprint-end-{{ widget.id }}').html(
-                        '<span class="badge ' + additionalStyles + '">' + response['estimated-end-date'] + '</span>'
+                        '<span class="badge ' + additionalStyles + '">' + endDate + '</span>'
                     );
                 }
 
