@@ -32,8 +32,8 @@
                         ykeys: response['keys'],
                         parseTime: false,
                         labels: response['labels'],
-                        {% if (config.chartType=='Area') or (config.chartType=='Bar') %}
                         hoverCallback: function (index, options, content, row) {
+                            content = '';
                             var i=0, sum = 0;
                             for (var key in row) {
                                 if (row.hasOwnProperty(key)) {
@@ -43,10 +43,50 @@
                                     }
                                 }
                             }
-                            if (i>1) content = content + '\nΣ: ' + sum.toString();
+
+                            var index = 0;
+                            for (var key in row) {
+                                if (row.hasOwnProperty(key)) {
+                                    if (key.charAt(0) == 'y') {
+                                        var value = row[key];
+
+                                        if (i > 1) {
+                                            value = value + '&nbsp;(' + Math.round(value / sum * 100) + '%)';
+                                        }
+
+                                        content = '<div class="morris-hover-point" style="text-align: left;">'
+                                                {% if (config.chartType=='Bar') %}
+                                            + '<i class="fa fa-circle" style="color:' + options.barColors[index] + '"></i>&nbsp;'
+                                                {% else %}
+                                            + '<i class="fa fa-circle" style="color:' + options.lineColors[index] + '"></i>&nbsp;'
+                                                {% endif %}
+                                            + options.labels[index]
+                                            + ':&nbsp;'
+                                            + value
+                                            + '</div>'
+                                            + content;
+                                        index++;
+                                    }
+                                }
+                            }
+
+                            {% if (config.chartType=='Area') or (config.chartType=='Bar') %}
+                            if (i>1) {
+                                content = content
+                                    + '<div class="morris-hover-row-label">Σ: '
+                                    + sum.toString()
+                                    + '</div>';
+                            }
+                            {% endif %}
+
+                            content = '<div class="morris-hover-row-label">'
+                                + row['date']
+                                + '</div>'
+                                + content;
+
+
                             return content;
                         },
-                        {% endif %}
                         fillOpacity: 0.5
                     });
 
