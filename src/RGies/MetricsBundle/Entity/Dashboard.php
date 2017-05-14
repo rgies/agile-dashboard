@@ -48,6 +48,11 @@ class Dashboard
     private $widgets;
 
     /**
+     * @ORM\OneToMany(targetEntity="RGies\MetricsBundle\Entity\Params", mappedBy="dashboard")
+     */
+    private $params;
+
+    /**
      * Constructor
      */
     public function __construct($init = null)
@@ -192,5 +197,39 @@ class Dashboard
         $this->widgets[] = $widget;
 
         return $this;
+    }
+
+    /**
+     * Add param
+     *
+     * @param \RGies\MetricsBundle\Entity\Params $param
+     *
+     * @return Dashboard
+     */
+    public function addParam(\RGies\MetricsBundle\Entity\Params $param)
+    {
+        $this->params[] = $param;
+
+        return $this;
+    }
+
+    /**
+     * Remove param
+     *
+     * @param \RGies\MetricsBundle\Entity\Params $param
+     */
+    public function removeParam(\RGies\MetricsBundle\Entity\Params $param)
+    {
+        $this->params->removeElement($param);
+    }
+
+    /**
+     * Get params
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getParams()
+    {
+        return $this->params;
     }
 }

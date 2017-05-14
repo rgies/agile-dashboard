@@ -1,0 +1,48 @@
+{% extends "MetricsBundle::layout.html.twig" %}
+
+{% block content -%}
+<div class="container">
+    <div class="page-header">
+        <h1>Params</h1>
+    </div>
+
+    <table class="record_properties table table-striped">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+            <tr>
+                <th>Label</th>
+                <td>{{ entity.label }}</td>
+            </tr>
+            <tr>
+                <th>Type</th>
+                <td>{{ entity.type }}</td>
+            </tr>
+            <tr>
+                <th>Placeholder</th>
+                <td>{{ entity.placeholder }}</td>
+            </tr>
+            <tr>
+                <th>Value</th>
+                <td>{{ entity.value }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('params') }}">
+            Back to the list
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('params_edit', { 'id': entity.id }) }}">
+            Edit
+        </a>
+    </li>
+    <li>{{ form(delete_form) }}</li>
+</ul>
+</div>
+{% endblock %}

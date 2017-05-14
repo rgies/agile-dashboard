@@ -1,0 +1,32 @@
+{% if entities %}
+<li>
+    <form action="" method="post" accept-charset="UTF-8">
+        {% for entity in entities %}
+        <div class="form-group">
+            <label for="dashboard_param_{{ entity.id }}">{{ entity.label }}:</label>
+            {% if entity.type == 'date' %}
+            <input id="dashboard_param_{{ entity.id }}" name="dashboard_param[{{ entity.id }}]" type="text" class="form-control datepicker" value="{{ entity.value }}"/>
+            {% else %}
+            <input id="dashboard_param_{{ entity.id }}" name="dashboard_param[{{ entity.id }}]" class="form-control" type="{{ entity.type }}" value="{{ entity.value }}"/>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <div class="form-group" style="padding-top: 15px;">
+            <button class="btn btn-primary btn-group-justified">
+                <i class="fa fa-check"></i> Apply
+            </button>
+            <small>
+                <center style="padding-top: 6px;">
+                    <a href="{{ path('dashboard_edit', {id: dashboardId}) }}"><i class="fa fa-pencil"></i> Edit dashboard parameter</a>
+                </center>
+            </small>
+        </div>
+    </form>
+</li>
+{% else %}
+<li style="padding-bottom: 10px;">
+    <button class="btn btn-primary btn-group-justified" onclick="location.href='{{ path('dashboard_edit', {id: dashboardId}) }}';">
+        <i class="fa fa-cogs"></i> Setup parameter
+    </button>
+</li>
+{% endif %}

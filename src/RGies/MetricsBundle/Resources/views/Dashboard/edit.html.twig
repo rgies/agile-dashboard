@@ -9,18 +9,47 @@
     {{ form(edit_form) }}
     {{ form(delete_form) }}
 
-    <div class="form-group">
-        <div class="control">
-            <button id="save" type="submit" onclick="formSave()" class="btn btn-primary pull-right">
-                <i class="fa fa-check"></i> Save
-            </button>
-            <span class="pull-right">&nbsp;&nbsp;&nbsp;</span>
-            <button id="delete" onclick="deleteEntity()" class="btn btn-danger pull-right">
-                <i class="fa fa-trash"></i> Delete
-            </button>
+
+    <div class="row">
+        <div class="form-group">
+            <label class="col-sm-2 control-label" style="text-align: right">Parameter</label>
+            <div class="col-sm-10">
+                <table class="table table-striped">
+                    <tbody id="param-items">
+                    {% for param in params %}
+                        <tr data-id="{{ param.id }}">
+                            <td><i id="dragicon" class="ion ion-drag" style="cursor: move"></i>&nbsp;&nbsp; <a href="{{ path('params_edit', { 'id': param.id }) }}">{{ param.label }}</a></td>
+                            <td>{{ param.type }}</td>
+                            <td>%{{ param.placeholder }}%</td>
+                            <td><a href="{{ path('params_edit', { 'id': param.id, 'dashboard': entity.id }) }}"><i class="fa fa-edit"></i> Edit</a></td>
+                        </tr>
+                    {% endfor %}
+                    {% if not params %}<tr><td colspan="5"><i>No parameters found</i></td></tr>{% endif %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
+    <div class="row">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">&nbsp;</label>
+            <div class="col-sm-10 control">
+                <button type="button" class="btn btn-primary pull-left" onclick="location.href='{{ path('params_new', {'dashboardId': entity.id}) }}'">
+                    <i class="fa fa-plus"></i> Add parameter
+                </button>
+                <button id="save" type="submit" onclick="formSave()" class="btn btn-primary pull-right">
+                    <i class="fa fa-check"></i> Save
+                </button>
+                <span class="pull-right">&nbsp;&nbsp;&nbsp;</span>
+                <button id="delete" onclick="deleteEntity()" class="btn btn-danger pull-right">
+                    <i class="fa fa-trash"></i> Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <br/>
     <br/>
 
     <a href="{{ path('home') }}">
@@ -30,30 +59,49 @@
 {% endblock %}
 
 {% block js -%}
-        <script type="text/javascript">
+    <link href="{{ asset('css/jquery-ui.min.css') }}" rel="stylesheet" media="screen">
+    <script src="{{ asset('js/jquery-ui.min.js') }}"></script>
 
-            function formSave()
+    <script type="text/javascript">
+
+
+        $(document).ready(function() {
+            $( "#param-items" ).sortable({
+                axis: "y",
+                cursor: "move",
+                //containment: "parent",
+                handle: "#dragicon",
+                update: function(event, ui) {
+                    var items = $(this).sortable('toArray', {attribute: 'data-id'}).toString();
+                    $.post('{{ path('params_reorder') }}', {'id_list': items, 'dashboard_id': {{ entity.id }} }).done(function(data){});
+                }
+            }).disableSelection();
+            $( "#param-items" ).sortable('enable');
+        });
+
+
+        function formSave()
+        {
+            var form = $("#edit-form");
+
+            if (form.validate())
             {
-                var form = $("#edit-form");
+                form.submit();
+            }
+        }
 
-                if (form.validate())
+        function deleteEntity()
+        {
+            var form = $("#delete-form");
+
+            bootbox.confirm('<h4><i class="fa fa-warning fa-2x text-danger"></i> Do you really want to delete <span class="label label-default">{{ entity.title }}</span> widget ?</h4>', function(result) {
+                if (result)
                 {
                     form.submit();
                 }
-            }
+            });
+        }
 
-            function deleteEntity()
-            {
-                var form = $("#delete-form");
-
-                bootbox.confirm('<h4><i class="fa fa-warning fa-2x text-danger"></i> Do you really want to delete <span class="label label-default">{{ entity.title }}</span> widget ?</h4>', function(result) {
-                    if (result)
-                    {
-                        form.submit();
-                    }
-                });
-            }
-
-            $("#edit-form").validate();
-        </script>
+        $("#edit-form").validate();
+    </script>
 {% endblock %}

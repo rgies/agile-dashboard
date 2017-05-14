@@ -1,5 +1,8 @@
 {% extends "::base.html.twig" %}
 {% block stylesheets %}
+    <!-- Bootstrap Datepicker -->
+    <link href="{{ asset('css/datepicker.css') }}" rel="stylesheet" media="screen">
+    <!-- Bundle default stylesheets -->
     <link href="{{ asset('bundles/metrics/css/default.css') }}" rel="stylesheet">
     <!-- individual page stylesheets -->
     <link rel="stylesheet" href="{{ asset('bundles/customtimelinewidget/css/default.css') }}"> <!-- Resource style -->
@@ -25,6 +28,9 @@
 {% endblock %}
 
 {% block javascripts %}
+    <!-- Bootstrap Datepicker -->
+    <script src="{{ asset('js/bootstrap-datepicker.min.js') }}"></script>
+    <!--<script src="{{ asset('js/locales/bootstrap-datepicker.de.js') }}"></script>-->
     <!-- Sparkline js -->
     <script src="{{ asset('js/jquery.sparkline.min.js') }}"></script>
     <script src="{{ asset('js/raphael.min.js') }}"></script>
@@ -40,6 +46,15 @@
         });
 
         $(document).ready(function() {
+            $('.datepicker').datepicker({
+                //startDate: '-0d',
+                language: "{{ app.request.locale }}",
+                autoclose: true,
+                calendarWeeks: true,
+                todayHighlight: true,
+                dateFormat: 'yy-mm-dd'
+            });
+
             if (core.isTouchDevice() == false)
             {
                 /*

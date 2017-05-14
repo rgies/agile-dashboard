@@ -1,0 +1,38 @@
+{% extends "MetricsBundle::layout.html.twig" %}
+
+{% block content -%}
+<div class="container" xmlns="http://www.w3.org/1999/html">
+    <div class="page-header">
+        <h1>Params list</h1>
+    </div>        <div>
+            <button type="button" class="btn btn-primary" onclick="location.href='{{ path('params_new') }}'">
+                <i class="fa fa-plus"></i> Create a new entry
+            </button>
+        </div><br/>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Label</th>
+                <th>Type</th>
+                <th>Placeholder</th>
+                <th>Value</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td><a href="{{ path('params_edit', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                <td>{{ entity.label }}</td>
+                <td>{{ entity.type }}</td>
+                <td>{{ entity.placeholder }}</td>
+                <td>{{ entity.value }}</td>
+                <td>                        <a href="{{ path('params_edit', { 'id': entity.id }) }}"><i class="fa fa-edit"></i> Edit</a>                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}
