@@ -21,7 +21,7 @@ class ParamsType extends AbstractType
                 'choices' => array(
                     'text' => 'Input',
                     'date' => 'Date',
-                    'choice' => 'Drop-down',
+                    //'choice' => 'Drop-down',
                 )
             ))
             ->add('placeholder')

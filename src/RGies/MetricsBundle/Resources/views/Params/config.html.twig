@@ -1,23 +1,24 @@
 {% if entities %}
 <li>
-    <form action="" method="post" accept-charset="UTF-8">
+    <form action="{{ path('params_save') }}" method="post" accept-charset="UTF-8">
+        <input name="dashboardId" type="hidden" value="{{ dashboardId }}"/>
         {% for entity in entities %}
         <div class="form-group">
             <label for="dashboard_param_{{ entity.id }}">{{ entity.label }}:</label>
             {% if entity.type == 'date' %}
-            <input id="dashboard_param_{{ entity.id }}" name="dashboard_param[{{ entity.id }}]" type="text" class="form-control datepicker" value="{{ entity.value }}"/>
+            <input id="dashboard_param_{{ entity.id }}" name="dashboard_params[{{ entity.id }}]" type="text" class="form-control datepicker" value="{{ entity.value }}"/>
             {% else %}
-            <input id="dashboard_param_{{ entity.id }}" name="dashboard_param[{{ entity.id }}]" class="form-control" type="{{ entity.type }}" value="{{ entity.value }}"/>
+            <input id="dashboard_param_{{ entity.id }}" name="dashboard_params[{{ entity.id }}]" class="form-control" type="{{ entity.type }}" value="{{ entity.value }}"/>
             {% endif %}
         </div>
         {% endfor %}
         <div class="form-group" style="padding-top: 15px;">
-            <button class="btn btn-primary btn-group-justified">
+            <button type="submit" class="btn btn-primary btn-group-justified">
                 <i class="fa fa-check"></i> Apply
             </button>
             <small>
                 <center style="padding-top: 6px;">
-                    <a href="{{ path('dashboard_edit', {id: dashboardId}) }}"><i class="fa fa-pencil"></i> Edit dashboard parameter</a>
+                    <a href="{{ path('dashboard_edit', {id: dashboardId}) }}"><i class="fa fa-pencil"></i> Edit parameter</a>
                 </center>
             </small>
         </div>

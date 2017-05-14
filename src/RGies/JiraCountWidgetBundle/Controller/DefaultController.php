@@ -46,12 +46,14 @@ class DefaultController extends Controller
             return new Response($cacheValue, Response::HTTP_OK);
         }
 
-        $widgetConfig = $this->get('WidgetService')->getWidgetConfig($widgetType, $widgetId);
+        $widgetService = $this->get('WidgetService');
+        $widgetConfig = $widgetService->getWidgetConfig($widgetType, $widgetId);
 
         $response = array();
         $response['icon'] = $widgetConfig->getIcon();
 
         $jql = $widgetConfig->getJqlQuery();
+        //$jql = $widgetService->resolveParameters(1, $widgetConfig->getJqlQuery());
 
         try {
             $issueService = new IssueService($this->get('JiraCoreService')->getLoginCredentials());

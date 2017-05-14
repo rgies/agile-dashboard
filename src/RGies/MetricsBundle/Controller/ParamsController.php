@@ -40,7 +40,7 @@ class ParamsController extends Controller
     /**
      * Creates a new Params entity.
      *
-     * @Route("/{dashboardId}", name="params_create")
+     * @Route("/create/{dashboardId}", name="params_create")
      * @Method("POST")
      * @Template("MetricsBundle:Params:new.html.twig")
      */
@@ -298,6 +298,36 @@ class ParamsController extends Controller
         $em->flush();
 
         return new Response(json_encode($response), Response::HTTP_OK);
+    }
+
+    /**
+     * Save dashboard parameter.
+     *
+     * @Route("/save", name="params_save")
+     * @Method("POST")
+     */
+    public function saveAction(Request $request)
+    {
+        $dashboardId = $request->request->get('dashboardId');
+        $params = $request->request->get('dashboard_params');
+
+        $em = $this->getDoctrine()->getManager();
+
+        foreach ($params as $key=>$value)
+        {
+            $entity = $em->getRepository('MetricsBundle:Params')->find($key);
+
+            if ($entity) {
+                $entity->setValue($value);
+                $em->persist($entity);
+            }
+
+        }
+        $em->flush();
+
+        // @todo: clear widget cache
+
+        return $this->redirect($this->generateUrl('home', array('id' => $dashboardId)));
     }
 
 }

@@ -141,5 +141,27 @@ class WidgetService
         return array('1x1');
     }
 
+    /**
+     * Inserts parameters on placeholders at the given string.
+     *
+     * @param $dashboardId
+     * @param $string
+     */
+    public function resolveParameters($dashboardId, $string)
+    {
+        $em = $this->_doctrine->getManager();
+
+        $entities = $em->getRepository('MetricsBundle:Params')->findBy(
+            array('dashboard' => $dashboardId)
+        );
+
+        foreach ($entities as $entity) {
+            $placeholder = '%' . $entity->getPlaceholder() . '%';
+            str_replace($placeholder, $entity->getValue(), $string);
+        }
+        
+        return $string;
+    }
+
 
 }
