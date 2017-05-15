@@ -19,6 +19,23 @@
     text-decoration: line-through;
 }
 
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+    color: #c8c8c8 !important;
+}
+input:-moz-placeholder,
+textarea:-moz-placeholder {
+    color: #c8c8c8 !important;
+}
+input::-moz-placeholder,
+textarea::-moz-placeholder {
+    color: #c8c8c8 !important;
+}
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+    color: #c8c8c8 !important;
+}
+
 /* -- Inner Input Icons ------------------ */
 
 /* enable absolute positioning */

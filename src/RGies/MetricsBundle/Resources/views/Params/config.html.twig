@@ -8,7 +8,7 @@
             {% if entity.type == 'date' %}
             <div class="inner-addon left-addon">
                 <i class="glyphicon glyphicon-calendar"></i>
-                <input id="dashboard_param_{{ entity.id }}" name="dashboard_params[{{ entity.id }}]" type="text" class="form-control datepicker" value="{{ entity.value }}"/>
+                <input id="dashboard_param_{{ entity.id }}" name="dashboard_params[{{ entity.id }}]" type="text" placeholder="Date" class="form-control datepicker" value="{{ paramsService.getValue(entity) }}"/>
             </div>
             {% else %}
             <input id="dashboard_param_{{ entity.id }}" name="dashboard_params[{{ entity.id }}]" class="form-control" type="{{ entity.type }}" value="{{ entity.value }}"/>
