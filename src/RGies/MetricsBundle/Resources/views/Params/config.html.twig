@@ -6,7 +6,10 @@
         <div class="form-group">
             <label for="dashboard_param_{{ entity.id }}">{{ entity.label }}:</label>
             {% if entity.type == 'date' %}
-            <input id="dashboard_param_{{ entity.id }}" name="dashboard_params[{{ entity.id }}]" type="text" class="form-control datepicker" value="{{ entity.value }}"/>
+            <div class="inner-addon left-addon">
+                <i class="glyphicon glyphicon-calendar"></i>
+                <input id="dashboard_param_{{ entity.id }}" name="dashboard_params[{{ entity.id }}]" type="text" class="form-control datepicker" value="{{ entity.value }}"/>
+            </div>
             {% else %}
             <input id="dashboard_param_{{ entity.id }}" name="dashboard_params[{{ entity.id }}]" class="form-control" type="{{ entity.type }}" value="{{ entity.value }}"/>
             {% endif %}
@@ -18,7 +21,7 @@
             </button>
             <small>
                 <center style="padding-top: 6px;">
-                    <a href="{{ path('dashboard_edit', {id: dashboardId}) }}"><i class="fa fa-pencil"></i> Edit parameter</a>
+                    <a href="{{ path('dashboard_edit', {id: dashboardId}) }}"><i class="fa fa-pencil"></i> Edit filter</a>
                 </center>
             </small>
         </div>
@@ -27,7 +30,7 @@
 {% else %}
 <li style="padding-bottom: 10px;">
     <button class="btn btn-primary btn-group-justified" onclick="location.href='{{ path('dashboard_edit', {id: dashboardId}) }}';">
-        <i class="fa fa-cogs"></i> Setup parameter
+        <i class="fa fa-cogs"></i> Setup filter
     </button>
 </li>
 {% endif %}

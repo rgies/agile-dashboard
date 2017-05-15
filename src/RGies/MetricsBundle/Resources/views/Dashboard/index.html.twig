@@ -26,7 +26,7 @@
 
     <div class="container" xmlns="http://www.w3.org/1999/html">
     <div class="page-header">
-        <h1>Dashboard list</h1>
+        <h1><i class="fa fa-dashboard"></i> Dashboard list</h1>
     </div>
     <div>
         <button type="button" class="btn btn-primary pull-left" onclick="location.href='{{ path('dashboard_new') }}'">
@@ -41,16 +41,14 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Id</th>
                 <th>Title</th>
                 <th>Actions</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="dashboard-items">
         {% for entity in entities %}
-            <tr>
-                <td>{{ entity.id }}</td>
-                <td><a href="{{ path('dashboard_edit', { 'id': entity.id }) }}">{{ entity.title }}</a></td>
+            <tr data-id="{{ entity.id }}">
+                <td><i id="dragicon" class="ion ion-drag" style="cursor: move"></i>&nbsp; <a href="{{ path('dashboard_edit', { 'id': entity.id }) }}">{{ entity.title }}</a></td>
                 <td>
                     <a href="{{ path('home', { 'id': entity.id }) }}"><i class="fa fa-dashboard"></i> View</a>
                     &nbsp;&nbsp;
@@ -72,6 +70,9 @@
 {% endblock %}
 
 {% block js %}
+    <link href="{{ asset('css/jquery-ui.min.css') }}" rel="stylesheet" media="screen">
+    <script src="{{ asset('js/jquery-ui.min.js') }}"></script>
+
     <script>
         /**
          * Copy dashboard.
@@ -85,6 +86,20 @@
             $('#copy-id').val(id);
             $('#copy-modal').modal();
         }
+
+        $(document).ready(function() {
+            $( "#dashboard-items" ).sortable({
+                axis: "y",
+                cursor: "move",
+                //containment: "parent",
+                handle: "#dragicon",
+                update: function(event, ui) {
+                    var items = $(this).sortable('toArray', {attribute: 'data-id'}).toString();
+                    $.post('{{ path('dashboard_reorder') }}', {'id_list': items}).done(function(data){});
+                }
+            }).disableSelection();
+            $( "#dashboard-items" ).sortable('enable');
+        });
 
     </script>
 {% endblock %}

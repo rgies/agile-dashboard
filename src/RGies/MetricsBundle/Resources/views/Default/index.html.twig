@@ -5,8 +5,16 @@
     {% set content %}
     <form id="copy-widget-form" method="post" action="{{ path('widgets_copy') }}" enctype="multipart/form-data">
         <div class="form-group">
-            <label for="copy-widget-title">Title</label>
+            <label for="copy-widget-title">New title</label>
             <input id="copy-widget-title" name="title" type="text" class="form-control" required="required">
+        </div>
+        <div class="form-group">
+            <label for="copy-target-dashboard">Target dashboard</label>
+            <select id="copy-target-dashboard" name="dashboard" class="form-control">
+                {% for item in dashboards %}
+                <option value="{{ item.id }}"{% if (item.id == dashboard.id) %} selected="selected"{% endif %}>{{ item.title }}</option>
+                {% endfor %}
+            </select>
         </div>
         <input id="copy-widget-id" type="hidden" name="id" value="">
     </form>
@@ -206,7 +214,7 @@
          */
         function copyWidget(id, title)
         {
-            $('#copy-widget-title').val(title);
+            $('#copy-widget-title').val(title + ' - copy');
             $('#copy-widget-id').val(id);
             $('#copy-widget-modal').modal();
         }

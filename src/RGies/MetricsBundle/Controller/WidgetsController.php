@@ -377,10 +377,11 @@ class WidgetsController extends Controller
      * @Route("/copyWidget/", name="widgets_copy")
      * @Template()
      */
-    public function copy(Request $request)
+    public function copyAction(Request $request)
     {
         $id = $request->get('id');
         $title = $request->get('title');
+        $dashboard = $request->get('dashboard');
 
         $em = $this->getDoctrine()->getManager();
         $widget = $em->getRepository('MetricsBundle:Widgets')->find($id);
@@ -390,6 +391,12 @@ class WidgetsController extends Controller
         $newConfig = clone $config;
 
         $newWidget->setTitle($title);
+
+        if ($dashboard) {
+            $dashboard = $em->getRepository('MetricsBundle:Dashboard')->find($dashboard);
+            $newWidget->setDashboard($dashboard);
+        }
+
         $em->persist($newWidget);
         $em->flush();
 
