@@ -47,7 +47,7 @@ class DefaultController extends Controller
         }
 
         $widgetService = $this->get('WidgetService');
-        $widgetConfig = $widgetService->getWidgetConfig($widgetType, $widgetId);
+        $widgetConfig = $widgetService->getResolvedWidgetConfig($widgetType, $widgetId);
 
         $response = array();
         $response['icon'] = $widgetConfig->getIcon();

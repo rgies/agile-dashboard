@@ -9,6 +9,7 @@
 namespace RGies\MetricsBundle\Services;
 
 use RGies\MetricsBundle\Entity\Widgets;
+use RGies\MetricsBundle\Objects\WidgetConfig;
 
 /**
  * Class WidgetService.
@@ -66,6 +67,24 @@ class WidgetService
     {
         $widgetService = $this->_loadPluginService($widgetType);
         return $widgetService->getWidgetConfig($widgetType, $widgetId, $toArray);
+    }
+
+    /**
+     * Get configuration with resolved placeholder by given widget id.
+     *
+     * @param string $widgetType Type name of the widget
+     * @param integer $widgetId ID of the widget
+     * @return object | array | null
+     */
+    public function getResolvedWidgetConfig($widgetType, $widgetId)
+    {
+        $widgetService = $this->_loadPluginService($widgetType);
+
+        return new WidgetConfig(
+            $widgetId,
+            $widgetService->getWidgetConfig($widgetType, $widgetId, false),
+            $this->_doctrine
+        );
     }
 
     /**
@@ -140,28 +159,5 @@ class WidgetService
 
         return array('1x1');
     }
-
-    /**
-     * Inserts parameters on placeholders at the given string.
-     *
-     * @param $dashboardId
-     * @param $string
-     */
-    public function resolveParameters($dashboardId, $string)
-    {
-        $em = $this->_doctrine->getManager();
-
-        $entities = $em->getRepository('MetricsBundle:Params')->findBy(
-            array('dashboard' => $dashboardId)
-        );
-
-        foreach ($entities as $entity) {
-            $placeholder = '%' . $entity->getPlaceholder() . '%';
-            str_replace($placeholder, $entity->getValue(), $string);
-        }
-        
-        return $string;
-    }
-
 
 }

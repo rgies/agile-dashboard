@@ -52,7 +52,7 @@ class DefaultController extends Controller
             }
         }
 
-        $widgetConfig = $this->get('WidgetService')->getWidgetConfig($widgetType, $widgetId);
+        $widgetConfig = $this->get('WidgetService')->getResolvedWidgetConfig($widgetType, $widgetId);
         $em = $this->getDoctrine()->getManager();
 
         $response = array();
@@ -62,10 +62,13 @@ class DefaultController extends Controller
         $response['keys'] = ['y1', 'y2'];
 
         $jql = $widgetConfig->getJqlQuery();
+
         $velocity = $widgetConfig->getVelocity();
         $calcBase = $widgetConfig->getCalcBase();
+
         $startDate = new \DateTime($widgetConfig->getStartDate());
         $endDate = new \DateTime($widgetConfig->getEndDate() . ' 23:59:59');
+
         $days = (int)$startDate->diff($endDate)->format('%a');
         $doneDays = (int)$startDate->diff(new \DateTime())->format('%a');
         $colors = ['#0b62a4', '#7A92A3', '#4da74d', '#afd8f8', '#edc240', '#cb4b4b', '#9440ed'];

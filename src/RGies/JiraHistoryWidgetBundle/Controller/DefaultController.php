@@ -51,7 +51,7 @@ class DefaultController extends Controller
             }
         }
 
-        $widgetConfig = $this->get('WidgetService')->getWidgetConfig($widgetType, $widgetId);
+        $widgetConfig = $this->get('WidgetService')->getResolvedWidgetConfig($widgetType, $widgetId);
         $em = $this->getDoctrine()->getManager();
 
         $response = array();

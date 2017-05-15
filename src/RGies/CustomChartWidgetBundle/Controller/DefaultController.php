@@ -41,7 +41,7 @@ class DefaultController extends Controller
             //return new Response($cacheValue, Response::HTTP_OK);
         }
 
-        $widgetConfig = $this->get('WidgetService')->getWidgetConfig($widgetType, $widgetId);
+        $widgetConfig = $this->get('WidgetService')->getResolvedWidgetConfig($widgetType, $widgetId);
 
         $response['data'] = array();
         $response['keys'] = array();
