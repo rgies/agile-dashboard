@@ -10,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use RGies\MetricsBundle\Entity\Dashboard;
+use RGies\MetricsBundle\Entity\Params;
 use RGies\MetricsBundle\Form\DashboardType;
 
 /**
@@ -282,6 +283,14 @@ class DashboardController extends Controller
 
         $data['dashboard'] = $dashboard[0];
 
+        $params = $em->getRepository('MetricsBundle:Params')
+            ->createQueryBuilder('p')
+            ->where('p.dashboard = :id')
+            ->setParameter('id', $id)
+            ->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+
+        $data['params'] = $params;
+
         $widgets = $em->getRepository('MetricsBundle:Widgets')
             ->createQueryBuilder('w')
             ->where('w.dashboard = :id')
@@ -438,6 +447,16 @@ class DashboardController extends Controller
 
         $em->persist($dashboard);
         $em->flush();
+
+        // persist params
+        if (isset($data['params'])) {
+            foreach ($data['params'] as $param) {
+                $param['dashboard'] = $dashboard;
+                $param = new Params($param);
+                $em->persist($param);
+                $em->flush();
+            }
+        }
 
         // persist widgets
         foreach ($data['widgets'] as $widget) {

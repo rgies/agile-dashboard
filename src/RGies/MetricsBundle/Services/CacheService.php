@@ -91,6 +91,16 @@ class CacheService
         return $default;
     }
 
+    /**
+     * Gets a single item from a json encoded cache entry.
+     *
+     * @param $domain
+     * @param $id
+     * @param $item
+     * @param null $default
+     * @param int $lifetime
+     * @return string
+     */
     public function getValueItem($domain, $id, $item, $default=null, $lifetime=600)
     {
         $items = json_decode($this->getValue($domain, $id, '[]', $lifetime), true);
@@ -126,6 +136,32 @@ class CacheService
             $q->setParameter('id', $id);
         }
 
+        return $q->execute();
+    }
+
+    /**
+     * Deletes cache for all widgets at a specific dashboard.
+     *
+     * @param $dashboardId
+     * @return integer Number of deleted items
+     */
+    public function deleteCacheByDashboardId($dashboardId)
+    {
+        $em = $this->_doctrine->getManager();
+
+        $widgets = $em->getRepository('MetricsBundle:Widgets')->findBy(
+            array('dashboard' => $dashboardId)
+        );
+
+        $widgetIdList = array();
+        foreach ($widgets as $widget) {
+            $widgetIdList[] = $widget->getId();
+        }
+
+        $query = 'delete from MetricsBundle:Cache st where st.uid IN ('
+            . implode($widgetIdList, ',') . ')';
+
+        $q = $em->createQuery($query);
         return $q->execute();
     }
 

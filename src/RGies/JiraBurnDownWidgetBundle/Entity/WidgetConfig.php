@@ -53,7 +53,7 @@ class WidgetConfig
     /**
      * @var integer
      *
-     * @ORM\Column(name="velocity", type="integer", nullable=true)
+     * @ORM\Column(name="velocity", type="string", nullable=true)
      */
     private $velocity;
 

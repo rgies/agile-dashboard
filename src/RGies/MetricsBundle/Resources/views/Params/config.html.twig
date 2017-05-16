@@ -1,17 +1,17 @@
 {% if entities %}
 <li>
-    <form action="{{ path('params_save') }}" method="post" accept-charset="UTF-8">
+    <form id="dashboard-params-form" action="{{ path('params_save') }}" method="post" accept-charset="UTF-8">
         <input name="dashboardId" type="hidden" value="{{ dashboardId }}"/>
         {% for entity in entities %}
         <div class="form-group">
-            <label for="dashboard_param_{{ entity.id }}">{{ entity.label }}:</label>
+            <label title="%{{ entity.placeholder }}%" for="dashboard_param_{{ entity.id }}">{{ entity.label }}:</label>
             {% if entity.type == 'date' %}
             <div class="inner-addon left-addon">
                 <i class="glyphicon glyphicon-calendar"></i>
                 <input id="dashboard_param_{{ entity.id }}" name="dashboard_params[{{ entity.id }}]" type="text" placeholder="Date" class="form-control datepicker" value="{{ paramsService.getValue(entity) }}"/>
             </div>
             {% else %}
-            <input id="dashboard_param_{{ entity.id }}" name="dashboard_params[{{ entity.id }}]" class="form-control" type="{{ entity.type }}" value="{{ entity.value }}"/>
+            <input id="dashboard_param_{{ entity.id }}" name="dashboard_params[{{ entity.id }}]" class="form-control" type="{{ entity.type }}" value="{{ paramsService.getValue(entity) }}"/>
             {% endif %}
         </div>
         {% endfor %}
@@ -20,9 +20,12 @@
                 <i class="fa fa-check"></i> Apply
             </button>
             <small>
-                <center style="padding-top: 6px;">
-                    <a href="{{ path('dashboard_edit', {id: dashboardId}) }}"><i class="fa fa-pencil"></i> Edit filter</a>
-                </center>
+                <div style="text-align: center; padding-top: 6px;">
+                    &nbsp;
+                    <a href="{{ path('dashboard_edit', {id: dashboardId}) }}"><i class="fa fa-pencil"></i> Edit</a>
+                    &nbsp;
+                    <a href="javascript:$('#dashboard-params-form').trigger('reset');"><i class="fa fa-undo"></i> Reset</a>
+                </div>
             </small>
         </div>
     </form>

@@ -325,7 +325,8 @@ class ParamsController extends Controller
         }
         $em->flush();
 
-        // @todo: clear widget cache
+        // clear widget cache
+        $this->get('CacheService')->deleteCacheByDashboardId($dashboardId);
 
         return $this->redirect($this->generateUrl('home', array('id' => $dashboardId)));
     }
