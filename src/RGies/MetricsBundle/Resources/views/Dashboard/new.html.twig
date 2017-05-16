@@ -1,21 +1,38 @@
 {% extends "MetricsBundle::layout.html.twig" %}
 
 {% block content -%}
-<div class="container">
-    <div class="page-header">
-        <h1><i class="fa fa-dashboard"></i> Dashboard creation</h1>
-    </div>
-
-    {{ form(form) }}
-
-    <div class="form-group">
-        <div class="control">
-            <button id="save" type="submit" onclick="formSave()" class="btn btn-primary pull-right">
-                <i class="fa fa-check"></i> Save
+    <!-- Upload Dialog -->
+    {% set content %}
+        <form id="upload-form" method="post" action="{{ path('dashboard_import') }}" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="filebutton-upl" class="control-label">File</label>
+                <input id="filebutton-upl" name="file[]" multiple="multiple" type="file" class="filestyle" data-buttonText="Select file" data-iconName="glyphicon-import" data-input="true" data-buttonName="btn-default">
+            </div>
+        </form>
+    {% endset %}
+    {% include 'MetricsBundle::Templates/modal.html.twig' with {'id': 'upload-modal', 'title': 'Import', 'submit': 'Import', 'content': content} only %}
+    <div class="container">
+        <div class="page-header">
+            <button type="button" class="btn btn-default pull-right" data-toggle="modal" data-target="#upload-modal">
+                <i class="glyphicon glyphicon-import"></i> Import dashboard
             </button>
+            <h1><i class="fa fa-dashboard"></i> Dashboard creation</h1>
+        </div>
+
+        {{ form(form) }}
+
+        <div class="form-group">
+            <div class="control">
+                <button id="save" type="submit" onclick="formSave()" class="btn btn-primary pull-right">
+                    <i class="fa fa-check"></i> Save
+                </button>
+                <span class="pull-right">&nbsp;&nbsp;&nbsp;</span>
+                <button type="button" onclick="history.back();" class="btn btn-default pull-right">
+                    <i class="fa fa-times-circle"></i> Cancel
+                </button>
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}
 
 {% block js -%}
