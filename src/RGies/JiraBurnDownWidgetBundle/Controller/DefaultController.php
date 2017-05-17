@@ -138,6 +138,9 @@ class DefaultController extends Controller
                             $entity->setValue($estimate / 3600);
                             break;
                         case 'count':
+                            $entity->setValue($issues->getTotal());
+                            break;
+
                         default:
                     }
 

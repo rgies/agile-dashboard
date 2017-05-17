@@ -1,0 +1,45 @@
+{% extends "MetricsBundle::Templates/default-widget.html.twig" %}
+
+{% block widget_body %}
+    <div id="widget-value-{{ widget.id }}"></div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        // HERE YOU CAN GET YOUR WIDGET DATA
+        addDataRequest('{{ path('JiraTimelineWidgetBundle-collect-data') }}'
+            , {id:{{ widget.id }}, type:'{{ widget.type }}', updateInterval:'{{ widget.updateInterval }}'}
+            , function (data) {
+
+                var response = JSON.parse(data);
+
+                if (response['warning']) {
+                    $('#widget-value-{{ widget.id }}').html(
+                        '<div class="widget-value-warning"><i class="fa fa-warning"></i> ' +
+                        response['warning'] + '</div>'
+                    );
+                    return;
+                }
+
+                if (response.html) {
+                    $('#widget-value-{{ widget.id }}').hide().html(response.html).show('slide');
+
+                    var timeline = new Timeline({
+                        element: 'timeline-{{ widget.id }}'
+                    });
+                } else {
+                    $('#widget-value-{{ widget.id }}').html('<i>No timeline created</i>');
+                }
+
+                // Badge with total number of left days to next milestone
+                if (response['days-to-milestone'] != undefined) {
+                    $('#widget-title-suffix-{{ widget.id }}').html(
+                        '<span style="text-shadow: none; font-size: 10px" class="badge">'
+                        + response['days-to-milestone'] + 'd left</span>'
+                    );
+                }
+
+
+            });
+    </script>
+{% endblock %}

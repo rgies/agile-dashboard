@@ -23,9 +23,9 @@
                             {{ item.title }}<br/><br/>
                             <i class="fa fa-calendar-o" style="font-size: 14pt"></i>
                             <span style="font-size: 8pt; margin-left: -18px; padding-top: 2px">{{ item.date|date('d') }}</span>
-                            <div>{{ item.date|date('M') }}</div>
+                            <div>{{ item.date|date('M/y') }}</div>
                             <div style="position: absolute; padding-top: 10px; bottom: -32px">
-                                {{ item.title }}
+                                &nbsp;&nbsp;{{ item.title }}
                             </div>
                         </a>
                     </li>

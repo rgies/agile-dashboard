@@ -1,0 +1,22 @@
+{% block class_body %}
+{% for action in actions %}
+    {% if 'annotation' == format.routing -%}
+    /**
+     * @Route("{{ action.route }}", name="{{ controller|lower }}-{{ action.route|trim('/') }}")
+     {% if 'default' == action.template -%}
+     * @Template()
+     {% else -%}
+     * @Template("{{ action.template }}")
+     {% endif -%}
+     */
+    {% endif -%}
+    public function {{ action.name }}(
+        {%- if action.placeholders|length > 0 -%}
+            ${{- action.placeholders|join(', $') -}}
+        {%- endif -%})
+    {
+        return array();
+    }
+
+{% endfor -%}
+{% endblock class_body %}

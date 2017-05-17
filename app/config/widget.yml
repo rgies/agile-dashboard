@@ -13,6 +13,7 @@ parameters:
         JiraHighEffortWidgetBundle:   'Jira - Highest efforts list'
         JiraTimeTrackingWidgetBundle: 'Jira - Time Tracking'
         JiraHistoryWidgetBundle:      'Jira - History Chart (Line, Bar Area)'
+        JiraTimelineWidgetBundle:     'Jira - Timeline with project versions'
 
         # Custom
         CustomChartWidgetBundle:      'Custom - Chart with manually entered data'

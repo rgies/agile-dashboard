@@ -36,6 +36,7 @@ class AppKernel extends Kernel
             new RGies\CustomChartWidgetBundle\CustomChartWidgetBundle(),
             new RGies\JiraBurnDownWidgetBundle\JiraBurnDownWidgetBundle(),
             new RGies\CustomTimelineWidgetBundle\CustomTimelineWidgetBundle(),
+            new RGies\JiraTimelineWidgetBundle\JiraTimelineWidgetBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

@@ -1,3 +1,8 @@
+jira_timeline_widget:
+    resource: "@JiraTimelineWidgetBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 custom_timeline_widget:
     resource: "@CustomTimelineWidgetBundle/Controller/"
     type:     annotation

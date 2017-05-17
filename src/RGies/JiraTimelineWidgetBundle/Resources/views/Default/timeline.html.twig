@@ -1,0 +1,58 @@
+<section id="timeline-{{ id }}" class="cd-horizontal-timeline">
+    <div class="timeline">
+        <div class="events-wrapper">
+            <div class="events">
+                <ol>
+                    {% for item in items %}
+                        {% if item.releaseDate is defined %}
+                        {% if item.link %}{% set uri = item.link %}{% else %}{% set uri = '#0' %}{% endif %}
+                        <li>
+                            {% if (dayDiff) and (item.releaseDate|date('d/m/Y') == selectedDate|date('d/m/Y')) %}
+                                <a href="#0" data-date="{{ 'now'|date('d/m/Y') }}" {% if dayDiff %}data-content="{{ dayDiff }} days left" data-toggle="popover" data-placement="bottom"{% endif %} class="today">Today</a>
+                            {% endif %}
+                            <a href="{{ uri }}" {% if item.self %}target="_blank" {% endif %}
+                               data-toggle="popover"
+                               data-placement="bottom"
+                               title="<strong>Milestone: {{ item.name }}</strong>"
+                               data-content="{{ item.description|default('') }}"
+                               data-date="{{ item.releaseDate|date('d/m/Y') }}"
+                               class="
+                               {%- if item.releaseDate|date('d/m/Y') == selectedDate|date('d/m/Y') %}selected {% endif -%}
+                               {%- if item.releaseDate|date('U') < date('-1 days')|date('U') %}older-event{% endif -%}
+                               "
+                            >
+                                {{ item.name }}<br/><br/>
+                                <i class="fa fa-calendar-o" style="font-size: 14pt"></i>
+                                <span style="font-size: 8pt; margin-left: -18px; padding-top: 2px">{{ item.releaseDate|date('d') }}</span>
+                                <div>{{ item.releaseDate|date('M/y') }}</div>
+                                <div style="position: absolute; padding-top: 10px; bottom: -32px">
+                                    {{ item.name }}
+                                </div>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% endfor %}
+                </ol>
+
+                <span class="filling-line" aria-hidden="true"></span>
+            </div> <!-- .events -->
+        </div> <!-- .events-wrapper -->
+
+        <ul class="cd-timeline-navigation">
+            <li><a href="#0" class="prev inactive">Prev</a></li>
+            <li><a href="#0" class="next">Next</a></li>
+        </ul> <!-- .cd-timeline-navigation -->
+    </div> <!-- .timeline -->
+
+    <div class="events-content" style="display: none">
+        <ol>
+            {% for item in items %}
+            {% if item.releaseDate is defined %}
+            <li {% if item.releaseDate|date('d/m/Y') == selectedDate|date('d/m/Y') %}class="selected" {% endif %}data-date="{{ item.releaseDate|date('d/m/Y') }}">
+                <p>{{ item.description|default('') }}</p>
+            </li>
+            {% endif %}
+            {% endfor %}
+        </ol>
+    </div> <!-- .events-content -->
+</section>
