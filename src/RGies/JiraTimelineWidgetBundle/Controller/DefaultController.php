@@ -44,7 +44,7 @@ class DefaultController extends Controller
         // get data from cache
         $cache = $this->get('CacheService');
         if ($cacheValue = $cache->getValue('JiraTimelineWidgetBundle', $widgetId, null, $updateInterval)) {
-            //return new Response($cacheValue, Response::HTTP_OK);
+            return new Response($cacheValue, Response::HTTP_OK);
         }
 
         // get widget configuration
@@ -68,7 +68,7 @@ class DefaultController extends Controller
 
             $data = array();
             foreach ($items->versions as $item) {
-                if (isset($item->releaseDate)) {
+                if (isset($item->releaseDate) && !$item->archived) {
                     $date = new \DateTime($item->releaseDate);
                     $item->link = $credentials->getjiraHost() . '/projects/' . $projectName;
                     $data[$date->getTimestamp()] = $item;

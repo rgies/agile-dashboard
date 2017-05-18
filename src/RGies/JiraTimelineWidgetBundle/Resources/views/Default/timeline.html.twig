@@ -8,7 +8,13 @@
                         {% if item.link %}{% set uri = item.link %}{% else %}{% set uri = '#0' %}{% endif %}
                         <li>
                             {% if (dayDiff) and (item.releaseDate|date('d/m/Y') == selectedDate|date('d/m/Y')) %}
-                                <a href="#0" data-date="{{ 'now'|date('d/m/Y') }}" {% if dayDiff %}data-content="{{ dayDiff }} days left" data-toggle="popover" data-placement="bottom"{% endif %} class="today">Today</a>
+                                <a href="#0" data-date="{{ 'now'|date('d/m/Y') }}" class="today">
+                                    <i class="ion ion-android-pin" style="font-size: 16px"></i><br/>
+                                    Today
+                                    <div class="timeline_today_arrow_box">
+                                        {{ dayDiff }} day{% if dayDiff > 1 %}s{% endif %}
+                                    </div>
+                                </a>
                             {% endif %}
                             <a href="{{ uri }}" {% if item.self %}target="_blank" {% endif %}
                                data-toggle="popover"
@@ -21,12 +27,13 @@
                                {%- if item.releaseDate|date('U') < date('-1 days')|date('U') %}older-event{% endif -%}
                                "
                             >
-                                {{ item.name }}<br/><br/>
+                                &nbsp;&nbsp;&nbsp;{{ item.name }}&nbsp;&nbsp;&nbsp;<br/><br/>
                                 <i class="fa fa-calendar-o" style="font-size: 14pt"></i>
                                 <span style="font-size: 8pt; margin-left: -18px; padding-top: 2px">{{ item.releaseDate|date('d') }}</span>
                                 <div>{{ item.releaseDate|date('M/y') }}</div>
-                                <div style="position: absolute; padding-top: 10px; bottom: -32px">
-                                    {{ item.name }}
+                                <div style="position: absolute; padding-top: 10px; bottom: {% if loop.index is odd %}-46{% else %}-30{% endif %}px">
+                                    {% if loop.index is odd %}|<br/>{% endif %}
+                                    &nbsp;&nbsp;&nbsp;{{ item.name }}&nbsp;&nbsp;&nbsp;
                                 </div>
                             </a>
                         </li>

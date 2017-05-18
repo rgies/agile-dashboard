@@ -97,7 +97,7 @@ var core = {
 (function() {
     var $,
         timelines,
-        eventsMinDistance = 60,
+        eventsMinDistance = 80,
         eventsMaxDistance = 120;
 
     $ = jQuery;

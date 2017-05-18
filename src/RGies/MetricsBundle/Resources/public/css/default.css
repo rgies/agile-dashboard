@@ -143,7 +143,7 @@ label.error {
     position: relative;
     width: 100%;
     height: 142px;
-    /*float: left;*/
+    float: left;
     margin-right: 15px;
     margin-bottom: 15px;
 }
@@ -291,7 +291,7 @@ Timeline Components
 
 -------------------------------- */
 .cd-horizontal-timeline a {
-    color: #497597;
+    color: #0b62a4;
     text-decoration: none;
 }
 
@@ -320,7 +320,7 @@ Timeline Components
     width: 100%;
     /*max-width: 800px;*/
     margin: 0 auto;
-    margin-top: 10px;
+    margin-top: 4px;
 }
 .cd-horizontal-timeline .events-wrapper {
     position: relative;
@@ -368,7 +368,7 @@ Timeline Components
     top: 0;
     height: 100%;
     width: 100%;
-    background-color: #497597;
+    background-color: #0b62a4;
     -webkit-transform: scaleX(0);
     -moz-transform: scaleX(0);
     -ms-transform: scaleX(0);
@@ -431,8 +431,8 @@ Timeline Components
     color: #cccccc;
 }
 .cd-horizontal-timeline .events a.selected::after {
-    background-color: #3a3f44;
-    border-color: #497597;
+    background-color: #cccccc;
+    border-color: #cccccc;
 }
 .cd-horizontal-timeline .events a.older-event {
     color: #555555;
@@ -444,18 +444,42 @@ Timeline Components
     background-color: #cccccc;
 }
 .cd-horizontal-timeline .events a.older-event::after {
-    background-color: #497597;
-    border-color: #497597;
+    background-color: #0b62a4;
+    border-color: #cccccc;
 }
 .cd-horizontal-timeline .events a.today {
-    color: #497597;
+    color: #cccccc;
 }
 .cd-horizontal-timeline .events a.today::after {
-    bottom: -5px;
-    height: 12px;
-    width: 12px;
-    background-color: #497597;
+    bottom: -7px;
+    height: 17px;
+    width: 17px;
+    background-color: #7A92A3;
     border: hidden;
+}
+.timeline_today_arrow_box {
+    position: absolute;
+    font-size: 7pt;
+    background: #0b62a4;
+    bottom: -7px;
+    left: 20px;
+    padding: 2px;
+    width: 70px;
+    text-align: center;
+ }
+.timeline_today_arrow_box:after {
+    left: 100%;
+    top: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-color: rgba(109, 101, 219, 0);
+    border-left-color: #0b62a4;
+    border-width: 9px;
+    margin-top: -9px;
 }
 
 .cd-timeline-navigation a {
