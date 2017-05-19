@@ -49,31 +49,34 @@ class DefaultController extends Controller
 
         // get widget configuration
         $widgetConfig = $this->get('WidgetService')->getResolvedWidgetConfig($widgetType, $widgetId);
-        $projectName = $widgetConfig->getProjectName();
+        $projectList = explode(',', $widgetConfig->getProjectName());
         $credentials = $this->get('JiraCoreService')->getLoginCredentials();
+        $data = array();
 
-        try {
-            $project = new ProjectService($credentials);
+        foreach ($projectList as $projectName) {
+            try {
+                $project = new ProjectService($credentials);
 
-            $items = $project->get($projectName);
+                $items = $project->get($projectName);
 
-            //print_r($items->versions); exit;
-        } catch (JiraException $e) {
-            $response['warning'] = wordwrap('Wrong start date format: ' . $e->getMessage(), 38, '<br/>');
-            return new Response(json_encode($response), Response::HTTP_OK);
-        }
+                //print_r($items->versions); exit;
+            } catch (JiraException $e) {
+                $response['warning'] = wordwrap('Wrong start date format: ' . $e->getMessage(), 38, '<br/>');
+                return new Response(json_encode($response), Response::HTTP_OK);
+            }
 
-
-        if ($items->versions) {
-
-            $data = array();
-            foreach ($items->versions as $item) {
-                if (isset($item->releaseDate) && !$item->archived) {
-                    $date = new \DateTime($item->releaseDate);
-                    $item->link = $credentials->getjiraHost() . '/projects/' . $projectName;
-                    $data[$date->getTimestamp()] = $item;
+            if ($items->versions) {
+                foreach ($items->versions as $item) {
+                    if (isset($item->releaseDate) && !$item->archived) {
+                        $date = new \DateTime($item->releaseDate);
+                        $item->link = $credentials->getjiraHost() . '/projects/' . $projectName;
+                        $data[$date->getTimestamp()] = $item;
+                    }
                 }
             }
+        }
+
+        if (count($data) > 0) {
 
             ksort($data);
 
