@@ -42,7 +42,7 @@ Dashboard with agile metrics connected to Atlassian Jira.
 
 3. Insert view and controller code
 
-    _Resources/views/Default/index.html.twig_
+    _Resources/views/Default/widget.html.twig_
     
         {% block widget_body %}
             <!-- ADD HERE YOUR WIDGET CONTENT -->
