@@ -3,4 +3,4 @@
 services:
     JiraCoreService:
         class: RGies\JiraCoreWidgetBundle\Services\JiraCoreService
-        arguments: [@doctrine, @service_container]
+        arguments: [@doctrine, @credential_service]

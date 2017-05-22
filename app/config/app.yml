@@ -78,6 +78,10 @@ services:
         class:            RGies\MetricsBundle\Services\ParamsService
         arguments:        [@doctrine]
 
+    credential_service:
+        class:            RGies\MetricsBundle\Services\CredentialService
+        arguments:        [@doctrine, %secret%]
+
 
 # Twig Configuration
 twig:
@@ -88,3 +92,4 @@ twig:
         widgetService:  @widget_service
         cacheService:   @cache_service
         paramsService:  @params_service
+        credentialService: @credential_service

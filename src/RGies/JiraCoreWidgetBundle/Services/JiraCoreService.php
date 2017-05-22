@@ -28,15 +28,15 @@ class JiraCoreService
     /**
      * @var array Plugin configuration
      */
-    private $_config;
+    private $_credentialService;
 
     /**
      * Class constructor.
      */
-    public function __construct($doctrine, $config)
+    public function __construct($doctrine, $credentialService)
     {
-        $this->_doctrine    = $doctrine;
-        $this->_config      = $config;
+        $this->_doctrine = $doctrine;
+        $this->_credentialService = $credentialService;
     }
 
     /**
@@ -46,13 +46,19 @@ class JiraCoreService
      */
     public function getLoginCredentials()
     {
-        return new ArrayConfiguration(
-            array(
-                'jiraHost' => $this->_config->getParameter('jira_host'),
-                'jiraUser' => $this->_config->getParameter('jira_user'),
-                'jiraPassword' => $this->_config->getParameter('jira_password'),
-            )
-        );
+        $credentials = $this->_credentialService->loadCredentials('jira');
+
+        if ($credentials) {
+            return new ArrayConfiguration(
+                array(
+                    'jiraHost' => $credentials->host,
+                    'jiraUser' => $credentials->user,
+                    'jiraPassword' => $credentials->password,
+                )
+            );
+        }
+
+        return null;
     }
 
 }

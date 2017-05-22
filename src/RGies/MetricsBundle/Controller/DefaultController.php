@@ -25,6 +25,10 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request, $id = null)
     {
+        if (!$this->get('credentialService')->loadCredentials('jira')) {
+            return $this->redirect($this->generateUrl('jira_core_widget_login_edit'));
+        }
+
         $em = $this->getDoctrine()->getManager();
         $dashboard = null;
 

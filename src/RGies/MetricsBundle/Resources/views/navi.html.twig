@@ -56,7 +56,10 @@
                             <li role="separator" class="divider"></li>
                             <li><a href="{{ path("dashboard") }}"><i class="fa fa-dashboard fa-fw"></i> Manage Dashboards</a></li>
                             <li><a href="{{ path("widgets") }}"><i class="fa fa-puzzle-piece fa-fw"></i> Manage Widgets</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="{{ path("jira_core_widget_login_edit") }}"><i class="fa fa-user-circle fa-fw"></i> Jira Credentials</a></li>
                             {%- if app.user %}
+                            <li role="separator" class="divider"></li>
                             <li><a href="{{ path("logout") }}"><span class="glyphicon glyphicon-log-out fa-fw"></span> Logout</a></li>
                             {% endif %}
                         </ul>
