@@ -177,7 +177,11 @@ class DefaultController extends Controller
 
         $response['legend'] = '';
         foreach ($response['labels'] as $key=>$label) {
-            $response['legend'] .= '&nbsp;&nbsp;<i style="color:' . $colors[$key] . '" class="fa fa-circle"></i> ' . $label;
+
+            $response['legend'] .= '&nbsp;&nbsp;<i style="color:'
+                . $colors[$key]
+                . '" class="fa fa-circle"></i> '
+                . '<span>' . $label . '</span>';
         }
 
         $response['data'] = array_reverse(array_values($response['data']));

@@ -22,12 +22,15 @@
 
                 // Set value
                 if (response['value']) {
-                    if (response['value'] / 3600 >= 1000) {
+                    if (response['value'] / 3600 >= 5000) {
                         value = Math.round(response['value'] / 360 / 8) / 10
                         + '<span class="widget-value-unit">d</span>';
-                    } else {
+                    } else if (response['value'] > 1800) {
                         value = Math.round(response['value'] / 360) / 10
-                        + '<span class="widget-value-unit">h</span>';
+                            + '<span class="widget-value-unit">h</span>';
+                    } else {
+                        value = Math.round(response['value'] / 6) / 10
+                            + '<span class="widget-value-unit">m</span>';
                     }
                 }
 
