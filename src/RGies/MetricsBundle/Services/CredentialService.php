@@ -9,6 +9,7 @@
 namespace RGies\MetricsBundle\Services;
 
 use RGies\MetricsBundle\Entity\Credential;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
  * Class CredentialService.

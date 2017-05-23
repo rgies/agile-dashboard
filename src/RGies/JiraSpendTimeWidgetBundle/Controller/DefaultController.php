@@ -37,6 +37,10 @@ class DefaultController extends Controller
             return new Response('No valid request', Response::HTTP_FORBIDDEN);
         }
 
+        // Allow php to handle parallel request.
+        // Please remove if you need to write something to the session.
+        session_write_close();
+
         $widgetId       = $request->get('id');
         $widgetType     = $request->get('type');
         $updateInterval = $request->get('updateInterval');
@@ -47,17 +51,19 @@ class DefaultController extends Controller
             return new Response($cacheValue, Response::HTTP_OK);
         }
 
+        $jiraLogin = $this->get('JiraCoreService')->getLoginCredentials();
         $widgetConfig = $this->get('WidgetService')->getResolvedWidgetConfig($widgetType, $widgetId);
 
         $response = array();
         $response['icon'] = $widgetConfig->getIcon();
 
         $jql = $widgetConfig->getJqlQuery();
+
         $spendTime = 0;
         $totalCount = 0;
 
         try {
-            $issueService = new IssueService($this->get('JiraCoreService')->getLoginCredentials());
+            $issueService = new IssueService($jiraLogin);
             $issues = $issueService->search($jql, 0, 10000, ['aggregatetimespent']);
             $totalCount = $issues->getTotal();
 
@@ -82,7 +88,7 @@ class DefaultController extends Controller
                 . round($spendTime / 3600 / $issues->getTotal(), 1) . 'h';
         }
 
-        $response['link'] = $this->getParameter('jira_host') . '/issues/?jql=' . urlencode($jql);
+        $response['link'] = $jiraLogin->getJiraHost() . '/issues/?jql=' . urlencode($jql);
 
         $cache->setValue('JiraSpendTimeWidget', $widgetId, json_encode($response));
 

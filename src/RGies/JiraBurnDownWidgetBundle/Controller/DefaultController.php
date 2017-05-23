@@ -39,6 +39,10 @@ class DefaultController extends Controller
             return new Response('No valid request', Response::HTTP_FORBIDDEN);
         }
 
+        // Allow php to handle parallel request.
+        // Please remove if you need to write something to the session.
+        session_write_close();
+
         $widgetId       = $request->get('id');
         $widgetType     = $request->get('type');
         $updateInterval = $request->get('updateInterval');

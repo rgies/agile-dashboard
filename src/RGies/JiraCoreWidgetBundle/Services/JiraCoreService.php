@@ -31,6 +31,11 @@ class JiraCoreService
     private $_credentialService;
 
     /**
+     * @var ArrayConfiguration Cached credentials.
+     */
+    private static $_credentials;
+
+    /**
      * Class constructor.
      */
     public function __construct($doctrine, $credentialService)
@@ -42,23 +47,34 @@ class JiraCoreService
     /**
      * Get Jira login credentials.
      *
-     * @return ArrayConfiguration Jira login credentials
+     * @return null|ArrayConfiguration Jira login credentials
      */
     public function getLoginCredentials()
     {
+        // cache for request lifetime
+        if (self::$_credentials) return self::$_credentials;
+
+        $login = null;
         $credentials = $this->_credentialService->loadCredentials('jira');
 
         if ($credentials) {
-            return new ArrayConfiguration(
+            $login = new ArrayConfiguration(
                 array(
-                    'jiraHost' => $credentials->host,
-                    'jiraUser' => $credentials->user,
-                    'jiraPassword' => $credentials->password,
+                    'jiraHost'      => $credentials->host,
+                    'jiraUser'      => $credentials->user,
+                    'jiraPassword'  => $credentials->password,
+                    'jiraLogFile'   => '../app/log/jira-rest-client.log',
+                    //'jiraLogLevel'  => 'INFO',
+                    //'curlOptSslVerifyHost' => true,
+                    //'curlOptSslVerifyPeer' => true,
+                    //'curlOptVerbose' => true,
                 )
             );
+
+            self::$_credentials = $login;
         }
 
-        return null;
+        return $login;
     }
 
 }

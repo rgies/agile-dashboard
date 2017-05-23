@@ -37,6 +37,10 @@ class DefaultController extends Controller
             return new Response('No valid request', Response::HTTP_FORBIDDEN);
         }
 
+        // Allow php to handle parallel request.
+        // Please remove if you need to write something to the session.
+        session_write_close();
+
         $widgetId       = $request->get('id');
         $widgetType     = $request->get('type');
         $updateInterval = $request->get('updateInterval');
@@ -47,6 +51,7 @@ class DefaultController extends Controller
             return new Response($cacheValue, Response::HTTP_OK);
         }
 
+        $jiraLogin = $this->get('JiraCoreService')->getLoginCredentials();
         $widgetConfig = $this->get('WidgetService')->getResolvedWidgetConfig($widgetType, $widgetId);
 
         $response = array();
@@ -80,7 +85,7 @@ class DefaultController extends Controller
         }
 
         try {
-            $issueService = new IssueService($this->get('JiraCoreService')->getLoginCredentials());
+            $issueService = new IssueService($jiraLogin);
             $issues = $issueService->search($jql, 0, 10000, ['key','created','updated','worklog']);
 
             // loop to found issues
@@ -120,7 +125,7 @@ class DefaultController extends Controller
             return new Response(json_encode($response), Response::HTTP_OK);
         }
 
-        $response['link'] = $this->getParameter('jira_host') . '/issues/?jql=' . urlencode($jql);
+        $response['link'] = $jiraLogin->getJiraHost() . '/issues/?jql=' . urlencode($jql);
         $response['issuecount'] = $issues->getTotal();
         $response['startdate'] = $startDate->format('d-m-Y');
         $response['enddate'] = $endDate->format('d-m-Y');

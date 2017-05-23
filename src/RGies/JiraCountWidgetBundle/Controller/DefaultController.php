@@ -34,6 +34,10 @@ class DefaultController extends Controller
             return new Response('No valid request', Response::HTTP_FORBIDDEN);
         }
 
+        // Allow php to handle parallel request.
+        // Please remove if you need to write something to the session.
+        session_write_close();
+
         $widgetId       = $request->get('id');
         $widgetType     = $request->get('type');
         $updateInterval = $request->get('updateInterval');
@@ -43,20 +47,19 @@ class DefaultController extends Controller
         // Data cache
         $cache = $this->get('CacheService');
         if ($cacheValue = $cache->getValue('JiraCountWidget', $widgetId, null, $updateInterval)) {
-            return new Response($cacheValue, Response::HTTP_OK);
+            //return new Response($cacheValue, Response::HTTP_OK);
         }
 
-        $widgetService = $this->get('WidgetService');
-        $widgetConfig = $widgetService->getResolvedWidgetConfig($widgetType, $widgetId);
+        $jiraLogin = $this->get('JiraCoreService')->getLoginCredentials();
+        $widgetConfig = $this->get('WidgetService')->getResolvedWidgetConfig($widgetType, $widgetId);
 
         $response = array();
         $response['icon'] = $widgetConfig->getIcon();
 
         $jql = $widgetConfig->getJqlQuery();
-        //$jql = $widgetService->resolveParameters(1, $widgetConfig->getJqlQuery());
 
         try {
-            $issueService = new IssueService($this->get('JiraCoreService')->getLoginCredentials());
+            $issueService = new IssueService($jiraLogin);
             $issues = $issueService->search($jql, 0, 100000, ['key']);
         } catch (JiraException $e) {
             $response['warning'] = wordwrap($e->getMessage(), 38, '<br/>');
@@ -67,7 +70,7 @@ class DefaultController extends Controller
             $response['value'] = $issues->getTotal();
         }
 
-        $response['link'] = $this->getParameter('jira_host') . '/issues/?jql=' . urlencode($jql);
+        $response['link'] = $jiraLogin->getJiraHost() . '/issues/?jql=' . urlencode($jql);
 
         $cache->setValue('JiraCountWidget', $widgetId, json_encode($response));
 

@@ -38,6 +38,10 @@ class DefaultController extends Controller
             return new Response('No valid request', Response::HTTP_FORBIDDEN);
         }
 
+        // Allow php to handle parallel request.
+        // Please remove if you need to write something to the session.
+        session_write_close();
+
         $widgetId       = $request->get('id');
         $widgetType     = $request->get('type');
         $updateInterval = $request->get('updateInterval');
@@ -49,6 +53,7 @@ class DefaultController extends Controller
             return new Response($cacheValue, Response::HTTP_OK);
         }
 
+        $jiraLogin = $this->get('JiraCoreService')->getLoginCredentials();
         $widgetConfig = $this->get('WidgetService')->getResolvedWidgetConfig($widgetType, $widgetId);
 
         $timeSpendArray = array();
@@ -61,7 +66,7 @@ class DefaultController extends Controller
         $jql = $widgetConfig->getJqlQuery();
 
         try {
-            $issueService = new IssueService($this->get('JiraCoreService')->getLoginCredentials());
+            $issueService = new IssueService($jiraLogin);
             $issues = $issueService->search($jql, 0, 10000, ['aggregatetimespent','summary']);
 
             foreach ($issues->getIssues() as $issue) {
@@ -143,7 +148,9 @@ class DefaultController extends Controller
      */
     protected function _createLink($key, $text)
     {
-        return '<a href="' . $this->getParameter('jira_host') . '/browse/' . $key
+        $jiraLogin = $this->get('JiraCoreService')->getLoginCredentials();
+
+        return '<a href="' . $jiraLogin->getJiraHost() . '/browse/' . $key
         . '" target="_blank" title="' . str_replace('"', '&quot;', $text) . '">' . $key . '</a>';
     }
 
