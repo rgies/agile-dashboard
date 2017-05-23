@@ -1,0 +1,29 @@
+{% extends "MetricsBundle::layout.html.twig" %}
+
+{% block content -%}
+    {% if app.session.getFlashBag.has("message") %}
+    <!-- flash message -->
+    <div class="alert alert-danger" role="alert">
+        {% for flashMessage in app.session.flashbag.get("message") %}
+            <i class="fa fa-warning"></i> {{ flashMessage }}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fa fa-user"></i> User Registration</h1>
+        </div>
+
+        {{ form(form) }}
+
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        $( document ).ready(function() {
+            $("#content-block > div > form").validate();
+        });
+    </script>
+{% endblock %}

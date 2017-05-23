@@ -1,0 +1,43 @@
+{% extends "MetricsBundle::layout.html.twig" %}
+
+{% block content -%}
+<div class="container">
+    <div class="page-header">
+        <h1><i class="fa fa-user"></i> User creation</h1>
+    </div>
+
+    {{ form(form) }}
+
+    <div class="form-group">
+        <div class="control">
+            <button id="save" type="submit" onclick="formSave()" class="btn btn-primary pull-right">
+                <i class="fa fa-check"></i> Save
+            </button>
+        </div>
+    </div>
+
+    <br/>
+
+    <a href="{{ path('user') }}">
+        <i class="fa fa-arrow-circle-left"></i> Back to the user list
+    </a>
+</div>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        $( document ).ready(function() {
+            $("#content-block > div > form").validate();
+        });
+
+        function formSave()
+        {
+            var form = $("#create-form");
+
+            if (form.validate())
+            {
+                form.submit();
+            }
+        }
+    </script>
+{% endblock %}

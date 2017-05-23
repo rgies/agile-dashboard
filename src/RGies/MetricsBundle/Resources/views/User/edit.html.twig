@@ -1,0 +1,76 @@
+{% extends "MetricsBundle::layout.html.twig" %}
+
+{% block content -%}
+<div class="container">
+    <div class="page-header">
+        <h1><i class="fa fa-user"></i> User edit</h1>
+    </div>
+
+    {{ form(edit_form) }}
+    {%- if is_granted("ROLE_ADMIN") %}{{ form(delete_form) }}{% endif %}
+
+    <div class="form-group">
+        <div class="control">
+            <button id="save" type="submit" onclick="formSave()" class="btn btn-primary pull-right">
+                <i class="fa fa-check"></i> Save
+            </button>
+            {%- if is_granted("ROLE_ADMIN") %}
+                <span class="pull-right">&nbsp;&nbsp;&nbsp;</span>
+                <button id="delete" onclick="deleteEntity()" class="btn btn-danger pull-right">
+                    <i class="fa fa-trash"></i> Delete
+                </button>
+            {% endif %}
+            <span class="pull-right" style="padding-right: 50px">&nbsp;</span>
+            <button type="button" onclick="inviteUser()" class="btn btn-default pull-right">
+                <i class="fa fa-envelope"></i> Send Invite
+            </button>
+        </div>
+    </div>
+
+    <br/>
+
+    <a href="{{ path('user') }}">
+        <i class="fa fa-arrow-circle-left"></i> Back to the user list
+    </a>
+</div>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        $( document ).ready(function() {
+            $("#content-block > div > form").validate();
+        });
+
+        function formSave()
+        {
+            var form = $("#edit-form");
+
+            if (form.validate())
+            {
+                form.submit();
+            }
+        }
+
+        function inviteUser()
+        {
+            // load form
+            $.post('{{ path('user_invite') }}',{'id': {{ entity.id }} }, function(data) {
+                if (typeof(data) == 'string') location.href=data;
+            });
+        }
+
+        {%- if is_granted("ROLE_ADMIN") %}
+        function deleteEntity()
+        {
+            var form = $("#delete-form");
+
+            bootbox.confirm('<h4><i class="fa fa-warning fa-2x text-danger"></i> Do you really want to delete <span class="label label-default">{{ entity.firstname }} {{ entity.lastname }}</span> ?</h4>', function(result) {
+                if (result)
+                {
+                    form.submit();
+                }
+            });
+        }
+        {% endif %}
+    </script>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends "MetricsBundle::layout.html.twig" %}
+
+{% block content -%}
+    <!-- Invite Dialog -->
+    {% set content %}
+    <!-- Data Form -->
+    <form id="invite-user-form" name="invite-user-form" role="form" method="post" action="">
+        <div class="form-group">
+            <label for="user_role">User Role</label>
+            <select id="user_role" name="user_role" class="form-control">
+                {% for key,role in userRoles %}
+                    <option value="{{ key }}">{{ role }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="login_name">Login</label>
+            <input id="login_name" name="login_name" type="text" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="firstname">Firstname</label>
+            <input id="firstname" name="firstname" type="text" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="lastname">Lastname</label>
+            <input id="lastname" name="lastname" type="text" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="text" class="form-control">
+        </div>
+    </form>
+    {% endset %}
+    {% include 'MetricsBundle::Templates/modal.html.twig' with {'id': 'invite-user-dialog', 'title': 'Invite User', 'submit': 'OK', 'content': content} only %}
+
+    <div class="container">
+        <div class="page-header">
+            <h1>
+                <i class="fa fa-user"></i> User list
+                <button type="button" class="btn btn-primary pull-right" onclick="location.href='{{ path('user_new') }}'">
+                    <i class="fa fa-plus"></i> New
+                </button>
+                <div class="pull-right">&nbsp;</div>
+                <button type="button" class="btn btn-primary pull-right" onclick="$('#invite-user-dialog').modal('show');">
+                    <i class="fa fa-external-link"></i> Invite
+                </button>
+
+            </h1>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Login</th>
+                <th>Name</th>
+                <th>Job Title</th>
+                <th>Email</th>
+                <th>Last Login</th>
+                <th>&nbsp;</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for entity in entities %}
+                <tr>
+                    <td>
+                        {% if entity.isactive != 1 %}<i class="fa fa-eye-slash"></i>{% endif %}
+                        {{ icon.roles[entity.role]|raw }}
+                        <a href="{{ path('user_edit', { 'id': entity.id }) }}">{{ entity.username }}</a>
+                    </td>
+                    <td>{{ entity.firstname }} {{ entity.lastname }}</td>
+                    <td>{{ label.jobtitles[entity.jobtitle]|default('') }}</td>
+                    <td>{{ entity.email }}</td>
+                    <td>{% if entity.getLastLoginDate() %}{{ entity.getLastLoginDate()|date('Y-m-d H:i') }}{% else %}never{% endif %}</td>
+                    <td>
+                        <a href="{{ path('user_edit', { 'id': entity.id }) }}"><i class="fa fa-edit"></i> edit</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <strong>Legend:</strong>
+        {% for key,label in label.roles %}
+            {{ icon.roles[key]|raw }}{{ label }}
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        $( document ).ready(function() {
+            // invite dialog
+            $('#invite-user-dialog').on('show.bs.modal', function (event) {
+                var modal = $(this);
+
+                // add wait animation
+                $('#invite-user-dialog-body').html('<center><br/><br/><i class="fa fa-refresh fa-spin fa-2x"></i><br/><br/></center>');
+
+                // add click event to submit button
+                $( "#invite-user-dialog-submit-button" ).click(function() {
+                    modal.modal('hide');
+
+                    // load form
+                    $.post('{{ path('user_invite') }}', $('#invite-user-form').serialize(), function(data){
+                        if (typeof(data) == 'string') location.href=data;
+                    });
+                });
+            });
+        });
+    </script>
+{% endblock %}

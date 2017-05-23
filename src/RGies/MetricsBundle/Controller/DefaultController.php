@@ -3,6 +3,8 @@
 namespace RGies\MetricsBundle\Controller;
 
 use RGies\MetricsBundle\Entity\Dashboard;
+use RGies\MetricsBundle\Entity\User;
+use RGies\MetricsBundle\Form\UserRegisterType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,12 +27,30 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request, $id = null)
     {
-        if (!$this->get('credentialService')->loadCredentials('jira')) {
-            return $this->redirect($this->generateUrl('jira_core_widget_login_edit'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         $dashboard = null;
+
+        // if no user exists add default admin account
+        $user = $em->getRepository('MetricsBundle:User')->findAll();
+        if (!$user) {
+            // admin user
+            $userAdmin = new User();
+            $userAdmin->setUsername('Admin');
+            $userAdmin->setPassword('admin');
+            $userAdmin->setRole('ROLE_ADMIN');
+            $userAdmin->setJobtitle('admin');
+            $userAdmin->setFirstname('Admin');
+            $userAdmin->setLastname('User');
+            $userAdmin->setEmail('admin@xxx.com');
+            $userAdmin->setIsActive(true);
+            $em->persist($userAdmin);
+            $em->flush();
+
+            // setup jira credential if nothing exists
+            if (!$this->get('credentialService')->loadCredentials('jira')) {
+                return $this->redirect($this->generateUrl('jira_core_widget_login_edit'));
+            }
+        }
 
         // get dashboards
         $dashboards = $em->getRepository('MetricsBundle:Dashboard')
@@ -163,6 +183,176 @@ class DefaultController extends Controller
             // last username entered by the user
             'last_username' => $lastUsername,
             'error'         => $error,
+        );
+    }
+
+    /**
+     * User registration.
+     *
+     * @Route("/register/{token}", name="registration")
+     * @Template()
+     */
+    public function registerAction(Request $request, $token)
+    {
+        $tokenService = $this->get('security_token_service');
+        $params = $tokenService->isValid($token, 'user_registration');
+        $em = $this->getDoctrine()->getManager();
+
+        if (!$params)
+        {
+            throw $this->createNotFoundException('Access not allowed.');
+        }
+
+        if (isset($params['userId'])) {
+            $entity = $em->getRepository('MetricsBundle:User')->find($params['userId']);
+        }
+        else {
+            $entity = new User();
+        }
+
+        $form = $this->createForm(new UserRegisterType($this->container, $params), $entity, array(
+            'action' => $this->generateUrl('registration', array('token' => $token)),
+            'method' => 'POST',
+        ));
+
+        $form->add(
+            'submit', 'submit',
+            array(
+                'label' => 'Register',
+                'attr' => array('class' => 'btn btn-primary pull-right'),
+            )
+        );
+
+        if ($request->request->get('rgies_MetricsBundle_user_register'))
+        {
+            // add user
+            $form->handleRequest($request);
+
+            if ($form->isValid()) {
+                $entity->setIsActive(true);
+
+                if (isset($params['userRole'])) {
+                    $entity->setRole($params['userRole']);
+                }
+
+                try {
+                    $em->persist($entity);
+                    $em->flush();
+                }
+                catch(\Doctrine\DBAL\DBALException $e) {
+                    $this->get('session')->getFlashBag()->add('message', 'Username or email already exists. Please change username and email.');
+
+                    return array(
+                        'entity' => $entity,
+                        'form'   => $form->createView(),
+                    );
+                }
+
+                if (isset($params['activityId'])) {
+                    $activityId = $params['activityId'];
+                    $activity = $em->getRepository('MetricsBundle:Activity')->find($activityId);
+
+                    if ($activity) {
+                        // assign user to activity
+                        $activity->getUser()->add($entity);
+
+                        if (isset($params['projectRole'])) {
+                            // set user role in assigned activity
+                            $activity->addUserRole($entity->getId(), $params['projectRole']);
+                        }
+
+                        $em->persist($activity);
+                        $em->flush();
+                    }
+                }
+
+                $session = $request->getSession();
+                if (null !== $session)
+                {
+                    $session->set(SecurityContextInterface::LAST_USERNAME, $entity->getUsername());
+                }
+
+                $tokenService->validate($token, 'user_registration');
+
+                return $this->redirect($this->generateUrl('login'));
+            }
+        }
+
+        return array(
+            'entity' => $entity,
+            'form'   => $form->createView(),
+        );
+    }
+
+    /**
+     * @Route("/myprofile/", name="myprofile")
+     * @Template()
+     */
+    public function myprofileAction()
+    {
+        $id = $this->getUser()->getId();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('MetricsBundle:User')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find User entity.');
+        }
+
+        $editForm = $this->createForm(new MyProfileType($this->container), $entity, array(
+            'action' => $this->generateUrl('myprofile_update', array('id' => $entity->getId())),
+            'method' => 'PUT',
+        ));
+
+        $editForm->add('submit', 'submit'
+            , array('label' => 'Update', 'attr' => array('class' => 'btn btn-primary pull-right')));
+
+        return array(
+            'entity'      => $entity,
+            'edit_form'   => $editForm->createView(),
+        );
+
+        return array();
+    }
+
+    /**
+     * Edits an existing User entity.
+     *
+     * @Route("/myprofile/update/", name="myprofile_update")
+     * @Method("PUT")
+     * @Template("MetricsBundle:Default:myprofile.html.twig")
+     */
+    public function updateAction(Request $request)
+    {
+        $id = $this->getUser()->getId();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('MetricsBundle:User')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find User entity.');
+        }
+
+        $editForm = $this->createForm(new MyProfileType($this->container), $entity, array(
+            'action' => $this->generateUrl('myprofile_update', array('id' => $entity->getId())),
+            'method' => 'PUT',
+        ));
+
+        $editForm->add('submit', 'submit', array('label' => 'Update'));
+
+        $editForm->handleRequest($request);
+
+        if ($editForm->isValid()) {
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('home'));
+        }
+
+        return array(
+            'entity'      => $entity,
+            'edit_form'   => $editForm->createView(),
         );
     }
 

@@ -42,7 +42,15 @@
             <argument type="service" id="router"/>
             <argument type="service" id="doctrine"/>
         </service>
+
+        <!-- Login Authentication Handler -->
+        <service id="authentication_handler" class="RGies\MetricsBundle\Handler\AuthenticationHandler">
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
+        </service>
     </services>
+
 
     <!--
     <parameters>
