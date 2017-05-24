@@ -9,7 +9,7 @@ parameters:
         JiraCountWidgetBundle:        'Jira - Count issues'
         JiraSpendTimeWidgetBundle:    'Jira - Time spend on issues'
         JiraPerformanceWidgetBundle:  'Jira - Performance'
-        JiraListWidgetBundle:         'Jira - List of top 5 issues'
+        JiraListWidgetBundle:         'Jira - List of selected issues'
         JiraHighEffortWidgetBundle:   'Jira - Highest efforts list'
         JiraTimeTrackingWidgetBundle: 'Jira - Time Tracking'
         JiraHistoryWidgetBundle:      'Jira - History Chart (Line, Bar Area)'

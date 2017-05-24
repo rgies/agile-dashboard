@@ -36,9 +36,8 @@
                 <ul class="nav navbar-nav navbar-right">
                     {% if dashboards is defined %}
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="Set dashboard filter">
-                            <i class="ion ion-funnel" style="font-size: 13pt"></i>
-                            <span class="fa fa-chevron-down"></span>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="Dashboard parameter">
+                            <i class="ion ion-android-options" style="font-size: 13pt"></i>
                         </a>
                         <ul class="dropdown-menu" style="padding: 15px; padding-bottom: 0px;" role="menu">{% render controller("MetricsBundle:Params:config", { 'id': dashboard.id }) %}</ul>
                     </li>

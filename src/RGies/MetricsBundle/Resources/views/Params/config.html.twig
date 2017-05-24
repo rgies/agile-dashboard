@@ -4,7 +4,10 @@
         <input name="dashboardId" type="hidden" value="{{ dashboardId }}"/>
         {% for entity in entities %}
         <div class="form-group">
-            <label title="%{{ entity.placeholder }}%" for="dashboard_param_{{ entity.id }}">{{ entity.label }}:</label>
+            <label for="dashboard_param_{{ entity.id }}">
+                {{ entity.label }}
+                <i class="fa fa-info-circle text-info" data-placement="left" data-toggle="popover" data-content="Please insert <b>%{{ entity.placeholder }}%</b> as placeholder for <i>{{ entity.label }}</i> at your widget settings."></i>
+            </label>
             {% if entity.type == 'date' %}
             <div class="inner-addon left-addon">
                 <i class="glyphicon glyphicon-calendar"></i>
@@ -33,7 +36,7 @@
 {% else %}
 <li style="padding-bottom: 10px;">
     <button class="btn btn-primary btn-group-justified" onclick="location.href='{{ path('dashboard_edit', {id: dashboardId}) }}';">
-        <i class="fa fa-cogs"></i> Setup filter
+        <i class="ion ion-android-options"></i> Setup parameter
     </button>
 </li>
 {% endif %}

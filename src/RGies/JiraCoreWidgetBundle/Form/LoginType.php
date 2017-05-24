@@ -15,8 +15,8 @@ class LoginType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('host','text')
-            ->add('user', 'text')
+            ->add('host','text', array('attr'=>array('placeholder'=>'https://xxx.atlassian.net')))
+            ->add('user', 'text', array('attr'=>array('placeholder'=>'E-mail or login name')))
             ->add('password','password')
         ;
     }
