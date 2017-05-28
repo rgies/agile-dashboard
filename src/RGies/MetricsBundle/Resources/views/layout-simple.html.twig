@@ -1,0 +1,32 @@
+{% extends "::base.html.twig" %}
+{% block stylesheets %}
+    <!-- Bundle default stylesheets -->
+    <link href="{{ asset('bundles/metrics/css/default.css') }}" rel="stylesheet">
+    <!-- individual page stylesheets -->
+    {% block css %}{% endblock %}
+{% endblock %}
+{% block body %}
+
+    <!-- Header -->
+    <div id="navigation-block" class="navbar navbar-default" style="width: 100%;">
+        <a class="navbar-brand" href="{{ path("home") }}">
+            <img src="{{ asset('dashboard_lg_icon.png') }}" width="20px" height="19px" style="vertical-align:top;"/>
+            {{ platform.name }}
+        </a>
+    </div>
+
+    <!-- Content -->
+    {% block content %}Content{% endblock %}
+
+    <!-- Footer -->
+    {% include 'MetricsBundle::footer.html.twig' %}
+{% endblock %}
+
+{% block javascripts %}
+    <!-- Custom js -->
+    <script src="{{ asset('bundles/metrics/js/default.js') }}"></script>
+    {%- if is_granted("ROLE_EDITOR") %}{{ editor_init() }}{% endif %}
+
+    <!-- individual page java scripts -->
+    {% block js %}{% endblock %}
+{% endblock %}

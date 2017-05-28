@@ -55,12 +55,12 @@
                             </li>
                             <li><a href="javascript:toggleDashboardEditMode();"><i class="fa fa-edit fa-fw"></i> Edit Dashboard&nbsp;<span class="badge">e-key</span></a></li>
                             <li role="separator" class="divider"></li>
-                            {%- if is_granted("ROLE_MANAGER") %}
+                            {%- if aclService.userHasAccess(path("user")) %}
                             <li><a href="{{ path("user") }}"><i class="ion ion-person-stalker fa-fw"></i> User Management</a></li>
                             {%- endif %}
                             <li><a href="{{ path("dashboard") }}"><i class="fa fa-dashboard fa-fw"></i> Dashboard Management</a></li>
                             <li><a href="{{ path("widgets") }}"><i class="fa fa-puzzle-piece fa-fw"></i> Widget Management</a></li>
-                            {%- if is_granted("ROLE_MANAGER") %}
+                            {%- if aclService.userHasAccess(path("jira_core_widget_login_edit")) %}
                             <li role="separator" class="divider"></li>
                             <li><a href="{{ path("jira_core_widget_login_edit") }}"><i class="fa fa-user-circle fa-fw"></i> Jira Credentials</a></li>
                             {%- endif %}

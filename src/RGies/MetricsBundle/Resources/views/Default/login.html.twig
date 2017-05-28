@@ -1,4 +1,4 @@
-{% extends "MetricsBundle::layout.html.twig" %}
+{% extends "MetricsBundle::layout-simple.html.twig" %}
 {% block content %}
     {% if error %}
         <div class="alert alert-danger" role="alert">{{ error.message }}</div>
@@ -9,14 +9,20 @@
             <div class="jumbotron">
                 <form id="login-form" accept-charset="UTF-8" role="form" action="{{ path("login_auth") }}" method="post">
                     <div class="form-group" style="text-align: center">
-                        <span class="fa fa-user-circle-o" style="font-size:100pt"></span>
+                        <span class="fa fa-user-circle-o" style="font-size:120pt"></span>
                     </div>
                     <fieldset>
                         <div class="form-group">
-                            <input id="username" class="form-control" placeholder="Username" name="_username" value="{{ last_username }}" type="text">
+                            <div class="inner-addon left-addon">
+                                <i class="glyphicon glyphicon-user"></i>
+                                <input id="username" class="form-control" placeholder="Username" name="_username" value="{{ last_username }}" type="text" />
+                            </div>
                         </div>
                         <div class="form-group">
-                            <input id="password" class="form-control" placeholder="Password" name="_password" type="password" value="">
+                            <div class="inner-addon left-addon">
+                                <i class="glyphicon glyphicon-lock"></i>
+                                <input id="password" class="form-control" placeholder="Password" name="_password" type="password" value="">
+                            </div>
                         </div>
                         <input type="hidden" name="_security_token" value="{{ csrf_token("authenticate") }}">
                         <input class="btn btn-lg btn-primary btn-block" type="submit" value="Sign in">
