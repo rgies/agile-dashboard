@@ -2,7 +2,6 @@
 parameters:
     platform_name: 'Agile Dashboard'
     platform_version: '1.0'
-    platform_vendor: 'R.Gies'
 
     # Widget update interval in minutes
     widget_update_interval: 5
@@ -79,45 +78,6 @@ parameters:
         ROLE_ADMIN:       '<i style="color: #FA6900; opacity: 0.6;" class="fa fa-user fa-fw"></i>'
         #ROLE_SUPER_ADMIN: '<i style="color: #FE2E2E" class="fa fa-user fa-fw"></i>'
 
-# Dashboard Services
-services:
-    widget_service:
-        class:            RGies\MetricsBundle\Services\WidgetService
-        arguments:        [@doctrine, %widget_plugins%, @service_container]
-
-    cache_service:
-        class:            RGies\MetricsBundle\Services\CacheService
-        arguments:        [@doctrine, %widget_cache%]
-
-    params_service:
-        class:            RGies\MetricsBundle\Services\ParamsService
-        arguments:        [@doctrine]
-
-    credential_service:
-        class:            RGies\MetricsBundle\Services\CredentialService
-        arguments:        [@doctrine, %secret%]
-
-    security_token_service:
-        class:            RGies\MetricsBundle\Services\SecurityTokenService
-        arguments:        [@doctrine]
-
-    acl_service:
-        class:            RGies\MetricsBundle\Services\AclService
-        arguments:        [@security.access_map, @security.context]
-
-# Twig Configuration
-twig:
-    globals:
-        # Variables
-        label:
-            roles:        "%user_role_labels%"
-
-        icon:
-            roles:        "%user_role_icons%"
-
-        # Services
-        widgetService:  @widget_service
-        cacheService:   @cache_service
-        paramsService:  @params_service
-        aclService:     @acl_service
-        credentialService: @credential_service
+imports:
+    - { resource: service.yml }
+    - { resource: twig.yml }

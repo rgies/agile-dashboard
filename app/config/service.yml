@@ -1,0 +1,25 @@
+# Dashboard Services
+services:
+    widget_service:
+        class:            RGies\MetricsBundle\Services\WidgetService
+        arguments:        [@doctrine, %widget_plugins%, @service_container]
+
+    cache_service:
+        class:            RGies\MetricsBundle\Services\CacheService
+        arguments:        [@doctrine, %widget_cache%]
+
+    params_service:
+        class:            RGies\MetricsBundle\Services\ParamsService
+        arguments:        [@doctrine]
+
+    credential_service:
+        class:            RGies\MetricsBundle\Services\CredentialService
+        arguments:        [@doctrine, %secret%]
+
+    security_token_service:
+        class:            RGies\MetricsBundle\Services\SecurityTokenService
+        arguments:        [@doctrine]
+
+    acl_service:
+        class:            RGies\MetricsBundle\Services\AclService
+        arguments:        [@security.access_map, @security.context]

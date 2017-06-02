@@ -2,6 +2,7 @@ parameters:
     platform_contact:  contact@website.com
     platform_keywords: 'metrics,kpi,agile,company,dashboard'
     platform_description: 'Company dashboard for agile metrics.'
+    platform_vendor: 'www.agile-dashboard.com'
 
     database_driver:   pdo_mysql
     database_host:     127.0.0.1

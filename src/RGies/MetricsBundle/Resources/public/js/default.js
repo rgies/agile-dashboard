@@ -89,7 +89,61 @@ var core = {
         d.setTime(d.getTime() + (days*24*60*60*1000));
         var expires = "expires=" + d.toUTCString();
         document.cookie = name + "=" + value + "; " + expires;
-    }
+    },
+
+    /**
+     * Draw progress pie.
+     *
+     * @param x
+     * @param y
+     * @param size
+     * @param percent
+     * @returns {string}
+     */
+    drawProgressArc : function (id, x, y, size, percent)
+    {
+        var startAngle = 0;
+        var endAngle = 3.6 * percent;
+        var radius = size / 2;
+
+        x = x + radius;
+        y = y + radius;
+
+        var start = this._polarToCartesian(x, y, radius, endAngle);
+        var end = this._polarToCartesian(x, y, radius, startAngle);
+        var arcSweep = endAngle - startAngle <= 180 ? "0" : "1";
+
+        var d = [
+            "M", start.x, start.y,
+            "A", radius, radius, 0, arcSweep, 0, end.x, end.y,
+            "L", x,y,
+            "L", start.x, start.y
+        ].join(" ");
+
+        document.getElementById(id).innerHTML = '<svg><path id="' + id
+            + '-arc" fill="green" stroke="none" stroke-width="0" d="' + d + '"/></svg>';
+    },
+
+    /**
+     * Calculates coordinates for progress arc.
+     *
+     * @param centerX
+     * @param centerY
+     * @param radius
+     * @param angleInDegrees
+     * @returns {{x: *, y: *}}
+     */
+    _polarToCartesian : function (centerX, centerY, radius, angleInDegrees)
+    {
+        var angleInRadians = (angleInDegrees-90) * Math.PI / 180.0;
+
+        return {
+            x: centerX + (radius * Math.cos(angleInRadians)),
+            y: centerY + (radius * Math.sin(angleInRadians))
+        }
+    },
+
+
 };
 
 

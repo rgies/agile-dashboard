@@ -19,7 +19,7 @@
                             <a href="{{ uri }}" {% if item.self %}target="_blank" {% endif %}
                                data-toggle="popover"
                                data-placement="bottom"
-                               title="<strong>Milestone: {{ item.name }}</strong>"
+                               title="<strong>Milestone: {{ item.name }} {% if item.progress is defined %}[{{ item.progress }}%]{% endif %}</strong>"
                                data-content="{{ item.description|default('') }}"
                                data-date="{{ item.releaseDate|date('d/m/Y') }}"
                                class="
@@ -35,6 +35,10 @@
                                     {% if loop.index is odd %}|<br/>{% endif %}
                                     &nbsp;&nbsp;&nbsp;{{ item.name }}&nbsp;&nbsp;&nbsp;
                                 </div>
+                                {%- if item.progress is defined -%}
+                                    <div id="progress" style="position:absolute; z-index: 50;"></div>
+                                    <script>core.drawProgressArc('progress',28,3,20,{{ item.progress }});</script>
+                                {%- endif -%}
                             </a>
                         </li>
                     {% endif %}

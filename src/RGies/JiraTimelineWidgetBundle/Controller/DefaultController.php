@@ -11,6 +11,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use JiraRestApi\Project\ProjectService;
 use JiraRestApi\JiraException;
+use JiraRestApi\Issue\IssueService;
+
 
 /**
  * Widget controller.
@@ -55,15 +57,16 @@ class DefaultController extends Controller
         $widgetConfig = $this->get('WidgetService')->getResolvedWidgetConfig($widgetType, $widgetId);
         $projectList = explode(',', $widgetConfig->getProjectName());
         $credentials = $this->get('JiraCoreService')->getLoginCredentials();
+
+        $project = new ProjectService($credentials);
+        $issueService = new IssueService($credentials);
+
         $data = array();
 
         foreach ($projectList as $projectName) {
             try {
-                $project = new ProjectService($credentials);
-
                 $items = $project->get($projectName);
 
-                //print_r($items->versions); exit;
             } catch (JiraException $e) {
                 $response['warning'] = wordwrap('Wrong start date format: ' . $e->getMessage(), 38, '<br/>');
                 return new Response(json_encode($response), Response::HTTP_OK);
@@ -74,6 +77,8 @@ class DefaultController extends Controller
                     if (isset($item->releaseDate) && !$item->archived) {
                         $date = new \DateTime($item->releaseDate);
                         $item->link = $credentials->getjiraHost() . '/projects/' . $projectName;
+                        $item->project = $projectName;
+                        //$item->progress = $this->_getProgress($issueService, $item->name);
                         $data[$date->getTimestamp()] = $item;
                     }
                 }
@@ -88,6 +93,8 @@ class DefaultController extends Controller
                 if (isset($item->releaseDate)) {
                     $selectedDate = new \DateTime($item->releaseDate);
                     if ($key > time()-(3600*24)) {
+                        // not used because performance issues
+                        //$item->progress = $this->_getProgress($issueService, $item->name);
                         break;
                     }
                 }
@@ -118,5 +125,36 @@ class DefaultController extends Controller
         $cache->setValue('JiraTimelineWidgetBundle', $widgetId, json_encode($response));
 
         return new Response(json_encode($response), Response::HTTP_OK);
+    }
+
+    /**
+     * Calculates the issue progress in % by resolved and unresolved issues at a version.
+     *
+     * @param IssueService $issueService
+     * @param $versionName
+     * @return float|int Progress in %
+     */
+    protected function _getProgress(IssueService $issueService, $versionName)
+    {
+        $resolved = 0;
+        $unresolved = 0;
+
+        $jql = 'fixVersion="' . $versionName . '" and type!=Epic';
+
+
+        try {
+            $issues = $issueService->search($jql, 0, 100000, ['resolutiondate']);
+        } catch (JiraException $e) {
+            return 0;
+        }
+        if ($issues) {
+            foreach ($issues->getIssues() as $issue) {
+                ($issue->fields->resolutiondate) ? $resolved++ : $unresolved++;
+            }
+        }
+
+        if ($unresolved==0) return 100;
+
+        return 100 / ($resolved + $unresolved) * $resolved;
     }
 }
