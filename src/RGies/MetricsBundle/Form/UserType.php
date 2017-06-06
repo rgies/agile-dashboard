@@ -31,6 +31,7 @@ class UserType extends AbstractType
             ->add('password', 'password', array('attr' => array('minlength'=>6)))
             ->add('firstname')
             ->add('lastname')
+            //->add('usergroup', 'entity', $dashboardChoice)
             ->add('jobtitle', 'text', array('required' => false))
             ->add('role', 'choice', array('choices' => $roles, 'label' => 'Access level'))
             ->add('email', 'email')

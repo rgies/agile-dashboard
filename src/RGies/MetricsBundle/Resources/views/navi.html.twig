@@ -42,30 +42,6 @@
                         <ul class="dropdown-menu" style="padding: 15px; padding-bottom: 0px;" role="menu">{% render controller("MetricsBundle:Params:config", { 'id': dashboard.id }) %}</ul>
                     </li>
                     {% endif %}
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <span class="fa fa-cog" style="font-size: 13pt"></span>
-                            <span class="fa fa-chevron-down"></span>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li>
-                                <a href="javascript:if (screenfull.enabled) {$('#sortable').css('background-color', $('body').css('background-color'));screenfull.toggle($('#sortable')[0])}">
-                                    <i class="fa fa-television fa-fw"></i> TV - full screen mode
-                                </a>
-                            </li>
-                            <li><a href="javascript:toggleDashboardEditMode();"><i class="fa fa-edit fa-fw"></i> Edit Dashboard&nbsp;<span class="badge">e-key</span></a></li>
-                            <li role="separator" class="divider"></li>
-                            {%- if aclService.userHasAccess(path("user")) %}
-                            <li><a href="{{ path("user") }}"><i class="ion ion-person-stalker fa-fw"></i> User Management</a></li>
-                            {%- endif %}
-                            <li><a href="{{ path("dashboard") }}"><i class="fa fa-dashboard fa-fw"></i> Dashboard Management</a></li>
-                            <li><a href="{{ path("widgets") }}"><i class="fa fa-puzzle-piece fa-fw"></i> Widget Management</a></li>
-                            {%- if aclService.userHasAccess(path("jira_core_widget_login_edit")) %}
-                            <li role="separator" class="divider"></li>
-                            <li><a href="{{ path("jira_core_widget_login_edit") }}"><i class="fa fa-user-circle fa-fw"></i> Jira Credentials</a></li>
-                            {%- endif %}
-                        </ul>
-                    </li>
                     <!-- My Place Menu -->
                     {%- if app.user %}
                     <li class="dropdown">
@@ -76,12 +52,6 @@
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="{{ path("myprofile") }}"><span class="glyphicon glyphicon-user fa-fw"></span> My Profile</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li>
-                                <a href="{{ path("logout") }}"><span class="glyphicon glyphicon-log-out fa-fw"></span> Logout</a>
-                            </li>
-                        </ul>
-                    </li>
                     {% else %}
                     <!-- Anonymous user -->
                     <li class="dropdown">
@@ -92,9 +62,32 @@
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="{{ path("login") }}"><span class="fa fa-user-circle fa-fw"></span> Login ...</a></li>
+                            <li role="separator" class="divider"></li>
+                    {%- endif %}
+                        <li>
+                            <a href="javascript:if (screenfull.enabled) {$('#sortable').css('background-color', $('body').css('background-color'));screenfull.toggle($('#sortable')[0])}">
+                                <i class="fa fa-television fa-fw"></i> TV - full screen mode
+                            </a>
+                        </li>
+                        <li><a href="javascript:toggleDashboardEditMode();"><i class="fa fa-edit fa-fw"></i> Edit Dashboard&nbsp;<span class="badge">e-key</span></a></li>
+                        <li role="separator" class="divider"></li>
+                        {%- if aclService.userHasAccess(path("user")) %}
+                            <li><a href="{{ path("user") }}"><i class="ion ion-person-stalker fa-fw"></i> User Management</a></li>
+                        {%- endif %}
+                        <li><a href="{{ path("dashboard") }}"><i class="fa fa-dashboard fa-fw"></i> Dashboard Management</a></li>
+                        <li><a href="{{ path("widgets") }}"><i class="fa fa-puzzle-piece fa-fw"></i> Widget Management</a></li>
+                        {%- if aclService.userHasAccess(path("jira_core_widget_login_edit")) %}
+                            <li role="separator" class="divider"></li>
+                            <li><a href="{{ path("jira_core_widget_login_edit") }}"><i class="fa fa-user-circle fa-fw"></i> Jira Credentials</a></li>
+                        {%- endif %}
+                    {%- if app.user %}
+                        <li role="separator" class="divider"></li>
+                        <li>
+                            <a href="{{ path("logout") }}"><span class="glyphicon glyphicon-log-out fa-fw"></span> Logout</a>
+                        </li>
+                    {%- endif %}
                         </ul>
                     </li>
-                    {%- endif %}
                 </ul>
             </div>
         </div>

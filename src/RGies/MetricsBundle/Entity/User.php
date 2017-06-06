@@ -69,6 +69,11 @@ class User implements AdvancedUserInterface, \Serializable
     private $email;
 
     /**
+     * @ORM\ManyToMany(targetEntity="RGies\MetricsBundle\Entity\UserGroup", mappedBy="user")
+     */
+    private $usergroup;
+
+    /**
      * @var boolean
      *
      * @ORM\Column(type="boolean", nullable=true, name="is_active")
@@ -283,6 +288,39 @@ class User implements AdvancedUserInterface, \Serializable
     public function getIsActive()
     {
         return $this->is_active;
+    }
+
+    /**
+     * Add user group
+     *
+     * @param \RGies\MetricsBundle\Entity\UserGroup $userGroup
+     * @return User
+     */
+    public function addUserGroup(\RGies\MetricsBundle\Entity\UserGroup $userGroup)
+    {
+        $this->usergroup[] = $userGroup;
+
+        return $this;
+    }
+
+    /**
+     * Remove user group
+     *
+     * @param \RGies\MetricsBundle\Entity\UserGroup $userGroup
+     */
+    public function removeActivity(\RGies\MetricsBundle\Entity\UserGroup $userGroup)
+    {
+        $this->usergroup->removeElement($userGroup);
+    }
+
+    /**
+     * Get user group
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getUserGroup()
+    {
+        return $this->usergroup;
     }
 
     // ===========================================

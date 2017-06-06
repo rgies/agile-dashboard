@@ -1,0 +1,90 @@
+{% extends "MetricsBundle::layout.html.twig" %}
+
+{% block content -%}
+<div class="container">
+    <div class="page-header">
+        <h1><i class="ion ion-person-stalker"></i> UserGroup edit</h1>
+    </div>
+
+    {{ form(edit_form) }}
+    {{ form(delete_form) }}
+
+    <div class="row">
+        <div class="form-group">
+            <label class="col-sm-2 control-label" style="text-align: right">Member</label>
+            <div class="col-sm-10">
+                <table class="table table-striped">
+                    <tbody id="param-items">
+                    {% for user in entity.user %}
+                        <tr data-id="{{ user.id }}">
+                            <td><a href="{{ path('user_edit', { 'id': user.id }) }}">{{ user.firstname }} {{ user.lastname }}</a></td>
+                            <td>{{ user.is_active }}</td>
+                            <td><a href="{{ path('user_edit', { 'id': user.id }) }}"><i class="fa fa-edit"></i> Edit</a></td>
+                        </tr>
+                    {% endfor %}
+                    {% if entity.user|length == 0 %}
+                        <tr>
+                            <td colspan="5">
+                                <a href="">
+                                    <i class="fa fa-plus"></i> <i>Add members</i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <div class="control">
+            <button id="save" type="submit" onclick="formSave()" class="btn btn-primary pull-right">
+                <i class="fa fa-check"></i> Save
+            </button>
+            <span class="pull-right">&nbsp;&nbsp;&nbsp;</span>
+            <button id="delete" onclick="deleteEntity()" class="btn btn-danger pull-right">
+                <i class="fa fa-trash"></i> Delete
+            </button>
+        </div>
+    </div>
+
+    <br/>
+
+    <a href="{{ path('home') }}">
+        <i class="fa fa-arrow-circle-left"></i> Return to home
+    </a>
+</div>
+{% endblock %}
+
+{% block js -%}
+        <script type="text/javascript">
+
+            function formSave()
+            {
+                var form = $("#edit-form");
+
+                if (form.validate())
+                {
+                    form.submit();
+                }
+            }
+
+            function deleteEntity()
+            {
+                var form = $("#delete-form");
+
+                bootbox.confirm('<h4><i class="fa fa-warning fa-2x text-danger"></i> Do you really want to delete <span class="label label-default">{{ entity.title }}</span> group ?</h4>', function(result) {
+                    if (result)
+                    {
+                        form.submit();
+                    }
+                });
+            }
+
+            $( document ).ready(function() {
+                $("#edit-form").validate();
+            });
+        </script>
+{% endblock %}

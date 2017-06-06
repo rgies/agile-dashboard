@@ -1,0 +1,42 @@
+{% extends "MetricsBundle::layout.html.twig" %}
+
+{% block content -%}
+<div class="container" xmlns="http://www.w3.org/1999/html">
+    <div class="page-header">
+        <h1><i class="ion ion-person-stalker"></i> Usergroup list</h1>
+    </div>
+    <div>
+        <button type="button" class="btn btn-primary" onclick="location.href='{{ path('usergroup_new') }}'">
+            <i class="fa fa-plus"></i> Create a new entry
+        </button>
+    </div><br/>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Group name</th>
+                <th>Members</th>
+                <th>Created</th>
+                <th>Modified</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td>
+                    {% if entity.isactive != 1 %}<i class="fa fa-eye-slash"></i>{% endif %}
+                    <i class="fa fa-group"></i> <a href="{{ path('usergroup_edit', { 'id': entity.id }) }}">{{ entity.title }}</a>
+                </td>
+                <td>
+                    <i class="fa fa-user"></i> {{ entity.user|length }} user
+                </td>
+                <td>{% if entity.created %}{{ entity.created|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{% if entity.modified %}{{ entity.modified|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td><a href="{{ path('usergroup_edit', { 'id': entity.id }) }}"><i class="fa fa-edit"></i> Edit</a>                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}
