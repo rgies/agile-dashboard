@@ -13,26 +13,15 @@
         <div class="form-group">
             <label class="col-sm-2 control-label" style="text-align: right">Member</label>
             <div class="col-sm-10">
-                <table class="table table-striped">
-                    <tbody id="param-items">
-                    {% for user in entity.user %}
-                        <tr data-id="{{ user.id }}">
-                            <td><a href="{{ path('user_edit', { 'id': user.id }) }}">{{ user.firstname }} {{ user.lastname }}</a></td>
-                            <td>{{ user.is_active }}</td>
-                            <td><a href="{{ path('user_edit', { 'id': user.id }) }}"><i class="fa fa-edit"></i> Edit</a></td>
-                        </tr>
+                <select id="select" name="select" class="form-control" onchange="addUser(this)">
+                    <option value="">+ Click to add user</option>
+                    {% for user in users %}
+                        <option value="{{ user.id }}">{{ user.firstname }} {{ user.lastname }} [{{ user.email }}]</option>
                     {% endfor %}
-                    {% if entity.user|length == 0 %}
-                        <tr>
-                            <td colspan="5">
-                                <a href="">
-                                    <i class="fa fa-plus"></i> <i>Add members</i>
-                                </a>
-                            </td>
-                        </tr>
-                    {% endif %}
-                    </tbody>
-                </table>
+                </select>
+                <div id="user-list">
+                    {% include 'MetricsBundle::Templates/usergroup-user-list.html.twig' with {'entity': entity} %}
+                </div>
             </div>
         </div>
     </div>
@@ -68,6 +57,25 @@
                 if (form.validate())
                 {
                     form.submit();
+                }
+            }
+
+            function addUser(element)
+            {
+                if (element.value) {
+                    $.post("{{ path('usergroup_add_user') }}", {'userId': element.value, 'userGroupId': {{ entity.id }} }).done(function(data) {
+                        $('#user-list').html(data);
+                    });
+                    $(element).val('').change();
+                }
+            }
+
+            function removeUser(id)
+            {
+                if (id) {
+                    $.post("{{ path('usergroup_remove_user') }}", {'userId': id, 'userGroupId': {{ entity.id }} }).done(function(data) {
+                        $('#user-list').html(data);
+                    });
                 }
             }
 

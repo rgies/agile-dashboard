@@ -1,0 +1,17 @@
+<table class="table table-striped">
+    <tbody id="param-items">
+    {% for user in entity.user %}
+        <tr data-id="{{ user.id }}">
+            <td>
+                <i class="fa fa-user"></i>
+                <a href="{{ path('user_edit', { 'id': user.id }) }}">
+                    {{ user.firstname }}
+                    {{ user.lastname }}
+                    [{{ user.email }}]
+                </a>
+            </td>
+            <td><a href="javascript: removeUser({{ user.id }});"><i class="fa fa-times"></i> remove</a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

@@ -3,6 +3,7 @@
 namespace RGies\MetricsBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -145,7 +146,14 @@ class UserGroupController extends Controller
         $editForm = $this->createEditForm($entity);
         $deleteForm = $this->createDeleteForm($id);
 
+        $users = $em->getRepository('MetricsBundle:User')->findAll(
+            array('is_active' => 1),
+            array('lastname', 'ASC')
+        );
+
+
         return array(
+            'users'       => $users,
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
@@ -245,5 +253,77 @@ class UserGroupController extends Controller
             //->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()
         ;
+    }
+
+
+    /**
+     * Add user to user group.
+     *
+     * @Route("/addUser/", name="usergroup_add_user")
+     * @Method("POST")
+     * @Template("MetricsBundle:Templates:usergroup-user-list.html.twig")
+     */
+    public function addUserAjax(Request $request)
+    {
+        if (!$request->isXmlHttpRequest())
+        {
+            return new Response('No valid request', Response::HTTP_FORBIDDEN);
+        }
+
+        $userId = $request->request->get('userId');
+        $userGroupId = $request->request->get('userGroupId');
+
+        if (!$userId || !$userGroupId)
+        {
+            throw $this->createNotFoundException('IDs not set.');
+        }
+
+
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('MetricsBundle:UserGroup')->find($userGroupId);
+
+        $user  = $em->getRepository('MetricsBundle:User')->find($userId);
+
+        $entity->addUser($user);
+        $em->persist($entity);
+        $em->flush();
+
+        return array('entity' => $entity);
+    }
+
+
+    /**
+     * Remove user from user group.
+     *
+     * @Route("/removeUser/", name="usergroup_remove_user")
+     * @Method("POST")
+     * @Template("MetricsBundle:Templates:usergroup-user-list.html.twig")
+     */
+    public function removeUserAjax(Request $request)
+    {
+        if (!$request->isXmlHttpRequest())
+        {
+            return new Response('No valid request', Response::HTTP_FORBIDDEN);
+        }
+
+        $userId = $request->request->get('userId');
+        $userGroupId = $request->request->get('userGroupId');
+
+        if (!$userId || !$userGroupId)
+        {
+            throw $this->createNotFoundException('IDs not set.');
+        }
+
+
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('MetricsBundle:UserGroup')->find($userGroupId);
+
+        $user  = $em->getRepository('MetricsBundle:User')->find($userId);
+
+        $entity->removeUser($user);
+        $em->persist($entity);
+        $em->flush();
+
+        return array('entity' => $entity);
     }
 }
