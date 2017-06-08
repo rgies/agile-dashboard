@@ -1,14 +1,13 @@
-{{ '{% extends "' }}{{ bundle }}{{ '::layout.html.twig" %}' }}
+{% extends "MetricsBundle::layout.html.twig" %}
 
-{% block content %}
-{{ "{% block content -%}" }}
+{% block content -%}
 <div class="container">
     <div class="page-header">
-        <h1>{{ entity }} edit</h1>
+        <h1>Domain edit</h1>
     </div>
 
-    {{ '{{ form(edit_form) }}' }}
-    {{ '{{ form(delete_form) }}' }}
+    {{ form(edit_form) }}
+    {{ form(delete_form) }}
 
     <div class="form-group">
         <div class="control">
@@ -24,13 +23,13 @@
 
     <br/>
 
-    <a href="{{ "{{ path('home') }}" }}">
+    <a href="{{ path('home') }}">
         <i class="fa fa-arrow-circle-left"></i> Return to home
     </a>
 </div>
-{{ "{% endblock %}" }}
+{% endblock %}
 
-{{ "{% block js -%}" }}
+{% block js -%}
         <script type="text/javascript">
 
             function formSave()
@@ -47,7 +46,7 @@
             {
                 var form = $("#delete-form");
 
-                bootbox.confirm('<h4><i class="fa fa-warning fa-2x text-danger"></i> Do you really want to delete <span class="label label-default">{{ '{{ entity.title }}' }}</span> ?</h4>', function(result) {
+                bootbox.confirm('<h4><i class="fa fa-warning fa-2x text-danger"></i> Do you really want to delete <span class="label label-default">{{ entity.title }}</span> ?</h4>', function(result) {
                     if (result)
                     {
                         form.submit();
@@ -59,5 +58,4 @@
                 $("#edit-form").validate();
             });
         </script>
-{{ "{% endblock %}" }}
-{% endblock content %}
+{% endblock %}

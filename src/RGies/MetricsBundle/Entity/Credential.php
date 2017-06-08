@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Credentials
  *
- * @ORM\Table(indexes={@ORM\Index(name="get_value", columns={"domain"})})
+ * @ORM\Table(indexes={@ORM\Index(name="get_value", columns={"provider"})})
  * @ORM\Entity(repositoryClass="RGies\MetricsBundle\Entity\CredentialRepository")
  */
 class Credential
@@ -24,9 +24,9 @@ class Credential
     /**
      * @var string
      *
-     * @ORM\Column(name="domain", type="string", length=64)
+     * @ORM\Column(name="provider", type="string", length=64)
      */
-    private $domain;
+    private $provider;
 
     /**
      * @var string
@@ -61,27 +61,27 @@ class Credential
     }
 
     /**
-     * Set domain
+     * Set provider
      *
-     * @param string $domain
+     * @param string $provider
      *
      * @return Credential
      */
-    public function setDomain($domain)
+    public function setProvider($provider)
     {
-        $this->domain = $domain;
+        $this->provider = $provider;
 
         return $this;
     }
 
     /**
-     * Get domain
+     * Get provider
      *
      * @return string
      */
-    public function getDomain()
+    public function getProvider()
     {
-        return $this->domain;
+        return $this->provider;
     }
 
     /**

@@ -37,10 +37,10 @@ class CredentialService
     /**
      * Save credential value.
      *
-     * @param string $domain Component (Jira, Google, etc.)
+     * @param string $provider Component (Jira, Google, etc.)
      * @param object|array $data   Credential array (e.g. login, password)
      */
-    public function saveCredentials($domain, $data)
+    public function saveCredentials($provider, $data)
     {
         $em = $this->_doctrine->getManager();
 
@@ -54,7 +54,7 @@ class CredentialService
         );
 
         $entities = $em->getRepository('MetricsBundle:Credential')->findBy(
-            array('domain' => $domain)
+            array('provider' => $provider)
         );
 
         if ($entities) {
@@ -62,7 +62,7 @@ class CredentialService
             $credential -> setValue($encrypted_string) -> setUpdated(time());
         } else {
             $credential = new Credential();
-            $credential -> setDomain($domain)
+            $credential -> setProvider($provider)
                 -> setValue($encrypted_string)
                 -> setUpdated(time())
                 -> setCreated(time());
@@ -75,17 +75,17 @@ class CredentialService
     /**
      * Loads credentials value.
      *
-     * @param $domain
+     * @param $provider
      * @return object|array|null
      */
-    public function loadCredentials($domain)
+    public function loadCredentials($provider)
     {
         $em = $this->_doctrine->getManager();
         $encryption_key = $this->_secret;
         $credentials = null;
 
         $entities = $em->getRepository('MetricsBundle:Credential')->findBy(
-            array('domain' => $domain)
+            array('provider' => $provider)
         );
 
         if ($entities) {

@@ -1,0 +1,40 @@
+{% extends "MetricsBundle::layout.html.twig" %}
+
+{% block content -%}
+<div class="container" xmlns="http://www.w3.org/1999/html">
+    <div class="page-header">
+        <h1>Domain list</h1>
+    </div>        <div>
+            <button type="button" class="btn btn-primary" onclick="location.href='{{ path('domain_new') }}'">
+                <i class="fa fa-plus"></i> Create a new entry
+            </button>
+        </div><br/>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Modified</th>
+                <th>Created</th>
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td><a href="{{ path('domain_edit', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                <td><a href="{{ path('domain_edit', { 'id': entity.id }) }}">{{ entity.title }}</a></td>
+                <td>{{ entity.description }}</td>
+                <td>{% if entity.modified %}{{ entity.modified|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{% if entity.created %}{{ entity.created|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{% if entity.isactive %}<i class="fa fa-check-circle"></i>{% endif %}</td>
+                <td><a href="{{ path('domain_edit', { 'id': entity.id }) }}"><i class="fa fa-edit"></i> Edit</a>                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}

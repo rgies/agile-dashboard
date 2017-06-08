@@ -36,16 +36,16 @@ class CacheService
     /**
      * Set cache value.
      *
-     * @param string $domain Domain
+     * @param string $section Cache section
      * @param string $id     Unique data id
      * @param string $value  Value to store in cache
      */
-    public function setValue($domain, $id, $value)
+    public function setValue($section, $id, $value)
     {
         $em = $this->_doctrine->getManager();
 
         $cache = new Cache();
-        $cache  -> setDomain($domain)
+        $cache  -> setSection($section)
                 -> setUid($id)
                 -> setValue($value)
                 -> setCreated(time());
@@ -61,13 +61,13 @@ class CacheService
     /**
      * Get cache value.
      *
-     * @param string $domain    Domain
+     * @param string $section   Cache section
      * @param string $id        Unique data id
      * @param string $default   OPTIONAL Default value
      * @param integer $lifetime OPTIONAL Lifetime of the requested value
      * @return string|null      Null or stored value
      */
-    public function getValue($domain, $id, $default=null, $lifetime=null)
+    public function getValue($section, $id, $default=null, $lifetime=null)
     {
         if ($lifetime === null) {
             $lifetime = $this->_config['default_lifetime'] * 60;
@@ -76,10 +76,10 @@ class CacheService
         $em = $this->_doctrine->getManager();
         $cache = $em->getRepository('MetricsBundle:Cache')
             -> createQueryBuilder('e')
-            -> where('e.domain = :domain')
+            -> where('e.section = :section')
             -> andWhere('e.uid = :id')
             -> orderBy('e.created', 'DESC')
-            -> setParameter('domain', $domain)
+            -> setParameter('section', $section)
             -> setParameter('id', $id)
             -> getQuery()->getResult();
 
@@ -94,16 +94,16 @@ class CacheService
     /**
      * Gets a single item from a json encoded cache entry.
      *
-     * @param $domain
+     * @param $section
      * @param $id
      * @param $item
      * @param null $default
      * @param int $lifetime
      * @return string
      */
-    public function getValueItem($domain, $id, $item, $default=null, $lifetime=600)
+    public function getValueItem($section, $id, $item, $default=null, $lifetime=600)
     {
-        $items = json_decode($this->getValue($domain, $id, '[]', $lifetime), true);
+        $items = json_decode($this->getValue($section, $id, '[]', $lifetime), true);
 
         if (isset($items[$item])) {
             return $items[$item];
@@ -115,22 +115,22 @@ class CacheService
     /**
      * Delete cache value.
      *
-     * @param string $domain Domain
+     * @param string $section Cache section
      * @param string $id     Unique data id
      * @return integer       Number of deleted items
      */
-    public function deleteValue($domain, $id = null)
+    public function deleteValue($section, $id = null)
     {
         $em = $this->_doctrine->getManager();
 
-        $query = 'delete from MetricsBundle:Cache st where st.domain = :domain';
+        $query = 'delete from MetricsBundle:Cache st where st.section = :section';
 
         if ($id) {
             $query = $query . ' and st.uid = :id';
         }
 
         $q = $em->createQuery($query);
-        $q->setParameter('domain', $domain);
+        $q->setParameter('section', $section);
 
         if ($id) {
             $q->setParameter('id', $id);

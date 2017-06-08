@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Cache
  *
- * @ORM\Table(indexes={@ORM\Index(name="get_value", columns={"domain","uid"})})
+ * @ORM\Table(indexes={@ORM\Index(name="get_value", columns={"section","uid"})})
  * @ORM\Entity(repositoryClass="RGies\MetricsBundle\Entity\CacheRepository")
  */
 class Cache
@@ -24,9 +24,9 @@ class Cache
     /**
      * @var string
      *
-     * @ORM\Column(name="domain", type="string", length=64)
+     * @ORM\Column(name="section", type="string", length=64)
      */
-    private $domain;
+    private $section;
 
     /**
      * @var integer
@@ -61,27 +61,27 @@ class Cache
     }
 
     /**
-     * Set domain
+     * Set section
      *
-     * @param string $domain
+     * @param string $section
      *
      * @return Cache
      */
-    public function setDomain($domain)
+    public function setSection($section)
     {
-        $this->domain = $domain;
+        $this->section = $section;
 
         return $this;
     }
 
     /**
-     * Get domain
+     * Get section
      *
      * @return string
      */
-    public function getDomain()
+    public function getSection()
     {
-        return $this->domain;
+        return $this->section;
     }
 
     /**
