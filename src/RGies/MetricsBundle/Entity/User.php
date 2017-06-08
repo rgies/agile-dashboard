@@ -92,6 +92,11 @@ class User implements AdvancedUserInterface, \Serializable
     private $created;
 
     /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $domain;
+
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $last_login_date;
@@ -291,7 +296,7 @@ class User implements AdvancedUserInterface, \Serializable
     }
 
     /**
-     * Add user group
+     * Add usergroup
      *
      * @param \RGies\MetricsBundle\Entity\UserGroup $userGroup
      * @return User
@@ -304,11 +309,11 @@ class User implements AdvancedUserInterface, \Serializable
     }
 
     /**
-     * Remove user group
+     * Remove usergroup
      *
      * @param \RGies\MetricsBundle\Entity\UserGroup $userGroup
      */
-    public function removeActivity(\RGies\MetricsBundle\Entity\UserGroup $userGroup)
+    public function removeUsergroup(\RGies\MetricsBundle\Entity\UserGroup $userGroup)
     {
         $this->usergroup->removeElement($userGroup);
     }
@@ -496,5 +501,29 @@ class User implements AdvancedUserInterface, \Serializable
     public function getLastLoginDate()
     {
         return $this->last_login_date;
+    }
+
+    /**
+     * Set domain
+     *
+     * @param string $domain
+     *
+     * @return User
+     */
+    public function setDomain($domain)
+    {
+        $this->domain = $domain;
+
+        return $this;
+    }
+
+    /**
+     * Get domain
+     *
+     * @return string
+     */
+    public function getDomain()
+    {
+        return $this->domain;
     }
 }

@@ -4,6 +4,7 @@ namespace RGies\MetricsBundle\Controller;
 
 use RGies\MetricsBundle\Entity\Dashboard;
 use RGies\MetricsBundle\Entity\User;
+use RGies\MetricsBundle\Entity\Domain;
 use RGies\MetricsBundle\Form\UserRegisterType;
 use RGies\MetricsBundle\Form\MyProfileType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -20,6 +21,17 @@ class DefaultController extends Controller
     const LAST_VISITED_DASHBOARD = 'last_dashboard_id';
 
     /**
+     * Init after login.
+     *
+     * @Route("/init", name="init")
+     * @Template()
+     */
+    public function initAction()
+    {
+        return $this->redirect($this->generateUrl('start'));
+    }
+
+    /**
      * Website home action.
      *
      * @Route("/", name="start")
@@ -34,11 +46,21 @@ class DefaultController extends Controller
         // if no user exists add default admin account
         $user = $em->getRepository('MetricsBundle:User')->findAll();
         if (!$user) {
+            // add default domain
+            $domains = $em->getRepository('MetricsBundle:Domain')->findAll();
+            if (!$domains) {
+                $domain = new Domain();
+                $domain->setTitle('Default');
+                $domain->setIsActive(true);
+                $em->persist($domain);
+                $em->flush();
+            }
+
             // admin user
             $userAdmin = new User();
             $userAdmin->setUsername('Admin');
             $userAdmin->setPassword('admin');
-            $userAdmin->setRole('ROLE_ADMIN');
+            $userAdmin->setRole('ROLE_SUPER_ADMIN');
             $userAdmin->setJobtitle('admin');
             $userAdmin->setFirstname('Admin');
             $userAdmin->setLastname('User');

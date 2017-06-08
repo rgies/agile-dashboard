@@ -55,9 +55,10 @@
         <table class="table table-striped">
             <thead>
             <tr>
+                <th>Id</th>
                 <th>Login</th>
                 <th>Name</th>
-                <th>Job Title</th>
+                <th>Role</th>
                 <th>Email</th>
                 <th>Last Login</th>
                 <th>&nbsp;</th>
@@ -66,13 +67,14 @@
             <tbody>
             {% for entity in entities %}
                 <tr>
+                    <td>{{ entity.id }}</td>
                     <td>
                         {% if entity.isactive != 1 %}<i class="fa fa-eye-slash"></i>{% endif %}
                         {{ icon.roles[entity.role]|raw }}
                         <a href="{{ path('user_edit', { 'id': entity.id }) }}">{{ entity.username }}</a>
                     </td>
                     <td>{{ entity.firstname }} {{ entity.lastname }}</td>
-                    <td>{{ label.jobtitles[entity.jobtitle]|default('') }}</td>
+                    <td>{{ label.roles[entity.role]|default('') }}</td>
                     <td>{{ entity.email }}</td>
                     <td>{% if entity.getLastLoginDate() %}{{ entity.getLastLoginDate()|date('Y-m-d H:i') }}{% else %}never{% endif %}</td>
                     <td>
