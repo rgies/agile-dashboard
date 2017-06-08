@@ -400,12 +400,12 @@ class DashboardController extends Controller
             $import = json_decode(file_get_contents($filename), true);
             $title = $import['dashboard']['title'] . '-new';
 
-            $this->_persistArray($import, $title);
+            $dashboard = $this->_persistArray($import, $title);
 
             @unlink($filename);
         }
 
-        return $this->forward('MetricsBundle:Dashboard:index');
+        return $this->redirect($this->generateUrl('dashboard_edit', ['id'=>$dashboard->getId()]));
     }
 
     /**
@@ -436,6 +436,7 @@ class DashboardController extends Controller
      *
      * @param array $data Dashboard data
      * @param string $title Dashboard title
+     * @return Dashboard
      */
     protected function _persistArray($data, $title)
     {
@@ -471,6 +472,8 @@ class DashboardController extends Controller
             $config['widget_id'] = $widget->getId();
             $this->get('WidgetService')->setWidgetConfig($widget->getType(), $config);
         }
+
+        return $dashboard;
     }
 
 

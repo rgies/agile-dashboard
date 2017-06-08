@@ -1,6 +1,8 @@
 imports:
     - { resource: widget.yml }
     - { resource: app.yml }
+    - { resource: service.yml }
+    - { resource: twig.yml }
     - { resource: parameters.yml }
     - { resource: security.yml }
 
