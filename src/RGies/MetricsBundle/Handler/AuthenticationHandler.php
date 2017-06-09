@@ -18,15 +18,20 @@ class AuthenticationHandler extends ContainerAware implements AuthenticationSucc
 {
     function onAuthenticationSuccess(Request $request, TokenInterface $token)
     {
+        $user = $token->getUser();
+
+        // set domain
+        $request->getSession()->set('domain', $user->getDomain());
+
         // set session variable for first login
-        if ($token->getUser()->getLastLoginDate() == null)
+        if ($user->getLastLoginDate() == null)
         {
             $request->getSession()->set('firstLogin', true);
         }
 
+        // set last login date
         $date = new \DateTime();
-
-        $token->getUser()->setLastLoginDate($date);
+        $user->setLastLoginDate($date);
         $this->container->get('doctrine')->getManager()->flush();
 
         // write login data to log file
@@ -40,6 +45,6 @@ class AuthenticationHandler extends ContainerAware implements AuthenticationSucc
             return new RedirectResponse($redirectUrl);
         }
 
-        return new RedirectResponse($this->container->get('router')->generate('init'));
+        return new RedirectResponse($this->container->get('router')->generate('start'));
     }
 }

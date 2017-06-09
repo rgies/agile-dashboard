@@ -69,10 +69,6 @@ class DefaultController extends Controller
             $em->persist($userAdmin);
             $em->flush();
 
-            // setup jira credential if nothing exists
-            if (!$this->get('credentialService')->loadCredentials('jira')) {
-                return $this->redirect($this->generateUrl('jira_core_widget_login_edit'));
-            }
         }
 
         // get dashboards
@@ -90,6 +86,11 @@ class DefaultController extends Controller
             $em->persist($dashboard);
             $em->flush();
             $dashboards = array($dashboard);
+
+            // setup jira credential if nothing exists
+            if (!$this->get('credentialService')->loadCredentials('jira')) {
+                return $this->redirect($this->generateUrl('jira_core_widget_login_edit'));
+            }
         } else if ($id) {
             // create cookie
             $expire = new \DateTime('+600 days');
