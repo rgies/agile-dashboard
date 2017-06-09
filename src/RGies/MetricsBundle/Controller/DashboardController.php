@@ -33,7 +33,7 @@ class DashboardController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $entities = $em->getRepository('MetricsBundle:Dashboard')->findBy(
-            array(),
+            array('domain' => $this->get('session')->get('domain')),
             array('pos'=>'ASC')
         );
 
@@ -56,6 +56,7 @@ class DashboardController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+            $entity->setDomain($request->getSession()->get('domain'));
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
@@ -108,31 +109,6 @@ class DashboardController extends Controller
     }
 
     /**
-     * Finds and displays a Dashboard entity.
-     *
-     * @Route("/{id}", name="dashboard_show")
-     * @Method("GET")
-     * @Template()
-     */
-    public function showAction($id)
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $entity = $em->getRepository('MetricsBundle:Dashboard')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Dashboard entity.');
-        }
-
-        $deleteForm = $this->createDeleteForm($id);
-
-        return array(
-            'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
-        );
-    }
-
-    /**
      * Displays a form to edit an existing Dashboard entity.
      *
      * @Route("/{id}/edit", name="dashboard_edit")
@@ -147,6 +123,10 @@ class DashboardController extends Controller
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Dashboard entity.');
+        }
+
+        if (!$this->get('AclService')->userHasEntityAccess($entity)) {
+            throw $this->createNotFoundException('No access allowed.');
         }
 
         $editForm = $this->createEditForm($entity);
@@ -200,6 +180,10 @@ class DashboardController extends Controller
             throw $this->createNotFoundException('Unable to find Dashboard entity.');
         }
 
+        if (!$this->get('AclService')->userHasEntityAccess($entity)) {
+            throw $this->createNotFoundException('No access allowed.');
+        }
+
         $deleteForm = $this->createDeleteForm($id);
         $editForm = $this->createEditForm($entity);
         $editForm->handleRequest($request);
@@ -234,6 +218,10 @@ class DashboardController extends Controller
 
             if (!$entity) {
                 throw $this->createNotFoundException('Unable to find Dashboard entity.');
+            }
+
+            if (!$this->get('AclService')->userHasEntityAccess($entity)) {
+                throw $this->createNotFoundException('No access allowed.');
             }
 
             $em->remove($entity);
@@ -361,6 +349,10 @@ class DashboardController extends Controller
         $entity = $em->getRepository('MetricsBundle:Dashboard')->find($id);
         $filename = str_replace(array(' ','%','/'), '_', $entity->getTitle()) . '.json';
 
+        if (!$this->get('AclService')->userHasEntityAccess($entity)) {
+            throw $this->createNotFoundException('No access allowed.');
+        }
+
         $response = new Response();
 
         $response->headers->set('Content-Type', 'application/json; charset=utf-8');
@@ -440,11 +432,13 @@ class DashboardController extends Controller
      */
     protected function _persistArray($data, $title)
     {
+        $session = $this->get('session');
         $em = $this->getDoctrine()->getManager();
 
         // persist dashboard
         $dashboard = new Dashboard($data['dashboard']);
         $dashboard->setTitle($title);
+        $dashboard->setDomain($session->get('domain'));
 
         $em->persist($dashboard);
         $em->flush();

@@ -45,6 +45,24 @@
         });
 
         $(document).ready(function() {
+            {%- if is_granted("ROLE_SUPER_ADMIN") %}
+            // load domain list
+            $('#domain-dropdown').on('click', function () {
+                //var element = $(this).parent().find(".dropdown-menu");
+                var element = $('#domain-dropdown-items');
+
+                if (element.css('display') == 'none') {
+                    element.html('<li><a href="#">Loading <i class="fa fa-refresh fa-spin"></i></a></li>');
+
+                    $.post("{{ path('domain-switch-list') }}").done(function(data) {
+                        element.html(data);
+                    });
+
+                }
+                else { element.html('');}
+            });
+            {% endif %}
+
             $('.datepicker').datepicker({
                 //startDate: '-0d',
                 language: "{{ app.request.locale }}",

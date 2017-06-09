@@ -8,8 +8,10 @@
         <div class="form-group">
             <label for="user_role">User Role</label>
             <select id="user_role" name="user_role" class="form-control">
-                {% for key,role in userRoles %}
-                    <option value="{{ key }}">{{ role }}</option>
+                {% for key,role in USER_ROLES %}
+                    {% if is_granted(key) %}
+                    <option value="{{ key }}">{{ role.label }}</option>
+                    {% endif %}
                 {% endfor %}
             </select>
         </div>
@@ -40,7 +42,7 @@
     <div class="container">
         <div class="page-header">
             <h1>
-                <i class="fa fa-user"></i> User list
+                <i class="glyphicon glyphicon-user"></i> User list
                 <button type="button" class="btn btn-primary pull-right" onclick="location.href='{{ path('user_new') }}'">
                     <i class="fa fa-plus"></i> New
                 </button>
@@ -48,7 +50,6 @@
                 <button type="button" class="btn btn-primary pull-right" onclick="$('#invite-user-dialog').modal('show');">
                     <i class="fa fa-external-link"></i> Invite
                 </button>
-
             </h1>
         </div>
 
@@ -70,23 +71,29 @@
                     <td>{{ entity.id }}</td>
                     <td>
                         {% if entity.isactive != 1 %}<i class="fa fa-eye-slash"></i>{% endif %}
-                        {{ icon.roles[entity.role]|raw }}
+                        {{ USER_ROLES[entity.role].icon|raw }}
+                        {% if aclService.userHasEntityAccess(entity) -%}
                         <a href="{{ path('user_edit', { 'id': entity.id }) }}">{{ entity.username }}</a>
+                        {%- else -%}
+                        {{ entity.username }}
+                        {%- endif %}
                     </td>
                     <td>{{ entity.firstname }} {{ entity.lastname }}</td>
-                    <td>{{ label.roles[entity.role]|default('') }}</td>
+                    <td>{{ USER_ROLES[entity.role].label|default('') }}</td>
                     <td>{{ entity.email }}</td>
                     <td>{% if entity.getLastLoginDate() %}{{ entity.getLastLoginDate()|date('Y-m-d H:i') }}{% else %}never{% endif %}</td>
                     <td>
+                        {% if aclService.userHasEntityAccess(entity) -%}
                         <a href="{{ path('user_edit', { 'id': entity.id }) }}"><i class="fa fa-edit"></i> edit</a>
+                        {%- endif %}
                     </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
         <strong>Legend:</strong>
-        {% for key,label in label.roles %}
-            {{ icon.roles[key]|raw }}{{ label }}
+        {% for role in USER_ROLES %}
+            {{ role.icon|raw }}{{ role.label }}
         {% endfor %}
     </div>
 {% endblock %}

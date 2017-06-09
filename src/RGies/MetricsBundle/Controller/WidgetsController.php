@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use RGies\MetricsBundle\Entity\Dashboard;
 use RGies\MetricsBundle\Entity\Widgets;
 use RGies\MetricsBundle\Form\WidgetsType;
 
@@ -24,17 +25,24 @@ class WidgetsController extends Controller
      * Lists all Widgets entities.
      *
      * @Route("/", name="widgets")
+     * @Route("/list/{index}", name="widgets_list")
      * @Method("GET")
      * @Template()
      */
-    public function indexAction()
+    public function indexAction($index = 0)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('MetricsBundle:Widgets')->findAll();
+        //$entities = $em->getRepository('MetricsBundle:Widgets')->findAll();
+        $dashboards = $em->getRepository('MetricsBundle:Dashboard')->findBy(
+            array('domain' => $this->get('session')->get('domain')),
+            array('pos'=>'ASC')
+        );
 
         return array(
-            'entities' => $entities,
+            'index' => $index,
+            'tab_items' => $dashboards,
+            'entities' => $dashboards[$index]->getWidgets(),
         );
     }
     /**
@@ -57,7 +65,6 @@ class WidgetsController extends Controller
 
             $widgetAction = $this->get('WidgetService')->getWidgetEditActionName($entity->getType());
 
-            //return $this->redirect($this->generateUrl('widgets_show', array('id' => $entity->getId())));
             return $this->redirect($this->generateUrl($widgetAction, array('id' => $entity->getId())));
         }
 
@@ -88,19 +95,20 @@ class WidgetsController extends Controller
     /**
      * Displays a form to create a new Widgets entity.
      *
-     * @Route("/new", name="widgets_new")
+     * @Route("/new/{dashboardId}", name="widgets_new")
      * @Method("GET")
      * @Template()
      */
-    public function newAction(Request $request)
+    public function newAction(Request $request, $dashboardId)
     {
+        /*
         $lastDashboardId = $request->cookies->get(self::LAST_VISITED_DASHBOARD);
         if (!$lastDashboardId) {
             $lastDashboardId = 1;
-        }
+        }*/
 
         $em = $this->getDoctrine()->getManager();
-        $dashboardEntity = $em->getRepository('MetricsBundle:Dashboard')->find($lastDashboardId);
+        $dashboardEntity = $em->getRepository('MetricsBundle:Dashboard')->find($dashboardId);
 
         $entity = new Widgets();
         $form   = $this->createCreateForm($entity, $dashboardEntity);
@@ -108,31 +116,6 @@ class WidgetsController extends Controller
         return array(
             'entity' => $entity,
             'form'   => $form->createView(),
-        );
-    }
-
-    /**
-     * Finds and displays a Widgets entity.
-     *
-     * @Route("/{id}", name="widgets_show")
-     * @Method("GET")
-     * @Template()
-     */
-    public function showAction($id)
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $entity = $em->getRepository('MetricsBundle:Widgets')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Widgets entity.');
-        }
-
-        $deleteForm = $this->createDeleteForm($id);
-
-        return array(
-            'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
         );
     }
 
@@ -151,6 +134,10 @@ class WidgetsController extends Controller
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Widgets entity.');
+        }
+
+        if (!$this->get('AclService')->userHasEntityAccess($entity->getDashboard())) {
+            throw $this->createNotFoundException('No access allowed.');
         }
 
         $editForm = $this->createEditForm($entity);
@@ -198,6 +185,10 @@ class WidgetsController extends Controller
             throw $this->createNotFoundException('Unable to find Widgets entity.');
         }
 
+        if (!$this->get('AclService')->userHasEntityAccess($entity->getDashboard())) {
+            throw $this->createNotFoundException('No access allowed.');
+        }
+
         $deleteForm = $this->createDeleteForm($id);
         $editForm = $this->createEditForm($entity);
         $editForm->handleRequest($request);
@@ -234,6 +225,10 @@ class WidgetsController extends Controller
 
             if (!$entity) {
                 throw $this->createNotFoundException('Unable to find Widgets entity.');
+            }
+
+            if (!$this->get('AclService')->userHasEntityAccess($entity->getDashboard())) {
+                throw $this->createNotFoundException('No access allowed.');
             }
 
             // delete config
@@ -282,6 +277,10 @@ class WidgetsController extends Controller
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Widgets entity.');
+        }
+
+        if (!$this->get('AclService')->userHasEntityAccess($entity->getDashboard())) {
+            throw $this->createNotFoundException('No access allowed.');
         }
 
         $entity->setEnabled(false);
@@ -406,7 +405,6 @@ class WidgetsController extends Controller
 
         $widgetAction = $this->get('WidgetService')->getWidgetEditActionName($newWidget->getType());
 
-        //return $this->redirect($this->generateUrl('widgets_show', array('id' => $entity->getId())));
         return $this->redirect($this->generateUrl($widgetAction, array('id' => $newWidget->getId())));
     }
 

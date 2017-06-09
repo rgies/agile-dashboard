@@ -32,14 +32,16 @@ class UserController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('MetricsBundle:User')->findAll();
-        $userRoles = $this->container->getParameter('user_role_labels');
+        $entities = $em->getRepository('MetricsBundle:User')->findBy(
+            array('domain' => $this->get('session')->get('domain')),
+            array('lastname' => 'ASC')
+        );
 
         return array(
             'entities'  => $entities,
-            'userRoles' => $userRoles,
         );
     }
+
     /**
      * Creates a new User entity.
      *
@@ -54,11 +56,11 @@ class UserController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+            $entity->setDomain($request->getSession()->get('domain'));
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
 
-            //return $this->redirect($this->generateUrl('user_show', array('id' => $entity->getId())));
             return $this->redirect($this->generateUrl('user'));
         }
 
@@ -82,8 +84,6 @@ class UserController extends Controller
             'method' => 'POST',
             'attr'   => array('id' => 'create-form'),
         ));
-
-        //$form->add('submit', 'submit', array('label' => 'Create'));
 
         return $form;
     }
@@ -121,6 +121,10 @@ class UserController extends Controller
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find User entity.');
+        }
+
+        if (!$this->get('AclService')->userHasEntityAccess($entity)) {
+            throw $this->createNotFoundException('No access allowed.');
         }
 
         $editForm = $this->createEditForm($entity);
@@ -173,6 +177,12 @@ class UserController extends Controller
             throw $this->createNotFoundException('Unable to find User entity.');
         }
 
+        if ($entity->getDomain() != $this->get('session')->get('domain')
+            && !$this->get('security.context')->isGranted('ROLE_SUPER_ADMIN')
+            || !$this->get('security.context')->isGranted($entity->getRole())) {
+            throw $this->createNotFoundException('No access allowed.');
+        }
+
         $deleteForm = $this->createDeleteForm($id);
         $editForm = $this->createEditForm($entity);
         $editForm->handleRequest($request);
@@ -208,6 +218,12 @@ class UserController extends Controller
 
             if (!$entity) {
                 throw $this->createNotFoundException('Unable to find User entity.');
+            }
+
+            if ($entity->getDomain() != $this->get('session')->get('domain')
+                && !$this->get('security.context')->isGranted('ROLE_SUPER_ADMIN')
+                || !$this->get('security.context')->isGranted($entity->getRole())) {
+                throw $this->createNotFoundException('No access allowed.');
             }
 
             $em->remove($entity);

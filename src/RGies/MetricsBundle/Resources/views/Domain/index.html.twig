@@ -3,12 +3,14 @@
 {% block content -%}
 <div class="container" xmlns="http://www.w3.org/1999/html">
     <div class="page-header">
-        <h1>Domain list</h1>
-    </div>        <div>
-            <button type="button" class="btn btn-primary" onclick="location.href='{{ path('domain_new') }}'">
-                <i class="fa fa-plus"></i> Create a new entry
+        <h1>
+            <i class="fa fa-cloud"></i> Domain list
+            <button type="button" class="btn btn-primary pull-right" onclick="location.href='{{ path('domain_new') }}'">
+                <i class="fa fa-plus"></i> New Domain
             </button>
-        </div><br/>
+        </h1>
+    </div>
+
     <table class="table table-striped">
         <thead>
             <tr>

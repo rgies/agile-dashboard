@@ -22,7 +22,7 @@
     {% include 'MetricsBundle::Templates/modal.html.twig' with {'id': 'copy-widget-modal', 'title': 'Copy Widget', 'submit': 'Copy', 'content': content} only %}
     {# END dialog #}
 
-    <button id="widget-new" title="Add new widget" class="btn btn-default" style="display: none; margin-bottom: 8px;" onclick="location.href='{{ path('widgets_new') }}'"><i class="fa fa-plus"></i> Add widget</button>
+    <button id="widget-new" title="Add new widget" class="btn btn-default" style="display: none; margin-bottom: 8px;" onclick="location.href='{{ path('widgets_new', {'dashboardId': dashboard.id}) }}'"><i class="fa fa-plus"></i> Add widget</button>
     <script>
         var requestStack = [];
         function addDataRequest(url, params, callback) {
@@ -44,7 +44,7 @@
             <div class="panel-heading widget-panel-title" style="">&nbsp;</div>
 
             <div class="panel-body widget-panel-body">
-                <center><a href="{{ path('widgets_new') }}"><i class="fa fa-plus-circle fa-5x"></i></a></center>
+                <center><a href="{{ path('widgets_new', {'dashboardId': dashboard.id}) }}"><i class="fa fa-plus-circle fa-5x"></i></a></center>
             </div>
         </div>
     {% endif %}
@@ -65,7 +65,7 @@
             if ( $('input:focus, textarea:focus').length === 0 ) {
                 // create new task <n>-key
                 if (event.keyCode == 110) {
-                    location.href = '{{ path('widgets_new') }}';
+                    location.href = '{{ path('widgets_new', {'dashboardId': dashboard.id}) }}';
                 }
                 // edit tasklist <e>-key
                 else if (event.keyCode == 101) {

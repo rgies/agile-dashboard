@@ -3,6 +3,7 @@
 namespace RGies\MetricsBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -223,6 +224,15 @@ class DomainController extends Controller
                 throw $this->createNotFoundException('Unable to find Domain entity.');
             }
 
+            // delete all user
+
+            // delete all user groups
+
+            // delete all dashboards
+
+            // delete all credentials
+
+
             $em->remove($entity);
             $em->flush();
         }
@@ -245,5 +255,57 @@ class DomainController extends Controller
             //->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()
         ;
+    }
+
+    /**
+     * Get html for domain switcher.
+     *
+     * @Route("/switch-list", name="domain-switch-list")
+     * @Method("POST")
+     * @Template("MetricsBundle:Domain:switch-list.html.twig")
+     */
+    public function switchListAjax(Request $request)
+    {
+        if (!$request->isXmlHttpRequest())
+        {
+            return new Response('No valid request', Response::HTTP_FORBIDDEN);
+        }
+
+        $em = $this->getDoctrine()->getManager();
+
+        $entities = $em->getRepository('MetricsBundle:Domain')->findBy(
+            array('is_active' => 1)
+        );
+
+        return array(
+            'entities' => $entities,
+        );
+    }
+
+    /**
+     * Switch the current domain.
+     *
+     * @Route("/switch/{domainId}", name="domain-switch")
+     * @Method("GET")
+     */
+    public function setDomain(Request $request, $domainId)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('MetricsBundle:Domain')->find($domainId);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Domain entity.');
+        }
+
+        // set the new domain in the session
+        $this->get('session')->set('domain', $entity->getId());
+        $this->get('session')->set('domain-name', $entity->getTitle());
+
+        // delete last visited dashboard cookie
+        $response = new Response();
+        $response->headers->clearCookie(DefaultController::LAST_VISITED_DASHBOARD);
+        $response->sendHeaders();
+
+        return $this->redirect($request->headers->get('referer'));
     }
 }

@@ -3,14 +3,21 @@
 {% block content -%}
 <div class="container">
     <div class="page-header">
-        <h1><i class="fa fa-puzzle-piece fa-fw"></i> Widgets list</h1>
+        <h1>
+            <i class="fa fa-puzzle-piece fa-fw"></i> Widgets list
+            <button type="button" class="btn btn-primary pull-right" onclick="location.href='{{ path('widgets_new', {'dashboardId': tab_items[index].id}) }}'">
+                <i class="fa fa-plus"></i> Add widget
+            </button>
+        </h1>
     </div>
 
-    <div>
-        <button type="button" class="btn btn-primary" onclick="location.href='{{ path('widgets_new') }}'">
-            <i class="fa fa-plus"></i> Add widget
-        </button>
-    </div><br/>
+    <ul class="nav nav-tabs">
+        {% for item in tab_items %}
+        <li role="presentation" {% if index == loop.index0 %}class="active"{% endif %}>
+            <a href="{{ path('widgets_list', {'index': loop.index0}) }}">{{ item.title }}</a>
+        </li>
+        {% endfor %}
+    </ul>
 
     <table class="table table-striped">
         <thead>

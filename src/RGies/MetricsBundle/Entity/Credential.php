@@ -49,6 +49,11 @@ class Credential
      */
     private $created;
 
+    /**
+     * @ORM\Column(type="integer", options={"default":"1"})
+     */
+    private $domain;
+
 
     /**
      * Get id
@@ -155,4 +160,29 @@ class Credential
     {
         return $this->created;
     }
+
+    /**
+     * Set domain
+     *
+     * @param string $domain
+     *
+     * @return User
+     */
+    public function setDomain($domain)
+    {
+        $this->domain = $domain;
+
+        return $this;
+    }
+
+    /**
+     * Get domain
+     *
+     * @return string
+     */
+    public function getDomain()
+    {
+        return $this->domain;
+    }
+
 }

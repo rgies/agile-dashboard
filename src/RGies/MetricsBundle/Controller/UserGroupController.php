@@ -50,6 +50,7 @@ class UserGroupController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+            $entity->setDomain($request->getSession()->get('domain'));
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();

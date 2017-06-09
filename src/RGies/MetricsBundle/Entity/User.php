@@ -92,7 +92,7 @@ class User implements AdvancedUserInterface, \Serializable
     private $created;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="integer", options={"default":"1"})
      */
     private $domain;
 

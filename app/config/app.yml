@@ -61,19 +61,3 @@ parameters:
         'Code':       'ion ion-code-working'
         'Eye':        'ion ion-eye'
         'Target':     'ion ion-pinpoint'
-
-    # User role labels
-    user_role_labels:
-        #ROLE_VISITOR:     'Visitor'
-        ROLE_USER:        'User'
-        ROLE_MANAGER:     'Manager'
-        ROLE_ADMIN:       'Administrator'
-        ROLE_SUPER_ADMIN: 'Super Admin'
-
-    # User role icons
-    user_role_icons:
-        #ROLE_VISITOR:     '<i style="color: #CCCCCC" class="fa fa-user fa-fw"></i>'
-        ROLE_USER:        '<i style="color: #AAAAAA" class="fa fa-user fa-fw"></i>'
-        ROLE_MANAGER:     '<i style="color: #0069FA; opacity: 0.6;" class="fa fa-user fa-fw"></i>'
-        ROLE_ADMIN:       '<i style="color: #FA6900; opacity: 0.6;" class="fa fa-user fa-fw"></i>'
-        ROLE_SUPER_ADMIN: '<i style="color: #FE2E2E" class="fa fa-user fa-fw"></i>'

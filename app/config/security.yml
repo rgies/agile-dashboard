@@ -1,3 +1,19 @@
+parameters:
+    # User role labels
+    user_roles:
+        ROLE_USER:
+            label:  'User'
+            icon:   '<i style="color: #AAAAAA" class="glyphicon glyphicon-user fa-fw"></i>'
+        ROLE_MANAGER:
+            label:  'Manager'
+            icon:   '<i style="color: #0069FA; opacity: 0.6;" class="glyphicon glyphicon-user fa-fw"></i>'
+        ROLE_ADMIN:
+            label:  'Administrator'
+            icon:   '<i style="color: #4da74d; opacity: 0.6;" class="glyphicon glyphicon-user fa-fw"></i>'
+        ROLE_SUPER_ADMIN:
+            label:  'Super Admin'
+            icon:   '<i style="color: #FA6900" class="glyphicon glyphicon-user fa-fw"></i>'
+
 security:
     encoders:
         RGies\MetricsBundle\Entity\User:
@@ -43,7 +59,10 @@ security:
 
     access_control:
         - { path: ^/jira_core_widget_login, roles: ROLE_ADMIN }
+        - { path: ^/domain, roles: ROLE_SUPER_ADMIN }
         - { path: ^/user, roles: ROLE_ADMIN }
+        - { path: ^/dashboard, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/widgets, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/myprofile, roles: ROLE_USER }

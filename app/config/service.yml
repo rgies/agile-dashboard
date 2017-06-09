@@ -14,7 +14,7 @@ services:
 
     credential_service:
         class:            RGies\MetricsBundle\Services\CredentialService
-        arguments:        [@doctrine, %secret%]
+        arguments:        [@doctrine, %secret%, @session]
 
     security_token_service:
         class:            RGies\MetricsBundle\Services\SecurityTokenService
@@ -22,4 +22,14 @@ services:
 
     acl_service:
         class:            RGies\MetricsBundle\Services\AclService
-        arguments:        [@security.access_map, @security.context]
+        arguments:        [@security.access_map, @security.context, @session]
+
+# Twig Configuration
+twig:
+    globals:
+        # Services
+        widgetService:      @widget_service
+        cacheService:       @cache_service
+        paramsService:      @params_service
+        aclService:         @acl_service
+        credentialService:  @credential_service

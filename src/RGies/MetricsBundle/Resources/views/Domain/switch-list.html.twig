@@ -1,0 +1,12 @@
+{% for entity in entities %}
+<li>
+    <a href="{{ path('domain-switch', {'domainId': entity.id}) }}">
+        {% if app.session.get('domain') == entity.id %}
+            <i class="fa fa-circle"></i>
+        {% else %}
+            <i class="fa fa-circle-o"></i>
+        {% endif %}
+        {{ entity.title }}
+    </a>
+</li>
+{% endfor %}

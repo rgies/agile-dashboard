@@ -25,13 +25,16 @@ class CredentialService
 
     private $_secret;
 
+    private $_session;
+
     /**
      * Class constructor.
      */
-    public function __construct($doctrine, $secret)
+    public function __construct($doctrine, $secret, $session)
     {
         $this->_doctrine = $doctrine;
         $this->_secret = $secret;
+        $this->_session = $session;
     }
 
     /**
@@ -64,6 +67,7 @@ class CredentialService
             $credential = new Credential();
             $credential -> setProvider($provider)
                 -> setValue($encrypted_string)
+                -> setDomain($this->_session->get('domain'))
                 -> setUpdated(time())
                 -> setCreated(time());
         }
@@ -85,7 +89,7 @@ class CredentialService
         $credentials = null;
 
         $entities = $em->getRepository('MetricsBundle:Credential')->findBy(
-            array('provider' => $provider)
+            array('provider' => $provider, 'domain' => $this->_session->get('domain'))
         );
 
         if ($entities) {

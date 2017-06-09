@@ -1,16 +1,4 @@
-# Twig Configuration
 twig:
     globals:
         # Variables
-        label:
-            roles:        "%user_role_labels%"
-
-        icon:
-            roles:        "%user_role_icons%"
-
-        # Services
-        widgetService:  @widget_service
-        cacheService:   @cache_service
-        paramsService:  @params_service
-        aclService:     @acl_service
-        credentialService: @credential_service
+        USER_ROLES: "%user_roles%"

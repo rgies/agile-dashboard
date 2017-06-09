@@ -21,17 +21,6 @@ class DefaultController extends Controller
     const LAST_VISITED_DASHBOARD = 'last_dashboard_id';
 
     /**
-     * Init after login.
-     *
-     * @Route("/init", name="init")
-     * @Template()
-     */
-    public function initAction()
-    {
-        return $this->redirect($this->generateUrl('start'));
-    }
-
-    /**
      * Website home action.
      *
      * @Route("/", name="start")
@@ -42,6 +31,20 @@ class DefaultController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $dashboard = null;
+
+        // set default domain
+        if (!$request->getSession()->has('domain')) {
+            $domain = 1;
+            $request->getSession()->set('domain', $domain);
+        } else {
+            $domain = $request->getSession()->get('domain');
+        }
+
+        // set domain name
+        if (!$request->getSession()->has('domain-name')) {
+            $domainEntity = $em->getRepository('MetricsBundle:Domain')->find($domain);
+            $request->getSession()->set('domain-name', $domainEntity->getTitle());
+        }
 
         // if no user exists add default admin account
         $user = $em->getRepository('MetricsBundle:User')->findAll();
@@ -74,15 +77,17 @@ class DefaultController extends Controller
         // get dashboards
         $dashboards = $em->getRepository('MetricsBundle:Dashboard')
                 ->createQueryBuilder('d')
-                //->where('d.enabled = 1')
+                ->where('d.domain = :domain')
                 ->orderBy('d.pos', 'ASC')
+                ->setParameter('domain', $request->getSession()->get('domain'))
                 ->getQuery()->getResult();
 
         // create default dashboard
         if (!$dashboards) {
             $dashboard = new Dashboard();
-            $dashboard->setTitle('Main Metrics');
-            $dashboard->setPos(1);
+            $dashboard->setTitle('Main Metrics')
+                ->setDomain($request->getSession()->get('domain'))
+                ->setPos(1);
             $em->persist($dashboard);
             $em->flush();
             $dashboards = array($dashboard);
@@ -97,7 +102,6 @@ class DefaultController extends Controller
             $cookie = new Cookie(self::LAST_VISITED_DASHBOARD, $id, $expire);
             $response = new Response();
             $response->headers->setCookie($cookie);
-            //$response->send();
             $response->sendHeaders();
         } else if ($request->cookies->has(self::LAST_VISITED_DASHBOARD)) {
             $id = $request->cookies->get(self::LAST_VISITED_DASHBOARD);
@@ -107,8 +111,12 @@ class DefaultController extends Controller
 
         if (!$dashboard && $id) {
             $dashboard = $em->getRepository('MetricsBundle:Dashboard')->find($id);
-            if (!$dashboard) {
-                $result = $em->getRepository('MetricsBundle:Dashboard')->findBy(array(), array('pos'=>'ASC'));
+
+            if (!$dashboard || $dashboard->getDomain() != $domain) {
+                $result = $em->getRepository('MetricsBundle:Dashboard')->findBy(
+                    array('domain' => $domain),
+                    array('pos'=>'ASC')
+                );
                 $dashboard = $result[0];
             }
         }

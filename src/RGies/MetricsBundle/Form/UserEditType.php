@@ -24,7 +24,12 @@ class UserEditType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $roles = $this->_container->getParameter('user_role_labels');
+        $roles = array();
+        foreach ($this->_container->getParameter('user_roles') as $key => $value) {
+            if ($this->_container->get('security.context')->isGranted($key)) {
+                $roles[$key] = $value['label'];
+            }
+        }
 
         $builder
             ->add('username')

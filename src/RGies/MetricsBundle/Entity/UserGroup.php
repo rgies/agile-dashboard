@@ -63,6 +63,11 @@ class UserGroup
      */
     private $is_active;
 
+    /**
+     * @ORM\Column(type="integer", options={"default":"1"})
+     */
+    private $domain;
+
 
     /**
      * Entity constructor
@@ -238,5 +243,30 @@ class UserGroup
     {
         return $this->is_active;
     }
+
+    /**
+     * Set domain
+     *
+     * @param string $domain
+     *
+     * @return User
+     */
+    public function setDomain($domain)
+    {
+        $this->domain = $domain;
+
+        return $this;
+    }
+
+    /**
+     * Get domain
+     *
+     * @return string
+     */
+    public function getDomain()
+    {
+        return $this->domain;
+    }
+
 }
 
