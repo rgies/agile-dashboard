@@ -262,6 +262,7 @@ class DefaultController extends Controller
 
             if ($form->isValid()) {
                 $entity->setIsActive(true);
+                $entity->setDomain($params['domain']);
 
                 if (isset($params['userRole'])) {
                     $entity->setRole($params['userRole']);
@@ -278,24 +279,6 @@ class DefaultController extends Controller
                         'entity' => $entity,
                         'form'   => $form->createView(),
                     );
-                }
-
-                if (isset($params['activityId'])) {
-                    $activityId = $params['activityId'];
-                    $activity = $em->getRepository('MetricsBundle:Activity')->find($activityId);
-
-                    if ($activity) {
-                        // assign user to activity
-                        $activity->getUser()->add($entity);
-
-                        if (isset($params['projectRole'])) {
-                            // set user role in assigned activity
-                            $activity->addUserRole($entity->getId(), $params['projectRole']);
-                        }
-
-                        $em->persist($activity);
-                        $em->flush();
-                    }
                 }
 
                 $session = $request->getSession();

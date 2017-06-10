@@ -261,10 +261,6 @@ class UserController extends Controller
             return new Response('No valid request', Response::HTTP_FORBIDDEN);
         }
 
-        if (!$this->get('security.context')->isGranted('ROLE_MANAGER')) {
-            return new Response('No valid access', Response::HTTP_FORBIDDEN);
-        }
-
         $params = array();
         $validationTimeFrame = 24;
 
@@ -280,16 +276,9 @@ class UserController extends Controller
             $params['jobtitle']     = $entity->getJobtitle();
         }
 
-        if ($request->request->get('activity_id')) {
-            $params['activityId'] = $request->request->get('activity_id');
-        }
 
         if ($request->request->get('user_role')) {
             $params['userRole'] = $request->request->get('user_role');
-        }
-
-        if ($request->request->get('project_role')) {
-            $params['projectRole'] = $request->request->get('project_role');
         }
 
         if ($request->request->get('login_name')) {
@@ -307,6 +296,8 @@ class UserController extends Controller
         if ($request->request->get('email')) {
             $params['email'] = $request->request->get('email');
         }
+
+        $params['domain'] = $this->get('session')->get('domain');
 
         $tokenService = $this->get('security_token_service');
 
