@@ -21,6 +21,40 @@ class DefaultController extends Controller
     const LAST_VISITED_DASHBOARD = 'last_dashboard_id';
 
     /**
+     * Create default domain and super admin user if database is empty.
+     */
+    protected function _init()
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        // add default domain
+        $domains = $em->getRepository('MetricsBundle:Domain')->findAll(array(),array('id'=>'ASC'));
+        if (!$domains) {
+            $domain = new Domain();
+            $domain->setTitle('Default');
+            $domain->setIsActive(true);
+            $em->persist($domain);
+            $em->flush();
+        } else {
+            $domain = $domains[0];
+        }
+
+        // admin user
+        $userAdmin = new User();
+        $userAdmin->setUsername('Admin');
+        $userAdmin->setPassword('admin');
+        $userAdmin->setRole('ROLE_SUPER_ADMIN');
+        $userAdmin->setJobtitle('admin');
+        $userAdmin->setFirstname('Admin');
+        $userAdmin->setLastname('User');
+        $userAdmin->setEmail('admin@xxx.com');
+        $userAdmin->setIsActive(true);
+        $userAdmin->setDomain($domain->getId());
+        $em->persist($userAdmin);
+        $em->flush();
+    }
+
+    /**
      * Website home action.
      *
      * @Route("/", name="start")
@@ -33,45 +67,23 @@ class DefaultController extends Controller
         $dashboard = null;
 
         // set default domain
-        if (!$request->getSession()->has('domain')) {
+        if (!$request->getSession()->has('domain') || !$request->getSession()->get('domain')) {
             $domain = 1;
             $request->getSession()->set('domain', $domain);
         } else {
             $domain = $request->getSession()->get('domain');
         }
 
+        // if no user exists add default admin account
+        $user = $em->getRepository('MetricsBundle:User')->findAll();
+        if (!$user) {
+            $this->_init();
+        }
+
         // set domain name
         if (!$request->getSession()->has('domain-name')) {
             $domainEntity = $em->getRepository('MetricsBundle:Domain')->find($domain);
             $request->getSession()->set('domain-name', $domainEntity->getTitle());
-        }
-
-        // if no user exists add default admin account
-        $user = $em->getRepository('MetricsBundle:User')->findAll();
-        if (!$user) {
-            // add default domain
-            $domains = $em->getRepository('MetricsBundle:Domain')->findAll();
-            if (!$domains) {
-                $domain = new Domain();
-                $domain->setTitle('Default');
-                $domain->setIsActive(true);
-                $em->persist($domain);
-                $em->flush();
-            }
-
-            // admin user
-            $userAdmin = new User();
-            $userAdmin->setUsername('Admin');
-            $userAdmin->setPassword('admin');
-            $userAdmin->setRole('ROLE_SUPER_ADMIN');
-            $userAdmin->setJobtitle('admin');
-            $userAdmin->setFirstname('Admin');
-            $userAdmin->setLastname('User');
-            $userAdmin->setEmail('admin@xxx.com');
-            $userAdmin->setIsActive(true);
-            $em->persist($userAdmin);
-            $em->flush();
-
         }
 
         // get dashboards
@@ -320,10 +332,14 @@ class DefaultController extends Controller
             'method' => 'PUT',
         ));
 
+        $domain = $em->getRepository('MetricsBundle:Domain')->find($entity->getDomain());
+        $domainName = $domain->getTitle();
+
         $editForm->add('submit', 'submit'
             , array('label' => 'Update', 'attr' => array('class' => 'btn btn-primary pull-right')));
 
         return array(
+            'domainName'  => $domainName,
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
         );

@@ -2,6 +2,14 @@
 
 {% block content -%}
     <div class="container">
+        {% if app.session.getFlashBag.has("error") %}
+            <!-- Error messages -->
+            {% for flashMessage in app.session.flashbag.get("error") %}
+            <div class="alert alert-danger" role="alert">
+                {{ flashMessage }}
+            </div>
+            {% endfor %}
+        {% endif %}
         <div class="page-header">
             <h1>Login creation</h1>
         </div>

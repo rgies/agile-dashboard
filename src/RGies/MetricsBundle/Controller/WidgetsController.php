@@ -159,7 +159,7 @@ class WidgetsController extends Controller
     */
     private function createEditForm(Widgets $entity)
     {
-        $form = $this->createForm(new WidgetsType($this->container), $entity, array(
+        $form = $this->createForm(new WidgetsType($this->container, $entity), array(
             'action' => $this->generateUrl('widgets_update', array('id' => $entity->getId())),
             'method' => 'PUT',
             'attr'   => array('id' => 'edit-form'),

@@ -5,6 +5,7 @@ namespace RGies\MetricsBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Doctrine\ORM\EntityRepository;
 
 class WidgetsType extends AbstractType
 {
@@ -33,6 +34,12 @@ class WidgetsType extends AbstractType
             'class'     => 'MetricsBundle:Dashboard',
             'label'     => 'Dashboard',
             'property'  => 'title',
+            'query_builder' => function (EntityRepository $er) {
+                return $er->createQueryBuilder('d')
+                    ->where('d.domain = :domain')
+                    ->setParameter('domain', $this->_container->get('session')->get('domain'))
+                    ->orderBy('d.pos', 'ASC');
+            }
         );
 
         $templateChoices = array(
@@ -47,7 +54,7 @@ class WidgetsType extends AbstractType
         );
 
         if ($this->_lastVisitedDashboardEntity) {
-            $dashboardChoice['data'] = $this->_lastVisitedDashboardEntity;
+           $dashboardChoice['data'] = $this->_lastVisitedDashboardEntity;
         }
 
         $builder

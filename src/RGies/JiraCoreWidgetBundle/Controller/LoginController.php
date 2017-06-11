@@ -19,7 +19,14 @@ class LoginController extends Controller
 {
     protected function _getCredentialObject()
     {
-        $entity = $this->get('CredentialService')->loadCredentials('jira');
+        $entity = null;
+        $this->_errorMessage = null;
+
+        try {
+            $entity = $this->get('CredentialService')->loadCredentials('jira');
+        } catch(\Exception $e) {
+            $this->get('session')->getFlashBag()->add('error', $e->getMessage());
+        }
 
         if (!$entity) {
             $entity = new \stdClass();
@@ -64,8 +71,8 @@ class LoginController extends Controller
         }*/
 
         return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
+            'entity'  => $entity,
+            'form'    => $form->createView(),
         );
     }
 
@@ -90,7 +97,7 @@ class LoginController extends Controller
     /**
      * Displays a form to create a new Login entity.
      *
-     * @Route("/new", name="jira_core_widget_login_edit")
+     * @Route("/edit", name="jira_core_widget_login_edit")
      * @Method("GET")
      * @Template()
      */
@@ -100,8 +107,8 @@ class LoginController extends Controller
         $form   = $this->createCreateForm($entity);
 
         return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
+            'entity'  => $entity,
+            'form'    => $form->createView(),
         );
     }
 

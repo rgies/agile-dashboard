@@ -47,7 +47,8 @@ class CredentialService
     {
         $em = $this->_doctrine->getManager();
 
-        $encryption_key = $this->_secret;
+        $domain = $this->_session->get('domain');
+        $encryption_key = $this->_secret . '#' . $domain;
         $pure_string = serialize($data);
 
         $iv_size = mcrypt_get_iv_size(MCRYPT_BLOWFISH, MCRYPT_MODE_ECB);
@@ -57,7 +58,7 @@ class CredentialService
         );
 
         $entities = $em->getRepository('MetricsBundle:Credential')->findBy(
-            array('provider' => $provider)
+            array('provider' => $provider, 'domain' => $domain)
         );
 
         if ($entities) {
@@ -67,7 +68,7 @@ class CredentialService
             $credential = new Credential();
             $credential -> setProvider($provider)
                 -> setValue($encrypted_string)
-                -> setDomain($this->_session->get('domain'))
+                -> setDomain($domain)
                 -> setUpdated(time())
                 -> setCreated(time());
         }
@@ -80,16 +81,19 @@ class CredentialService
      * Loads credentials value.
      *
      * @param $provider
-     * @return object|array|null
+     * @return array|null|object
+     * @throws \Exception
      */
     public function loadCredentials($provider)
     {
         $em = $this->_doctrine->getManager();
-        $encryption_key = $this->_secret;
+
+        $domain = $this->_session->get('domain');
+        $decryption_key = $this->_secret . '#' . $domain;
         $credentials = null;
 
         $entities = $em->getRepository('MetricsBundle:Credential')->findBy(
-            array('provider' => $provider, 'domain' => $this->_session->get('domain'))
+            array('provider' => $provider, 'domain' => $domain)
         );
 
         if ($entities) {
@@ -98,9 +102,15 @@ class CredentialService
 
             $iv_size = mcrypt_get_iv_size(MCRYPT_BLOWFISH, MCRYPT_MODE_ECB);
             $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-            $decrypted_string = mcrypt_decrypt(MCRYPT_BLOWFISH, $encryption_key, $encrypted_string, MCRYPT_MODE_ECB, $iv);
+            $decrypted_string = mcrypt_decrypt(MCRYPT_BLOWFISH, $decryption_key, $encrypted_string, MCRYPT_MODE_ECB, $iv);
 
-            $credentials = unserialize($decrypted_string);
+            $credentials = @unserialize($decrypted_string);
+
+            if (!$credentials) {
+                throw new \Exception('Credential data not valid, please save '
+                    . $provider . ' credentials again.');
+            }
+
         }
 
         return $credentials;
