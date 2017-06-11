@@ -36,6 +36,7 @@ class DomainController extends Controller
             'entities' => $entities,
         );
     }
+
     /**
      * Creates a new Domain entity.
      *

@@ -64,10 +64,12 @@ class AclService
 
         $roles = $this->_getRoles($path);
 
-        foreach($roles as $role){
-            if ($this->_securityContext->isGranted($role)) {
-                $finalPaths[] = $path;
-                break;
+        if (count($roles)) {
+            foreach($roles as $role){
+                if ($this->_securityContext->isGranted($role)) {
+                    $finalPaths[] = $path;
+                    break;
+                }
             }
         }
 
@@ -89,7 +91,7 @@ class AclService
         }
 
         if ($entity->getDomain() != $this->_session->get('domain')
-            && !$this->_securityContext->isGranted('ROLE_SUPER_ADMIN')
+            && !$this->_securityContext->isGranted('ROLE_ALLOWED_TO_SWITCH')
             || !$this->_securityContext->isGranted($role)) {
             return false;
         }

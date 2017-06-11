@@ -43,7 +43,7 @@ class DefaultController extends Controller
         $userAdmin = new User();
         $userAdmin->setUsername('Admin');
         $userAdmin->setPassword('admin');
-        $userAdmin->setRole('ROLE_SUPER_ADMIN');
+        $userAdmin->setRole($this->getParameter('global_admin_role'));
         $userAdmin->setJobtitle('admin');
         $userAdmin->setFirstname('Admin');
         $userAdmin->setLastname('User');

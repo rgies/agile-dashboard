@@ -43,7 +43,7 @@
                     </li>
                     {% endif %}
                     {%- if app.user %}
-                    {%- if is_granted("ROLE_SUPER_ADMIN") %}
+                    {%- if is_granted("ROLE_ALLOWED_TO_SWITCH") %}
                     <!-- Domain switcher -->
                     <li class="dropdown">
                         <a id="domain-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown" title="Domain">

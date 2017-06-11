@@ -177,9 +177,7 @@ class UserController extends Controller
             throw $this->createNotFoundException('Unable to find User entity.');
         }
 
-        if ($entity->getDomain() != $this->get('session')->get('domain')
-            && !$this->get('security.context')->isGranted('ROLE_SUPER_ADMIN')
-            || !$this->get('security.context')->isGranted($entity->getRole())) {
+        if (!$this->get('AclService')->userHasEntityAccess($entity)) {
             throw $this->createNotFoundException('No access allowed.');
         }
 
@@ -220,9 +218,7 @@ class UserController extends Controller
                 throw $this->createNotFoundException('Unable to find User entity.');
             }
 
-            if ($entity->getDomain() != $this->get('session')->get('domain')
-                && !$this->get('security.context')->isGranted('ROLE_SUPER_ADMIN')
-                || !$this->get('security.context')->isGranted($entity->getRole())) {
+            if (!$this->get('AclService')->userHasEntityAccess($entity)) {
                 throw $this->createNotFoundException('No access allowed.');
             }
 

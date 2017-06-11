@@ -45,7 +45,7 @@
         });
 
         $(document).ready(function() {
-            {%- if is_granted("ROLE_SUPER_ADMIN") %}
+            {%- if is_granted("ROLE_ALLOWED_TO_SWITCH") %}
             // load domain list
             $('#domain-dropdown').on('click', function () {
                 //var element = $(this).parent().find(".dropdown-menu");

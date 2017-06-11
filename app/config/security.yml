@@ -1,4 +1,7 @@
 parameters:
+    # Defaut role to init global admin
+    global_admin_role: 'ROLE_ADMIN'
+
     # User role labels
     user_roles:
         ROLE_USER:
@@ -10,9 +13,6 @@ parameters:
         ROLE_ADMIN:
             label:  'Administrator'
             icon:   '<i style="color: #4da74d; opacity: 0.6;" class="glyphicon glyphicon-user fa-fw"></i>'
-        ROLE_SUPER_ADMIN:
-            label:  'Super Admin'
-            icon:   '<i style="color: #FA6900" class="glyphicon glyphicon-user fa-fw"></i>'
 
 security:
     encoders:
@@ -25,7 +25,6 @@ security:
         ROLE_USER:        [ROLE_VISITOR]
         ROLE_MANAGER:     [ROLE_VISITOR, ROLE_USER]
         ROLE_ADMIN:       [ROLE_VISITOR, ROLE_USER, ROLE_MANAGER]
-        ROLE_SUPER_ADMIN: [ROLE_VISITOR, ROLE_MANAGER, ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
     providers:
         administrators:
@@ -59,7 +58,7 @@ security:
 
     access_control:
         - { path: ^/jira_core_widget_login, roles: ROLE_ADMIN }
-        - { path: ^/domain, roles: ROLE_SUPER_ADMIN }
+        - { path: ^/domain, roles: ROLE_ALLOWED_TO_SWITCH }
         - { path: ^/user, roles: ROLE_ADMIN }
         - { path: ^/dashboard, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/widgets, roles: IS_AUTHENTICATED_ANONYMOUSLY }
