@@ -226,12 +226,24 @@ class DomainController extends Controller
             }
 
             // delete all user
+            $em->createQuery('delete from MetricsBundle:User u where u.domain = :id')
+                ->setParameter('id', $id)
+                ->execute();
 
             // delete all user groups
+            $em->createQuery('delete from MetricsBundle:Usergroup u where u.domain = :id')
+                ->setParameter('id', $id)
+                ->execute();
 
             // delete all dashboards
+            $em->createQuery('delete from MetricsBundle:Dashboard d where d.domain = :id')
+                ->setParameter('id', $id)
+                ->execute();
 
             // delete all credentials
+            $em->createQuery('delete from MetricsBundle:Credential c where c.domain = :id')
+                ->setParameter('id', $id)
+                ->execute();
 
 
             $em->remove($entity);
