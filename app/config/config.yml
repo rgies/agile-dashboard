@@ -5,6 +5,7 @@ imports:
     - { resource: twig.yml }
     - { resource: parameters.yml }
     - { resource: security.yml }
+    - { resource: provider.yml }
 
 framework:
     #esi:             ~

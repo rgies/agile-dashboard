@@ -398,4 +398,33 @@ class DefaultController extends Controller
         return array();
     }
 
+    /**
+     * Service Provider Management.
+     *
+     * @Route("/provider/", name="provider")
+     * @Template()
+     */
+    public function providerAction()
+    {
+        $provider = $this->getParameter('service_provider');
+        $em = $this->getDoctrine()->getManager();
+
+        $entities = $em->getRepository('MetricsBundle:Credential')->findBy(
+            array('domain' => $this->get('session')->get('domain'))
+        );
+
+        $data = array();
+        foreach ($provider as $key=>$item) {
+            $config = $this->getParameter($key . 'Config');
+            $data[$key]['icon'] = $config['icon'];
+            $data[$key]['action'] = $config['action'];
+            $data[$key]['name'] = $item;
+        }
+
+
+        return array(
+            'provider' => $data,
+            'entities' => $entities,
+        );
+    }
 }

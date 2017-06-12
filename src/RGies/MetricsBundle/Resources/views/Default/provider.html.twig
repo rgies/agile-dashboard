@@ -1,0 +1,28 @@
+{% extends "MetricsBundle::layout.html.twig" %}
+{% block content %}
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fa fa-plug"></i> Service Provider</h1>
+        </div>
+
+        <div>
+            {% for key,item in provider %}
+            <div title="{{ item.name }}" class="pull-left">
+                <a href="{{ path(item.action) }}">
+                    <img src="{{ asset(item.icon) }}" />
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="clearfix"></div>
+
+        <br/>
+        <br/>
+
+        <a href="{{ path('home') }}">
+            <i class="fa fa-arrow-circle-left"></i> Back to dashboard
+        </a>
+
+    </div>
+{% endblock %}

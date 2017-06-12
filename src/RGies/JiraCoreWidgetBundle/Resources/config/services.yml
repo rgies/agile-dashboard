@@ -1,3 +1,8 @@
+# Plugin Parameters
+parameters:
+    JiraCoreWidgetBundleConfig:
+        icon: 'bundles/jiracorewidget/images/jira.png'
+        action: 'jira_core_widget_login_edit'
 
 # Plugin Services
 services:

@@ -58,7 +58,7 @@ class LoginController extends Controller
                 $entity
             );
 
-            return $this->redirect($this->generateUrl('home'));
+            return $this->redirect($this->generateUrl('provider'));
         }
 
         /*

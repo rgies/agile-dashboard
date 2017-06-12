@@ -1,0 +1,4 @@
+parameters:
+    # Service Provider
+    service_provider:
+        JiraCoreWidgetBundle: 'Atlassian JIRA'

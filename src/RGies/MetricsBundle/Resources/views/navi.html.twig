@@ -95,9 +95,8 @@
                         {%- if aclService.userHasUrlAccess(path("widgets")) %}
                             <li><a href="{{ path("widgets") }}"><i class="fa fa-puzzle-piece fa-fw"></i> Widget Management</a></li>
                         {%- endif %}
-                        {%- if aclService.userHasUrlAccess(path("jira_core_widget_login_edit")) %}
-                            <li role="separator" class="divider"></li>
-                            <li><a href="{{ path("jira_core_widget_login_edit") }}"><i class="fa fa-user-circle fa-fw"></i> Jira Credentials</a></li>
+                        {%- if aclService.userHasUrlAccess(path("provider")) %}
+                            <li><a href="{{ path("provider") }}"><i class="fa fa-plug fa-fw"></i> Service Provider</a></li>
                         {%- endif %}
                     {%- if app.user %}
                         <li role="separator" class="divider"></li>
