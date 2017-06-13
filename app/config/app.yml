@@ -1,7 +1,7 @@
 # General Parameters
 parameters:
     platform_name: 'Agile Dashboard'
-    platform_version: '1.0'
+    platform_version: '1.1'
 
     # Widget update interval in minutes
     widget_update_interval: 5

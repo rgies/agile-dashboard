@@ -65,7 +65,9 @@
             if ( $('input:focus, textarea:focus').length === 0 ) {
                 // create new task <n>-key
                 if (event.keyCode == 110) {
+                    {%- if aclService.userHasUrlAccess(path('widgets_new', {'dashboardId': dashboard.id})) %}
                     location.href = '{{ path('widgets_new', {'dashboardId': dashboard.id}) }}';
+                    {% endif -%}
                 }
                 // edit tasklist <e>-key
                 {% if is_granted("ROLE_EDIT_DASHBOARD") -%}
