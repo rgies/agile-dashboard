@@ -34,6 +34,15 @@
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">
+                    {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+                        <!-- Exit user simulation -->
+                        <li>
+                            <a href="{{ path('home', {'_switch_user': '_exit'}) }}" style="color: #ff0000">
+                                <i class="fa fa-window-close"></i>
+                                Exit user simulation
+                            </a>
+                        </li>
+                    {% endif %}
                     {% if dashboards is defined %}
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="Dashboard parameter">
@@ -83,8 +92,8 @@
                         </li>
                         {%- if is_granted("ROLE_EDIT_DASHBOARD") %}
                             <li><a href="javascript:toggleDashboardEditMode();"><i class="fa fa-edit fa-fw"></i> Edit Dashboard&nbsp;<span class="badge">e-key</span></a></li>
+                            <li role="separator" class="divider"></li>
                         {% endif %}
-                        <li role="separator" class="divider"></li>
                         {%- if aclService.userHasUrlAccess(path("domain")) %}
                             <li><a href="{{ path("domain") }}"><i class="fa fa-cloud fa-fw"></i> Domain Management</a></li>
                         {%- endif %}

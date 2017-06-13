@@ -24,19 +24,24 @@
             </button>
             <small>
                 <div style="text-align: center; padding-top: 6px;">
-                    &nbsp;
+                {% if aclService.userHasUrlAccess(path('dashboard_edit', {id: dashboardId})) %}
                     <a href="{{ path('dashboard_edit', {id: dashboardId}) }}"><i class="fa fa-pencil"></i> Edit</a>
-                    &nbsp;
+                    &nbsp;&nbsp;
+                {% endif %}
                     <a href="javascript:$('#dashboard-params-form').trigger('reset');"><i class="fa fa-undo"></i> Reset</a>
                 </div>
             </small>
         </div>
     </form>
 </li>
-{% else %}
+{% elseif aclService.userHasUrlAccess(path('dashboard_edit', {id: dashboardId})) %}
 <li style="padding-bottom: 10px;">
     <button class="btn btn-primary btn-group-justified" onclick="location.href='{{ path('dashboard_edit', {id: dashboardId}) }}';">
         <i class="ion ion-android-options"></i> Setup parameter
     </button>
+</li>
+{% else %}
+<li style="padding-bottom: 10px;">
+    <i class="text-nowrap">No parameter defined</i>
 </li>
 {% endif %}

@@ -83,9 +83,12 @@
                     <td>{{ entity.email }}</td>
                     <td>{% if entity.getLastLoginDate() %}{{ entity.getLastLoginDate()|date('Y-m-d H:i') }}{% else %}never{% endif %}</td>
                     <td>
-                        {% if aclService.userHasEntityAccess(entity) -%}
-                        <a href="{{ path('user_edit', { 'id': entity.id }) }}"><i class="fa fa-edit"></i> edit</a>
-                        {%- endif %}
+                        {%- if aclService.userHasEntityAccess(entity) %}
+                        <a href="{{ path('user_edit', { 'id': entity.id }) }}"><i class="fa fa-edit"></i> edit</a>&nbsp;&nbsp;&nbsp;
+                        {% endif -%}
+                        {% if is_granted('ROLE_ALLOWED_TO_SWITCH') -%}
+                        <a href="{{ path('home', {'_switch_user': entity.username}) }}"><i class="fa fa-user-circle"></i> login</a>
+                        {% endif -%}
                     </td>
                 </tr>
             {% endfor %}

@@ -45,6 +45,7 @@ security:
             security: false
 
         secured_area:
+            switch_user: true
             pattern:    ^/
             form_login:
                 login_path: login

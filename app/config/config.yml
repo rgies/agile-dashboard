@@ -4,7 +4,7 @@ imports:
     - { resource: service.yml }
     - { resource: twig.yml }
     - { resource: parameters.yml }
-    - { resource: security.yml }
+    - { resource: security_professional.yml }
     - { resource: provider.yml }
 
 framework:

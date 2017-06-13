@@ -51,8 +51,10 @@ class WidgetsController extends Controller
             }
         }
 
+        $index = ($index) ? $index : 0;
+
         return array(
-            'index' => ($index) ? $index : 0,
+            'index' => $index,
             'tab_items' => $dashboards,
             'entities' => $dashboards[$index]->getWidgets(),
         );
