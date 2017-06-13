@@ -29,7 +29,7 @@ class WidgetsController extends Controller
      * @Method("GET")
      * @Template()
      */
-    public function indexAction($index = 0)
+    public function indexAction(Request $request, $index = null)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -39,8 +39,20 @@ class WidgetsController extends Controller
             array('pos'=>'ASC')
         );
 
+        // preset to last visited dashboard
+        if ($index == null && $request->cookies->has(DefaultController::LAST_VISITED_DASHBOARD)) {
+            $id = $request->cookies->get(DefaultController::LAST_VISITED_DASHBOARD);
+
+            foreach ($dashboards as $dashboard) {
+                if ($dashboard->getId() == $id) {
+                    break;
+                }
+                $index++;
+            }
+        }
+
         return array(
-            'index' => $index,
+            'index' => ($index) ? $index : 0,
             'tab_items' => $dashboards,
             'entities' => $dashboards[$index]->getWidgets(),
         );
