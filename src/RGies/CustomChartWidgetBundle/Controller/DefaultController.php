@@ -38,6 +38,7 @@ class DefaultController extends Controller
         $widgetId       = $request->get('id');
         $widgetType     = $request->get('type');
         $updateInterval = $request->get('updateInterval');
+        $colors = ['#0b62a4', '#7A92A3', '#4da74d', '#afd8f8', '#edc240', '#cb4b4b', '#9440ed'];
 
         // Get data from cache
         $cache = $this->get('CacheService');
@@ -89,6 +90,15 @@ class DefaultController extends Controller
         }
 
         $response['labels'] = $labels;
+        $response['legend'] = '';
+        foreach ($response['labels'] as $key=>$label) {
+
+            $response['legend'] .= '&nbsp;&nbsp;<i style="color:'
+                . $colors[$key]
+                . '" class="fa fa-circle"></i> '
+                . '<span>' . $label . '</span>';
+        }
+
 
         // Cache response data
         $cache->setValue('CustomChartWidgetBundle', $widgetId, json_encode($response));
