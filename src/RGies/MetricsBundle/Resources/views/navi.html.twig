@@ -81,7 +81,9 @@
                                 <i class="fa fa-television fa-fw"></i> TV - full screen mode
                             </a>
                         </li>
-                        <li><a href="javascript:toggleDashboardEditMode();"><i class="fa fa-edit fa-fw"></i> Edit Dashboard&nbsp;<span class="badge">e-key</span></a></li>
+                        {%- if is_granted("ROLE_EDIT_DASHBOARD") %}
+                            <li><a href="javascript:toggleDashboardEditMode();"><i class="fa fa-edit fa-fw"></i> Edit Dashboard&nbsp;<span class="badge">e-key</span></a></li>
+                        {% endif %}
                         <li role="separator" class="divider"></li>
                         {%- if aclService.userHasUrlAccess(path("domain")) %}
                             <li><a href="{{ path("domain") }}"><i class="fa fa-cloud fa-fw"></i> Domain Management</a></li>

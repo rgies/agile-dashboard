@@ -10,6 +10,7 @@
         </span>
         <span id="widget-title-suffix-{{ widget.id }}"></span>
 
+        {% if aclService.userHasUrlAccess(path('widgets_edit', {id: widget.id})) -%}
         <div class="btn-group pull-right" style="cursor: pointer">
             <span alt="Menu" title="Menu" class="fa fa-bars" data-toggle="dropdown" aria-expanded="false"></span>
             <ul class="dropdown-menu dropdown-menu-right" role="menu">
@@ -39,6 +40,7 @@
                 {% block menue_items %}{% endblock %}
             </ul>
         </div>
+        {% endif -%}
     </div>
 
     <div id="widget-{{ widget.id }}-body" class="panel-body widget-panel-body">

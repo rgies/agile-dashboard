@@ -8,9 +8,12 @@
         <div>
             {% for key,item in provider %}
             <div title="{{ item.name }}" class="pull-left">
-                <a href="{{ path(item.action) }}">
-                    <img src="{{ asset(item.icon) }}" />
-                </a>
+                <img src="{{ asset(item.icon) }}" />
+                <div style="padding-top: 10px; text-align: center">
+                    <a href="{{ path(item.action) }}" class="btn btn-default">
+                        <i class="fa fa-cog"></i> Setup {{ item.name }} ...
+                    </a>
+                </div>
             </div>
             {% endfor %}
         </div>

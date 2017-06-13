@@ -26,7 +26,7 @@ security:
             iterations: 1
 
     role_hierarchy:
-        ROLE_USER:        [ROLE_VISITOR]
+        ROLE_USER:        [ROLE_VISITOR, ROLE_EDIT_DASHBOARD]
         ROLE_MANAGER:     [ROLE_VISITOR, ROLE_USER]
         ROLE_ADMIN:       [ROLE_VISITOR, ROLE_USER, ROLE_MANAGER]
         ROLE_SUPER_ADMIN: [ROLE_VISITOR, ROLE_MANAGER, ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]

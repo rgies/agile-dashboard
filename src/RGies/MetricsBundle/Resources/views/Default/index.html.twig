@@ -68,9 +68,11 @@
                     location.href = '{{ path('widgets_new', {'dashboardId': dashboard.id}) }}';
                 }
                 // edit tasklist <e>-key
+                {% if is_granted("ROLE_EDIT_DASHBOARD") -%}
                 else if (event.keyCode == 101) {
                     toggleDashboardEditMode();
                 }
+                {% endif -%}
                 // fullscreen mode
                 else if (event.keyCode == 102) {
                     if (screenfull.enabled) {
@@ -83,13 +85,18 @@
         /**
          * Activates or deactivates the dashboard edit mode.
          */
+        {%- if is_granted("ROLE_EDIT_DASHBOARD") %}
         function toggleDashboardEditMode()
         {
             // toggle plus items
             if (dashboardEditMode == false) {
                 dashboardEditMode = true;
+                {% if aclService.userHasUrlAccess(path('dashboard_new')) -%}
                 $('#dashboard-new').css('display', 'inline-block');
+                {% endif -%}
+                {% if aclService.userHasUrlAccess(path('widgets_new', {dashboardId: dashboard.id})) -%}
                 $('#widget-new').css('display', 'inline-block');
+                {% endif -%}
                 $('.widget-item').addClass('widget-panel-edit-mode');
                 $('.dashboard-nav-item').addClass('widget-panel-edit-mode');
                 $( "#sortable" ).sortable({
@@ -136,6 +143,7 @@
                 $( "#dashboard-nav-items" ).sortable('disable');
             }
         }
+        {% endif %}
 
         /**
          * Dashboard init
