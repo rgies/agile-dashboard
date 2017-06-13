@@ -29,6 +29,7 @@ parameters:
         'Cart':       'ion ion-android-cart'
         'Cloud':      'ion ion-cloud'
         'Code':       'ion ion-code-working'
+        'Credit-cart': 'ion ion-credit-card'
         'Date':       'ion ion-android-calendar'
         'Experiment': 'ion ion-erlenmeyer-flask'
         'Eye':        'ion ion-eye'
