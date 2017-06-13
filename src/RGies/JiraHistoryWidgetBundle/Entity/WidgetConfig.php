@@ -39,6 +39,13 @@ class WidgetConfig
     /**
      * @var string
      *
+     * @ORM\Column(name="data_source", type="string", length=100, nullable=true)
+     */
+    private $data_source='Count';
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="start_date", type="string", length=100, nullable=true)
      */
     private $start_date;
@@ -233,5 +240,29 @@ class WidgetConfig
     public function getChartType()
     {
         return $this->chart_type;
+    }
+
+    /**
+     * Set dataSource
+     *
+     * @param string $dataSource
+     *
+     * @return WidgetConfig
+     */
+    public function setDataSource($dataSource)
+    {
+        $this->data_source = $dataSource;
+
+        return $this;
+    }
+
+    /**
+     * Get dataSource
+     *
+     * @return string
+     */
+    public function getDataSource()
+    {
+        return $this->data_source;
     }
 }

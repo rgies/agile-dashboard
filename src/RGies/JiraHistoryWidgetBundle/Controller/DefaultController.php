@@ -148,13 +148,29 @@ class DefaultController extends Controller
                     $jqlQuery = str_replace('%end%', $now->format('Y-m-d 23:59'), $jqlQuery);
 
                     try {
-                        $issues = $issueService->search($jqlQuery, 0, 10000, ['key','created','updated']);
-
                         $entity = new WidgetData();
                         $entity->setWidgetId($widgetId);
                         $entity->setDataRow($row);
                         $entity->setDate($keyDate);
-                        $entity->setValue($issues->getTotal());
+
+                        switch($widgetConfig->getDataSource())
+                        {
+                            case 'SpendTime':
+                                $spendTime = 0;
+                                $issues = $issueService->search($jqlQuery, 0, 10000, ['aggregatetimespent']);
+                                foreach ($issues->getIssues() as $issue) {
+                                    if ($issue->fields->aggregatetimespent) {
+                                        $spendTime += $issue->fields->aggregatetimespent;
+                                    }
+                                }
+                                $entity->setValue(round($spendTime / 3600, 0));
+                                break;
+
+                            default:
+                                $issues = $issueService->search($jqlQuery, 0, 10000, ['key']);
+                                $entity->setValue($issues->getTotal());
+                        }
+
 
                         // don't persists data which are not final
                         if ($now->format('Y-m-d') == date('Y-m-d')) {
