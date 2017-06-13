@@ -84,9 +84,13 @@ class DefaultController extends Controller
             }
         }
 
+        $jqlQuery = str_replace('%date%', $startDate->format('Y-m-d'), $jql);
+        $jqlQuery = str_replace('%start%', $startDate->format('Y-m-d'), $jqlQuery);
+        $jqlQuery = str_replace('%end%', $endDate->format('Y-m-d 23:59'), $jqlQuery);
+
         try {
             $issueService = new IssueService($jiraLogin);
-            $issues = $issueService->search($jql, 0, 10000, ['key','created','updated','worklog']);
+            $issues = $issueService->search($jqlQuery, 0, 10000, ['key','created','updated','worklog']);
 
             // loop to found issues
             foreach ($issues->getIssues() as $issue) {
