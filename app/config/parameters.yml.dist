@@ -1,3 +1,6 @@
+imports:
+- { resource: security.yml }
+
 parameters:
     platform_contact:  contact@website.com
     platform_keywords: 'metrics,kpi,agile,company,dashboard'
