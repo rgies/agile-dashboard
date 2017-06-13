@@ -101,12 +101,6 @@ class WidgetsController extends Controller
      */
     public function newAction(Request $request, $dashboardId)
     {
-        /*
-        $lastDashboardId = $request->cookies->get(self::LAST_VISITED_DASHBOARD);
-        if (!$lastDashboardId) {
-            $lastDashboardId = 1;
-        }*/
-
         $em = $this->getDoctrine()->getManager();
         $dashboardEntity = $em->getRepository('MetricsBundle:Dashboard')->find($dashboardId);
 
@@ -159,7 +153,7 @@ class WidgetsController extends Controller
     */
     private function createEditForm(Widgets $entity)
     {
-        $form = $this->createForm(new WidgetsType($this->container, $entity), array(
+        $form = $this->createForm(new WidgetsType($this->container), $entity, array(
             'action' => $this->generateUrl('widgets_update', array('id' => $entity->getId())),
             'method' => 'PUT',
             'attr'   => array('id' => 'edit-form'),
