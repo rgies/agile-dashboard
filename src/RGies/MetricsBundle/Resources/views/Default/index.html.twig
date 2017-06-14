@@ -63,18 +63,18 @@
             //console.log(event.keyCode);
 
             if ( $('input:focus, textarea:focus').length === 0 ) {
-                // create new task <n>-key
+                // create new widget <n>-key
                 if (event.keyCode == 110) {
                     {%- if aclService.userHasUrlAccess(path('widgets_new', {'dashboardId': dashboard.id})) %}
                     location.href = '{{ path('widgets_new', {'dashboardId': dashboard.id}) }}';
                     {% endif -%}
                 }
-                // edit tasklist <e>-key
-                {% if is_granted("ROLE_EDIT_DASHBOARD") -%}
+                // dashboard drag&drop edit  mode <e>-key
                 else if (event.keyCode == 101) {
+                    {% if aclService.userHasUrlAccess(path("widgets_reorder")) %}
                     toggleDashboardEditMode();
+                    {% endif %}
                 }
-                {% endif -%}
                 // fullscreen mode
                 else if (event.keyCode == 102) {
                     if (screenfull.enabled) {
@@ -87,7 +87,7 @@
         /**
          * Activates or deactivates the dashboard edit mode.
          */
-        {%- if is_granted("ROLE_EDIT_DASHBOARD") %}
+        {% if aclService.userHasUrlAccess(path("widgets_reorder")) %}
         function toggleDashboardEditMode()
         {
             // toggle plus items

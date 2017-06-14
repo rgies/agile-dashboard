@@ -90,7 +90,7 @@
                                 <i class="fa fa-television fa-fw"></i> TV - full screen mode
                             </a>
                         </li>
-                        {%- if is_granted("ROLE_EDIT_DASHBOARD") %}
+                        {%- if aclService.userHasUrlAccess(path("widgets_reorder")) %}
                             <li><a href="javascript:toggleDashboardEditMode();"><i class="fa fa-edit fa-fw"></i> Edit Dashboard&nbsp;<span class="badge">e-key</span></a></li>
                             <li role="separator" class="divider"></li>
                         {% endif %}

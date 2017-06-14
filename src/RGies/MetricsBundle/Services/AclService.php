@@ -50,25 +50,29 @@ class AclService
     /**
      * Checks if current user has access to given url path.
      *
-     * @param $path
      * @return bool
      */
-    public function userHasUrlAccess($path)
+    public function userHasUrlAccess()
     {
-        $pieces = parse_url($path);
-        $path = substr($pieces['path'], strrpos(strstr($pieces['path'], '.', true), '/'));
-        $path = rtrim(str_replace(array('/app.php', '/app_dev.php'), '', $path), '/');
-
         //your logic for check access. can returns true or false
         $finalPaths = array();
 
-        $roles = $this->_getRoles($path);
+        $paths = func_get_args();
 
-        if (count($roles)) {
-            foreach($roles as $role){
-                if ($this->_securityContext->isGranted($role)) {
-                    $finalPaths[] = $path;
-                    break;
+        foreach ($paths as $path) {
+            $pieces = parse_url($path);
+            $path = substr($pieces['path'], strrpos(strstr($pieces['path'], '.', true), '/'));
+            $path = rtrim(str_replace(array('/app.php', '/app_dev.php'), '', $path), '/');
+
+
+            $roles = $this->_getRoles($path);
+
+            if (count($roles)) {
+                foreach($roles as $role){
+                    if ($this->_securityContext->isGranted($role)) {
+                        $finalPaths[] = $path;
+                        break;
+                    }
                 }
             }
         }
