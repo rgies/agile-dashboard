@@ -43,6 +43,7 @@
         <div class="page-header">
             <h1>
                 <i class="glyphicon glyphicon-user"></i> User list
+                {% if aclService.userHasUrlAccess(path('user_new')) and not licenseService.limitReached('User') -%}
                 <button type="button" class="btn btn-primary pull-right" onclick="location.href='{{ path('user_new') }}'">
                     <i class="fa fa-plus"></i> New
                 </button>
@@ -50,6 +51,7 @@
                 <button type="button" class="btn btn-primary pull-right" onclick="$('#invite-user-dialog').modal('show');">
                     <i class="fa fa-external-link"></i> Invite
                 </button>
+                {% endif %}
             </h1>
         </div>
 

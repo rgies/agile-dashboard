@@ -97,6 +97,10 @@ class UserController extends Controller
      */
     public function newAction()
     {
+        if ($this->get('LicenseService')->limitReached('User')) {
+            throw $this->createAccessDeniedException('Limit of maximal user accounts reached.');
+        }
+
         $entity = new User();
         $form   = $this->createCreateForm($entity);
 

@@ -24,6 +24,10 @@ services:
         class:            RGies\MetricsBundle\Services\AclService
         arguments:        [@security.access_map, @security.context, @session]
 
+    license_service:
+        class:            RGies\MetricsBundle\Services\LicenseService
+        arguments:        [@doctrine, @session, @service_container]
+
 # Twig Configuration
 twig:
     globals:
@@ -33,3 +37,4 @@ twig:
         paramsService:      @params_service
         aclService:         @acl_service
         credentialService:  @credential_service
+        licenseService:     @license_service

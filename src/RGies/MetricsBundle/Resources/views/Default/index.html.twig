@@ -93,7 +93,7 @@
             // toggle plus items
             if (dashboardEditMode == false) {
                 dashboardEditMode = true;
-                {% if aclService.userHasUrlAccess(path('dashboard_new')) -%}
+                {% if aclService.userHasUrlAccess(path('dashboard_new')) and not licenseService.limitReached('Dashboard') -%}
                 $('#dashboard-new').css('display', 'inline-block');
                 {% endif -%}
                 {% if aclService.userHasUrlAccess(path('widgets_new', {dashboardId: dashboard.id})) -%}

@@ -28,6 +28,7 @@
     <div class="page-header">
         <h1>
             <i class="fa fa-dashboard"></i> Dashboard list
+            {% if aclService.userHasUrlAccess(path('dashboard_new')) and not licenseService.limitReached('Dashboard') -%}
             <button type="button" class="btn btn-primary pull-right" onclick="location.href='{{ path('dashboard_new') }}'">
                 <i class="fa fa-plus"></i> Add
             </button>
@@ -35,6 +36,7 @@
             <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#upload-modal">
                 <i class="glyphicon glyphicon-import"></i> Import
             </button>
+            {% endif %}
         </h1>
     </div>
 
@@ -54,8 +56,10 @@
                     &nbsp;&nbsp;
                     <a href="{{ path('dashboard_edit', { 'id': entity.id }) }}"><i class="fa fa-edit"></i> Edit</a>
                     &nbsp;&nbsp;
+                    {% if aclService.userHasUrlAccess(path('dashboard_copy')) and not licenseService.limitReached('Dashboard') -%}
                     <a href="javascript: copyDashboard({{ entity.id }}, '{{ entity.title }}')"><i class="fa fa-copy"></i> Copy</a>
                     &nbsp;&nbsp;
+                    {% endif %}
                     <a href="{{ path('dashboard_export', { 'id': entity.id }) }}"><i class="fa fa-download"></i> Export</a>
                 </td>
             </tr>

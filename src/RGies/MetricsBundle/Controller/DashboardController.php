@@ -99,6 +99,10 @@ class DashboardController extends Controller
      */
     public function newAction()
     {
+        if ($this->get('LicenseService')->limitReached('Dashboard')) {
+            throw $this->createAccessDeniedException('Limit of maximal dashboard count reached.');
+        }
+
         $entity = new Dashboard();
         $form   = $this->createCreateForm($entity);
 
@@ -378,6 +382,10 @@ class DashboardController extends Controller
     public function importDashboardAction(Request $request)
     {
         foreach ($request->files->get('file') as $file) {
+            if ($this->get('LicenseService')->limitReached('Dashboard')) {
+                break;
+            }
+
             $filename = 'uploads/' . $file->getClientOriginalName();
 
             if (!move_uploaded_file($file->getPathname(), $filename)) {
@@ -388,7 +396,6 @@ class DashboardController extends Controller
                 throw $this->createNotFoundException('Only *.json files allowed');
             }
 
-            //$title = basename($file->getClientOriginalName(), '.json');
             $import = json_decode(file_get_contents($filename), true);
             $title = $import['dashboard']['title'] . '-new';
 
@@ -408,6 +415,10 @@ class DashboardController extends Controller
      */
     public function copyDashboardAction(Request $request)
     {
+        if ($this->get('LicenseService')->limitReached('Dashboard')) {
+            throw $this->createAccessDeniedException('Limit of maximal dashboard count reached.');
+        }
+
         $id = $request->get('id');
         $title = $request->get('title', 'Untitled copy');
 
