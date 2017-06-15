@@ -55,7 +55,7 @@
                     {%- if is_granted("ROLE_ALLOWED_TO_SWITCH") %}
                     <!-- Domain switcher -->
                     <li class="dropdown">
-                        <a id="domain-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown" title="Domain">
+                        <a id="domain-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown" title="{{ app.session.get('domain-name') }}">
                             <span class="fa fa-cloud"></span>
                             <span class="hidden-xs hidden-sm hidden-md">{{ app.session.get('domain-name') }}</span>
                         </a>
