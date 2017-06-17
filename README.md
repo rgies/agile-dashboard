@@ -20,17 +20,21 @@ Dashboard with agile metrics connected to Atlassian Jira.
 
 2. Create database table
 
-		$ app/console doctrine:database:create
+		>php app/console doctrine:database:create
     
 3. Update database schema
 
-		$ app/console doctrine:schema:update --force
+		>php app/console doctrine:schema:update --force
+		
+4. Load initial data
+
+        >php app/console doctrine:fixture:load
     
 ## Develop own widgets
 
 1. Create widget code skeleton
 
-        $ app/console dashboard:generate:widget
+        >php app/console dashboard:generate:widget
         
 2. Add generated widget name to config 
 
@@ -67,4 +71,4 @@ Dashboard with agile metrics connected to Atlassian Jira.
 
 5. Update database schema
 
-		$ app/console doctrine:schema:update --force
+		>php app/console doctrine:schema:update --force

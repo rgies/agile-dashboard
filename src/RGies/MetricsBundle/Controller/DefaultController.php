@@ -21,40 +21,6 @@ class DefaultController extends Controller
     const LAST_VISITED_DASHBOARD = 'last_dashboard_id';
 
     /**
-     * Create default domain and super admin user if database is empty.
-     */
-    protected function _init()
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        // add default domain
-        $domains = $em->getRepository('MetricsBundle:Domain')->findAll(array(),array('id'=>'ASC'));
-        if (!$domains) {
-            $domain = new Domain();
-            $domain->setTitle('Default');
-            $domain->setIsActive(true);
-            $em->persist($domain);
-            $em->flush();
-        } else {
-            $domain = $domains[0];
-        }
-
-        // admin user
-        $userAdmin = new User();
-        $userAdmin->setUsername('Admin');
-        $userAdmin->setPassword('admin');
-        $userAdmin->setRole($this->getParameter('global_admin_role'));
-        $userAdmin->setJobtitle('admin');
-        $userAdmin->setFirstname('Admin');
-        $userAdmin->setLastname('User');
-        $userAdmin->setEmail('admin@xxx.com');
-        $userAdmin->setIsActive(true);
-        $userAdmin->setDomain($domain->getId());
-        $em->persist($userAdmin);
-        $em->flush();
-    }
-
-    /**
      * Website home action.
      *
      * @Route("/", name="start")
@@ -72,12 +38,6 @@ class DefaultController extends Controller
             $request->getSession()->set('domain', $domain);
         } else {
             $domain = $request->getSession()->get('domain');
-        }
-
-        // if no user exists add default admin account
-        $user = $em->getRepository('MetricsBundle:User')->findAll();
-        if (!$user) {
-            $this->_init();
         }
 
         // set domain name
