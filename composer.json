@@ -17,7 +17,7 @@
         "psr-0": { "": "src/" }
     },
     "require": {
-        "php": ">=5.3.3",
+        "php": ">=5.5.9",
         "symfony/symfony": "v2.7.2",
         "doctrine/orm": "~2.2,>=2.2.3",
         "doctrine/doctrine-bundle": "~1.2",

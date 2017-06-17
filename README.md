@@ -3,38 +3,51 @@ Dashboard with agile metrics connected to Atlassian Jira.
 
 ![Sample Dashboard](http://www.rgies.de/images/agile-dashboard3.jpg)
 
+## Requirements
+
+* PHP >= 5.5.9
+* Composer
+* Mysql
+
 ## How to install
 
 1. Download and install **[Composer](http://getcomposer.org/download)**.
 
 2. Clone or [download](https://github.com/rgies/agile-dashboard/archive/master.zip) the repository:
 
-		$ git clone https://github.com/rgies/agile-dashboard.git
-		$ cd agile-dashboard
+		git clone https://github.com/rgies/agile-dashboard.git
+		cd agile-dashboard
 
 ## How to configure
 
 1. Start setup and follow the instuctions:
 
-		$ composer install
+		composer install
 
 2. Create database table
 
-		>php app/console doctrine:database:create
+		php app/console doctrine:database:create
     
 3. Update database schema
 
-		>php app/console doctrine:schema:update --force
+		php app/console doctrine:schema:update --force
 		
 4. Load initial data
 
-        >php app/console doctrine:fixture:load
+        php app/console doctrine:fixture:load
     
-## Develop own widgets
+# Usage
+
+## Table of Contents
+
+### Project
+- [Develop own widgets](#develop-own-widgets)    
+    
+#### Develop own widgets
 
 1. Create widget code skeleton
 
-        >php app/console dashboard:generate:widget
+        php app/console dashboard:generate:widget
         
 2. Add generated widget name to config 
 
@@ -71,4 +84,4 @@ Dashboard with agile metrics connected to Atlassian Jira.
 
 5. Update database schema
 
-		>php app/console doctrine:schema:update --force
+		php app/console doctrine:schema:update --force
