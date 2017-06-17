@@ -36,6 +36,9 @@ Dashboard with agile metrics connected to Atlassian Jira.
 
         php app/console doctrine:fixture:load
     
+    **Note:**
+    Default login credentials (admin/admin). Please login an change password.    
+    
 # Usage
 
 ## Table of Contents
