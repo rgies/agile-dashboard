@@ -40,7 +40,7 @@ Dashboard with agile metrics connected to Atlassian Jira.
 
 ## Table of Contents
 
-### Project
+### Development
 - [Develop own widgets](#develop-own-widgets)    
     
 #### Develop own widgets
