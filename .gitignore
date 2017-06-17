@@ -6,7 +6,9 @@
 !app/cache/.gitkeep
 !app/logs/.gitkeep
 /build/
-/vendor/
-/bin/
+/vendor/*
+!/vendor/.htaccess
+/bin/*
+!/bin/.htaccess
 /composer.phar
 /composer.lock
