@@ -43,9 +43,20 @@ Dashboard with agile metrics connected to Atlassian Jira.
 
 ## Table of Contents
 
+### Setup
+- [Setup service provider](#setup-service-provider)
+
 ### Development
 - [Develop own widgets](#develop-own-widgets)    
     
+#### Setup service provider
+
+1. Login as Administrator (Default: admin/admin)
+
+2. Go to the "Service Provider" section
+
+3. Click on Jira and put in the login credentials
+
 #### Develop own widgets
 
 1. Create widget code skeleton
