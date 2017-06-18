@@ -55,7 +55,7 @@ class JiraCoreService
         if (self::$_credentials) return self::$_credentials;
 
         $login = null;
-        $credentials = $this->_credentialService->loadCredentials('jira');
+        $credentials = $this->_credentialService->loadCredentials('JiraCoreWidgetBundle');
 
         if ($credentials) {
             $login = new ArrayConfiguration(

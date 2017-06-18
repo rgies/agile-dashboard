@@ -7,8 +7,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use RGies\JiraCoreWidgetBundle\Entity\Login;
 use RGies\JiraCoreWidgetBundle\Form\LoginType;
+use JiraRestApi\Project\ProjectService;
+use JiraRestApi\JiraException;
 
 /**
  * Login controller.
@@ -23,7 +24,7 @@ class LoginController extends Controller
         $this->_errorMessage = null;
 
         try {
-            $entity = $this->get('CredentialService')->loadCredentials('jira');
+            $entity = $this->get('CredentialService')->loadCredentials('JiraCoreWidgetBundle');
         } catch(\Exception $e) {
             $this->get('session')->getFlashBag()->add('error', $e->getMessage());
         }
@@ -54,21 +55,29 @@ class LoginController extends Controller
 
         if ($form->isValid()) {
             $this->get('CredentialService')->saveCredentials(
-                'jira',
+                'JiraCoreWidgetBundle',
                 $entity
             );
 
+            // test connection
+            $jiraLogin = $this->get('JiraCoreService')->getLoginCredentials();
+            $result = null;
+
+            try {
+                $project = new ProjectService($jiraLogin);
+                $result = $project->getAllProjects();
+            } catch (JiraException $e) {
+
+            }
+
+            if ($result) {
+                $this->get('CredentialService')->setConnectedState('JiraCoreWidgetBundle', true);
+            } else {
+                $this->get('CredentialService')->setConnectedState('JiraCoreWidgetBundle', false);
+            }
+
             return $this->redirect($this->generateUrl('provider'));
         }
-
-        /*
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
-            $em->flush();
-
-            return $this->redirect($this->generateUrl('login'));
-        }*/
 
         return array(
             'entity'  => $entity,

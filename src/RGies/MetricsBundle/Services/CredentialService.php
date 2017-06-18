@@ -40,7 +40,7 @@ class CredentialService
     /**
      * Save credential value.
      *
-     * @param string $provider Component (Jira, Google, etc.)
+     * @param string $provider Bundle provider (JiraCoreBundle, GoogleCoreBundle, etc.)
      * @param object|array $data   Credential array (e.g. login, password)
      */
     public function saveCredentials($provider, $data)
@@ -114,6 +114,35 @@ class CredentialService
         }
 
         return $credentials;
+    }
+
+    /**
+     * Sets the connected state of a provider connection.
+     *
+     * @param string $provider
+     * @param boolean $state
+     * @return boolean Did the state could be set
+     */
+    public function setConnectedState($provider, $state)
+    {
+        $em = $this->_doctrine->getManager();
+        $domain = $this->_session->get('domain');
+
+        $entities = $em->getRepository('MetricsBundle:Credential')->findBy(
+            array('provider' => $provider, 'domain' => $domain)
+        );
+
+        if ($entities) {
+            $entity = $entities[0];
+
+            $entity->setConnected($state);
+            $em->persist($entity);
+            $em->flush();
+
+            return true;
+        }
+
+        return false;
     }
 
 }

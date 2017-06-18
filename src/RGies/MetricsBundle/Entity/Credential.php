@@ -54,6 +54,13 @@ class Credential
      */
     private $domain;
 
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="connected", type="boolean", nullable=true, options={"default":"0"})
+     */
+    private $connected=false;
+
 
     /**
      * Get id
@@ -185,4 +192,27 @@ class Credential
         return $this->domain;
     }
 
+    /**
+     * Set connected
+     *
+     * @param boolean $connected
+     *
+     * @return Credential
+     */
+    public function setConnected($connected)
+    {
+        $this->connected = $connected;
+
+        return $this;
+    }
+
+    /**
+     * Get connected
+     *
+     * @return boolean
+     */
+    public function getConnected()
+    {
+        return $this->connected;
+    }
 }
