@@ -10,20 +10,20 @@
             <div title="{{ item.name }}" class="pull-left" style="position: relative">
                 <a href="{{ path(item.action) }}">
                     <img {% if item.connected is not defined %}style="opacity: 0.3;"{% endif %} src="{{ asset(item.icon) }}" />
-                </a>
-                <div style="position: absolute; font-size: 36pt; top: 140px; right: -5px;">
-                {% if item.connected is defined %}
-                    {% if item.connected %}
-                        <i class="fa fa-check-circle"></i>
-                    {% else %}
-                        <span title="Connection error. Please check your credentials." style="color: #b80429;">
+                    <div style="position: absolute; font-size: 36pt; top: 140px; right: -5px;">
+                        {% if item.connected is defined %}
+                            {% if item.connected %}
+                                <i class="fa fa-check-circle"></i>
+                            {% else %}
+                                <span title="Connection error. Please check your credentials." style="color: #b80429;">
                             <i class="fa fa-times-circle"></i>
                         </span>
-                    {% endif %}
-                {% else %}
-                    <i class="fa fa-unlink"></i>
-                {% endif %}
-                </div>
+                            {% endif %}
+                        {% else %}
+                            <i class="fa fa-unlink"></i>
+                        {% endif %}
+                    </div>
+                </a>
                 <div style="padding-top: 10px; text-align: center">
                     <a href="{{ path(item.action) }}" class="btn btn-default">
                         <i class="fa fa-cog"></i> Setup {{ item.name }}
