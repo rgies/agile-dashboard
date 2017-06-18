@@ -15,26 +15,26 @@ Dashboard with agile metrics connected to Atlassian Jira.
 
 2. Clone or [download](https://github.com/rgies/agile-dashboard/archive/master.zip) the repository:
 
-		git clone https://github.com/rgies/agile-dashboard.git
-		cd agile-dashboard
+		$ git clone https://github.com/rgies/agile-dashboard.git
+		$ cd agile-dashboard
 
 ## How to configure
 
 1. Start setup and follow the instuctions:
 
-		composer install
+		$ composer install
 
 2. Create database table
 
-		php app/console doctrine:database:create
+		$ app/console doctrine:database:create
     
 3. Update database schema
 
-		php app/console doctrine:schema:update --force
+		$ app/console doctrine:schema:update --force
 		
 4. Load initial data
 
-        php app/console doctrine:fixture:load
+        $ app/console doctrine:fixture:load
     
     **Note:**
     Default login credentials (admin/admin). Please login an change password.    
@@ -50,7 +50,7 @@ Dashboard with agile metrics connected to Atlassian Jira.
 
 1. Create widget code skeleton
 
-        php app/console dashboard:generate:widget
+        $ app/console dashboard:generate:widget
         
 2. Add generated widget name to config 
 
@@ -87,4 +87,4 @@ Dashboard with agile metrics connected to Atlassian Jira.
 
 5. Update database schema
 
-		php app/console doctrine:schema:update --force
+		$ app/console doctrine:schema:update --force
