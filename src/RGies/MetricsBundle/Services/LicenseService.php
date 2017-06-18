@@ -46,17 +46,35 @@ class LicenseService
      * Checks if the defined element limit is reached.
      *
      * @param string $entityName Entity to check (Dashboard, User, Widgets, etc.)
-     * @return boolean
+     * @return bool
+     * @throws \Exception
      */
     public function limitReached($entityName)
     {
+        $limit = null;
         $reached = false;
-        $limitParameter = 'limit_' . mb_strtolower($entityName) . '_count';
 
-        if ($this->_serviceContainer->hasParameter($limitParameter) && $this->_serviceContainer->getParameter($limitParameter)) {
-            $em = $this->_doctrine->getManager();
-            $domain = $this->_serviceContainer->get('session')->get('domain');
+        $configParameter = 'limit_' . mb_strtolower($entityName) . '_count';
+        $domainAttribute = 'get' . ucfirst($entityName) . 'Limit';
 
+        $em = $this->_doctrine->getManager();
+
+        $domain = $this->_serviceContainer->get('session')->get('domain');
+        $domainEntity = $em->getRepository('MetricsBundle:Domain')->find($domain);
+
+        if (! $domainEntity) {
+            throw new \Exception('Fatal error: No domain defined');
+        }
+
+        if (method_exists($domainEntity, $domainAttribute) && $domainEntity->$domainAttribute()) {
+            // limit set by domain entity
+            $limit = $domainEntity->$domainAttribute();
+        } elseif ($this->_serviceContainer->hasParameter($configParameter) && $this->_serviceContainer->getParameter($configParameter)) {
+            // limit set by config
+            $limit = $this->_serviceContainer->getParameter($configParameter);
+        }
+
+        if ($limit) {
             $count = $em->getRepository('MetricsBundle:' . ucfirst($entityName))
                 ->createQueryBuilder('e')
                 ->select('count(e.id)')
@@ -65,7 +83,7 @@ class LicenseService
                 ->getQuery()
                 ->getSingleScalarResult();
 
-            $reached = ($this->_serviceContainer->getParameter($limitParameter) > $count) ? false : true;
+            $reached = ($limit > $count) ? false : true;
         }
 
         return $reached;

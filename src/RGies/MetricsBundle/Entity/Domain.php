@@ -57,6 +57,27 @@ class Domain
     private $is_active;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="dashboard_limit", type="integer", nullable=true)
+     */
+    private $dashboard_limit;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="user_limit", type="integer", nullable=true)
+     */
+    private $user_limit;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="widget_limit", type="integer", nullable=true)
+     */
+    private $widget_limit;
+
+    /**
      * Entity constructor
      */
     public function __construct()
@@ -198,5 +219,76 @@ class Domain
     {
         return $this->is_active;
     }
-}
 
+    /**
+     * Set dashboardLimit
+     *
+     * @param integer $dashboardLimit
+     *
+     * @return Domain
+     */
+    public function setDashboardLimit($dashboardLimit)
+    {
+        $this->dashboard_limit = $dashboardLimit;
+
+        return $this;
+    }
+
+    /**
+     * Get dashboardLimit
+     *
+     * @return integer
+     */
+    public function getDashboardLimit()
+    {
+        return $this->dashboard_limit;
+    }
+
+    /**
+     * Set userLimit
+     *
+     * @param integer $userLimit
+     *
+     * @return Domain
+     */
+    public function setUserLimit($userLimit)
+    {
+        $this->user_limit = $userLimit;
+
+        return $this;
+    }
+
+    /**
+     * Get userLimit
+     *
+     * @return integer
+     */
+    public function getUserLimit()
+    {
+        return $this->user_limit;
+    }
+
+    /**
+     * Set widgetLimit
+     *
+     * @param integer $widgetLimit
+     *
+     * @return Domain
+     */
+    public function setWidgetLimit($widgetLimit)
+    {
+        $this->widget_limit = $widgetLimit;
+
+        return $this;
+    }
+
+    /**
+     * Get widgetLimit
+     *
+     * @return integer
+     */
+    public function getWidgetLimit()
+    {
+        return $this->widget_limit;
+    }
+}
