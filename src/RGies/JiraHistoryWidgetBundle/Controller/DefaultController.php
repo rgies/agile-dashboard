@@ -63,6 +63,7 @@ class DefaultController extends Controller
         $startDate = new \DateTime();
         $endDate = new \DateTime();
 
+        $customField = $widgetConfig->getCustomField();
         $labels = explode(',', $widgetConfig->getLabel1());
         $jqls = explode("\n", $widgetConfig->getJqlQuery1());
 
@@ -164,6 +165,17 @@ class DefaultController extends Controller
                                     }
                                 }
                                 $entity->setValue(round($spendTime / 3600, 0));
+                                break;
+
+                            case 'Custom':
+                                $value = 0;
+                                $issues = $issueService->search($jqlQuery, 0, 10000, [$customField]);
+                                foreach ($issues->getIssues() as $issue) {
+                                    if (isset($issue->fields->$customField)) {
+                                        $value += $issue->fields->$customField;
+                                    }
+                                }
+                                $entity->setValue($value);
                                 break;
 
                             default:

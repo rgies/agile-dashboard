@@ -31,6 +31,21 @@
         }
 
         $( document ).ready(function() {
+            $("#jira_burn_down_widget_widgetconfig_calc_base").parent().append($("#jira_burn_down_widget_widgetconfig_customField"));
+            $('#jira_burn_down_widget_widgetconfig_customField').attr('placeholder', 'Please type in custom field name (e.g. customfield_10004)');
+
+            if ($('#jira_burn_down_widget_widgetconfig_calc_base').val() == 'points'){
+                $('#jira_burn_down_widget_widgetconfig_customField').attr('type', 'input');
+            }
+
+            $("#jira_burn_down_widget_widgetconfig_calc_base").change(function(){
+                if ($('#jira_burn_down_widget_widgetconfig_calc_base').val() == 'points'){
+                    $('#jira_burn_down_widget_widgetconfig_customField').attr('type', 'input').focus();
+                } else {
+                    $('#jira_burn_down_widget_widgetconfig_customField').attr('type', 'hidden');
+                }
+            });
+
             $('input:text:visible:first').focus();
             $("#create-form").validate();
         });

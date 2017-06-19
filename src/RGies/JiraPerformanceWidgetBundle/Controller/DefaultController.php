@@ -63,7 +63,7 @@ class DefaultController extends Controller
         $spendStoryPoints = 0;
         $totalCount = 0;
         $issueCount = 0;
-        $storyPointField = 'customfield_10004';
+        $storyPointField = $widgetConfig->getCustomField();
         $workDays = array();
 
         try {

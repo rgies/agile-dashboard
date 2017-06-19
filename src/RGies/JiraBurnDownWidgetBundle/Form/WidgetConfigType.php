@@ -26,10 +26,12 @@ class WidgetConfigType extends AbstractType
     {
         $builder
             ->add('widget_id','hidden')
-            ->add('calc_base','choice', array('label'=> 'Calculation base','choices' => array(
-                'points'  =>  'Story Points (SP)',
+            ->add('calc_base','choice', array('attr'=>array('style'=>'width: 250px'),'label'=> 'Calculation base','choices' => array(
                 'count'   =>  'Issue Count',
-                'hours'   =>  'Time Estimates (h)')))
+                'hours'   =>  'Time Estimates (h)',
+                'points'  =>  'Custom Field',
+            )))
+            ->add('customField', 'hidden')
             ->add('start_date','text',array('label' => 'Start date (2017-01-15 / -7 days / -1 month)'))
             ->add('end_date','text',array())
             ->add('velocity', 'text',array('required'=>false, 'label' => '[Optional] Current team velocity per day'))

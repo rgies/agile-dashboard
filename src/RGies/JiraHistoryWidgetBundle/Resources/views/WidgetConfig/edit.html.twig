@@ -37,6 +37,25 @@
                 }
             }
 
-            $("#edit-form").validate();
+
+            $( document ).ready(function() {
+                $("#jira_history_widget_widgetconfig_data_source").parent().append($("#jira_history_widget_widgetconfig_customField"));
+                $('#jira_history_widget_widgetconfig_customField').attr('placeholder', 'Please type in custom field name (e.g. customfield_10004)');
+
+                if ($('#jira_history_widget_widgetconfig_data_source').val() == 'Custom'){
+                    $('#jira_history_widget_widgetconfig_customField').attr('type', 'input');
+                }
+
+                $("#jira_history_widget_widgetconfig_data_source").change(function(){
+                    if ($('#jira_history_widget_widgetconfig_data_source').val() == 'Custom'){
+                        $('#jira_history_widget_widgetconfig_customField').attr('type', 'input').focus();
+                    } else {
+                        $('#jira_history_widget_widgetconfig_customField').attr('type', 'hidden');
+                    }
+                });
+
+                $("#edit-form").validate();
+
+            });
         </script>
 {% endblock %}

@@ -46,6 +46,13 @@ class WidgetConfig
     /**
      * @var string
      *
+     * @ORM\Column(name="customField", type="string", length=100, nullable=true)
+     */
+    private $customField;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="start_date", type="string", length=100, nullable=true)
      */
     private $start_date;
@@ -264,5 +271,29 @@ class WidgetConfig
     public function getDataSource()
     {
         return $this->data_source;
+    }
+
+    /**
+     * Set customField
+     *
+     * @param string $customField
+     *
+     * @return WidgetConfig
+     */
+    public function setCustomField($customField)
+    {
+        $this->customField = $customField;
+
+        return $this;
+    }
+
+    /**
+     * Get customField
+     *
+     * @return string
+     */
+    public function getCustomField()
+    {
+        return $this->customField;
     }
 }

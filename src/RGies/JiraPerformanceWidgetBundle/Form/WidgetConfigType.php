@@ -29,6 +29,7 @@ class WidgetConfigType extends AbstractType
         $builder
             ->add('widget_id','hidden')
             ->add('icon', 'choice', array('choices' => $icons))
+            ->add('customField', 'text', array('label' => 'Story Points Field (e.g. customfield_10004)'))
             ->add('extended_info','choice',array(
                 'required' => false,
                 'choices' => array(

@@ -38,6 +38,13 @@ class WidgetConfig
 
     /**
      * @var string
+     * 
+     * @ORM\Column(name="customField", type="string", length=100)
+     */
+    private $customField;
+
+    /**
+     * @var string
      *
      * @ORM\Column(name="jql_query", type="text")
      */
@@ -193,5 +200,29 @@ class WidgetConfig
     public function getExtendedInfo()
     {
         return $this->extended_info;
+    }
+
+    /**
+     * Set customField
+     *
+     * @param string $customField
+     *
+     * @return WidgetConfig
+     */
+    public function setCustomField($customField)
+    {
+        $this->customField = $customField;
+
+        return $this;
+    }
+
+    /**
+     * Get customField
+     *
+     * @return string
+     */
+    public function getCustomField()
+    {
+        return $this->customField;
     }
 }

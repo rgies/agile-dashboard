@@ -76,7 +76,7 @@ class DefaultController extends Controller
         $days = (int)$startDate->diff($endDate)->format('%a');
         $doneDays = (int)$startDate->diff(new \DateTime())->format('%a');
         $colors = ['#0b62a4', '#7A92A3', '#4da74d', '#afd8f8', '#edc240', '#cb4b4b', '#9440ed'];
-        $storyPointField = 'customfield_10004';
+        $storyPointField = $widgetConfig->getCustomField();
 
         //$widget = $em->getRepository('MetricsBundle:Widgets')->find($widgetId);
         //$size = $widget->getSize();
