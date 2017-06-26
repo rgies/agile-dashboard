@@ -185,8 +185,8 @@ class DefaultController extends Controller
             }
         }
 
-        $response['startdate'] = $startDate->format('d-m-Y');
-        $response['enddate'] = $endDate->format('d-m-Y');
+        $response['startdate'] = $startDate->format('d-m-y');
+        $response['enddate'] = $endDate->format('d-m-y');
         $response['days'] = $days;
         $response['value'] = '###';
         $response['subtext'] = $response['startdate'] . ' - ' . $response['enddate'];
@@ -202,10 +202,12 @@ class DefaultController extends Controller
                 $response['min'] = round(min($leadTimeValues), 1);
                 $response['max'] = round(max($leadTimeValues), 1);
                 $response['value'] = round(array_sum($leadTimeValues) / count($leadTimeValues), 1);
-                $response['subtext'] .= '<br/><i class="fa fa-arrow-down"></i>'
+                $response['subtext'] .= '&nbsp;&nbsp;&nbsp;<i class="fa fa-arrow-down"></i>'
                     . $response['min'] . 'd / <i class="fa fa-arrow-up"></i>'
                     . $response['max'] . 'd';
             }
+
+            $response['leadTimeValues'] = array_reverse(array_map('round', $leadTimeValues));
         }
 
         // Cache response data

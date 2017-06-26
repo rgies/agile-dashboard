@@ -2,12 +2,14 @@
 
 {% block widget_body %}
     <i class="widget-icon ion ion-stats-bars"></i>
-    <h3><span id="widget-value-{{ widget.id }}">###</span></h3>
+    <h3 style="margin-bottom: 0;"><span id="widget-value-{{ widget.id }}">###</span></h3>
+    <span id="sparkline-{{ widget.id }}"></span>
+    <div id="widget-subtext-{{ widget.id }}" class="widget-value-subtext"></div>
+
 {% endblock %}
 
 {% block script %}
     <script>
-        // HERE YOU CAN GET YOUR WIDGET DATA
         addDataRequest('{{ path('JiraLeadTimeWidgetBundle-collect-data') }}'
             , {id:{{ widget.id }}, type:'{{ widget.type }}', updateInterval:'{{ widget.updateInterval }}'}
             , function (data) {
@@ -30,6 +32,23 @@
                     );
                 } else {
                     $('#widget-title-suffix-{{ widget.id }}').html('');
+
+                    // Sparkline Chart
+                    if (response['leadTimeValues']) {
+                        $("#sparkline-{{ widget.id }}").sparkline(response['leadTimeValues'], {
+                            type: 'line',
+                            width: '100px',
+                            height: '30px',
+                            lineWidth: 2,
+                            spotRadius: 4,
+                            tooltipFormat: '{{ '<i style="color: {{color}}" class="fa fa-circle"></i>&nbsp;{{y}} days&nbsp;&nbsp;&nbsp;&nbsp;<br/>&nbsp;' }}'
+                        });
+                    }
+
+                    // Set subtext
+                    if (response['subtext']) {
+                        $('#widget-subtext-{{ widget.id }}').html(response['subtext']).show('blind');
+                    }
                 }
 
                 // Set value
@@ -39,11 +58,6 @@
                     // Set value
                     if (response['value'] != undefined) {
                         value =  response['value'] + '<span class="widget-value-unit">d</span>';
-                    }
-
-                    // Set subtext
-                    if (response['subtext']) {
-                        value = value + '<div class="widget-value-subtext">' + response['subtext'] + '</div>';
                     }
 
                     // Set warning
