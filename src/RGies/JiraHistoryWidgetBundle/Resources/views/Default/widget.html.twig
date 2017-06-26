@@ -16,6 +16,15 @@
 
                     $('#chart-{{ widget.id }}').html('');
 
+                    // Processing icon
+                    if (response['need-update']) {
+                        $('#widget-title-suffix-{{ widget.id }}').html(
+                            '<i class="fa fa-refresh fa-spin fa-fw"></i>'
+                        );
+                    } else {
+                        $('#widget-title-suffix-{{ widget.id }}').html('');
+                    }
+
                     if (response['warning']) {
                         $('#chart-{{ widget.id }}').html(
                             '<div class="widget-value-warning"><i class="fa fa-warning"></i> ' +
