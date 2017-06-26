@@ -14,8 +14,45 @@
 
                 var response = JSON.parse(data);
 
+                // Set warning
+                if (response['warning']) {
+                    var value = '<div class="widget-value-warning"><i class="fa fa-warning"></i> '
+                        + response['warning'] + '</div>';
+                    $('#widget-value-{{ widget.id }}').html(value);
+                    $('#widget-link-{{ widget.id }}').html('');
+                    return;
+                }
+
+                // Processing icon
+                if (response['need-update']) {
+                    $('#widget-title-suffix-{{ widget.id }}').html(
+                        '<i class="fa fa-refresh fa-spin fa-fw"></i>'
+                    );
+                } else {
+                    $('#widget-title-suffix-{{ widget.id }}').html('');
+                }
+
+                // Set value
                 $('#widget-value-{{ widget.id }}').hide('blind',null,function() {
-                    $('#widget-value-{{ widget.id }}').html(response['days']).show('blind');
+                    var value = '';
+
+                    // Set value
+                    if (response['value'] != undefined) {
+                        value =  response['value'] + '<span class="widget-value-unit">d</span>';
+                    }
+
+                    // Set subtext
+                    if (response['subtext']) {
+                        value = value + '<div class="widget-value-subtext">' + response['subtext'] + '</div>';
+                    }
+
+                    // Set warning
+                    if (response['warning']) {
+                        value = value + '<div class="widget-value-warning"><i class="fa fa-warning"></i> '
+                            + response['warning'] + '</div>';
+                    }
+
+                    $('#widget-value-{{ widget.id }}').html(value).show('blind');
                 });
 
                 if (response['need-update']) {

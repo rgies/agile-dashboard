@@ -50,7 +50,7 @@ class DefaultController extends Controller
         $cache = $this->get('CacheService');
         if ($needUpdate === null) {
             if ($cacheValue = $cache->getValue('JiraLeadTimeWidgetBundle', $widgetId, null, $updateInterval)) {
-                //return new Response($cacheValue, Response::HTTP_OK);
+                return new Response($cacheValue, Response::HTTP_OK);
             }
         }
 
@@ -112,7 +112,6 @@ class DefaultController extends Controller
 
         $data = $this->_getDataArray($widgetId, 1);
 
-
         for ($now; $now > $startDate; $now->modify($interval))
         {
             $keyDate = new \DateTime($now->format('Y-m-d'));
@@ -142,30 +141,29 @@ class DefaultController extends Controller
                     $entity->setDate($keyDate);
 
                     // search for jira issues from jql
-                    $issues = $issueService->search($jqlQuery, 0, 10000, ['key'], ['changelog']);
-                    //$entity->setValue($issues->getTotal());
+                    $issues = $issueService->search($jqlQuery, 0, 10000, ['key', 'created', 'resolutiondate']);
 
 
-
+                    $leadTimeArray = array();
+                    $average = 0;
                     foreach ($issues->getIssues() as $issue) {
-
-                        /**
-                        if (isset($issue->changelog)) {
-                            foreach ($issue->changelog as $changelog) {
-                                //if ()
-                            }
-
-                        }**/
 
                         //var_dump($issue); exit;
 
-                        //if ($issue->expand) {
-                        //    $spendTime += $issue->fields->aggregatetimespent;
-                        //}
+                        if (isset($issue->fields->resolutiondate) && $issue->fields->resolutiondate) {
+                            $resolved = new \DateTime($issue->fields->resolutiondate);
+                            $leadTimeDays = (int)$issue->fields->created->diff($resolved)->format('%a');
+
+                            $leadTimeArray[] = $leadTimeDays;
+                        }
+
                     }
-                    //$entity->setValue(round($spendTime / 3600, 0));
 
+                    if (count($leadTimeArray)) {
+                        $average = array_sum($leadTimeArray) / count($leadTimeArray);
+                    }
 
+                    $entity->setValue($average);
 
                     // don't persists data which are not final
                     if ($now->format('Y-m-d') == date('Y-m-d')) {
@@ -187,8 +185,28 @@ class DefaultController extends Controller
             }
         }
 
+        $response['startdate'] = $startDate->format('d-m-Y');
+        $response['enddate'] = $endDate->format('d-m-Y');
         $response['days'] = $days;
+        $response['value'] = '###';
+        $response['subtext'] = $response['startdate'] . ' - ' . $response['enddate'];
 
+        // calculate average
+        if (count($response['data'])) {
+            $leadTimeValues = array_filter(
+                array_column($response['data'], 1),
+                function ($val){return $val!=0;}
+            );
+
+            if (count($leadTimeValues)) {
+                $response['min'] = round(min($leadTimeValues), 1);
+                $response['max'] = round(max($leadTimeValues), 1);
+                $response['value'] = round(array_sum($leadTimeValues) / count($leadTimeValues), 1);
+                $response['subtext'] .= '<br/><i class="fa fa-arrow-down"></i>'
+                    . $response['min'] . 'd / <i class="fa fa-arrow-up"></i>'
+                    . $response['max'] . 'd';
+            }
+        }
 
         // Cache response data
         $cache->setValue('JiraLeadTimeWidgetBundle', $widgetId, json_encode($response));
