@@ -1,0 +1,32 @@
+{% extends "MetricsBundle::Templates/default-widget.html.twig" %}
+
+{% block widget_body %}
+    <i class="widget-icon ion ion-stats-bars"></i>
+    <h3><span id="widget-value-{{ widget.id }}">###</span></h3>
+{% endblock %}
+
+{% block script %}
+    <script>
+        // HERE YOU CAN GET YOUR WIDGET DATA
+        addDataRequest('{{ path('JiraLeadTimeWidgetBundle-collect-data') }}'
+            , {id:{{ widget.id }}, type:'{{ widget.type }}', updateInterval:'{{ widget.updateInterval }}'}
+            , function (data) {
+
+                var response = JSON.parse(data);
+
+                $('#widget-value-{{ widget.id }}').hide('blind',null,function() {
+                    $('#widget-value-{{ widget.id }}').html(response['days']).show('blind');
+                });
+
+                if (response['need-update']) {
+                    dataRequestHandler.retryQueue.push(
+                            {
+                                'url':'{{ path('JiraLeadTimeWidgetBundle-collect-data') }}',
+                                'params': {id:{{ widget.id }}, type:'{{ widget.type }}', needUpdate: 1, updateInterval:'{{ widget.updateInterval }}'},
+                                'callback': arguments.callee
+                            }
+                    );
+                }
+        });
+    </script>
+{% endblock %}
