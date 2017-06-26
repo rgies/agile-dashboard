@@ -40,7 +40,11 @@
                 });
 
                 // Title line badge
-                if (response['diff-days'] && response['diff-days']>0) {
+                if (response['need-update']) {
+                    $('#widget-title-suffix-{{ widget.id }}').html(
+                        '<i class="fa fa-refresh fa-spin fa-fw"></i>'
+                    );
+                } else if (response['diff-days'] && response['diff-days']>0) {
                     $('#widget-title-suffix-{{ widget.id }}').html(
                         '<span style="text-shadow: none; font-size: 10px" class="badge badge-warning">+' + response['diff-days'] + 'd</span>'
                     );
@@ -48,9 +52,12 @@
                     $('#widget-title-suffix-{{ widget.id }}').html(
                         '<span style="text-shadow: none; font-size: 10px" class="badge">' + response['left-days'] + 'd left</span>'
                     );
+                } else {
+                    $('#widget-title-suffix-{{ widget.id }}').html('');
                 }
 
-                // Sprint goal badge
+
+        // Sprint goal badge
                 if (response['sprint-end']) {
                     var additionalStyles = '';
                     var endDate = response['sprint-end'];
