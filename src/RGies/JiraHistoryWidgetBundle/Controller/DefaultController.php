@@ -99,6 +99,8 @@ class DefaultController extends Controller
         $row = 1;
         foreach ($labels as $label)
         {
+            if ($row > count($jqls)) break;
+
             $now = clone $endDate;
             $interval = '-1 day';
 
@@ -124,6 +126,7 @@ class DefaultController extends Controller
             $rowKey = 'y' . $row;
             $response['labels'][] = $label;
             $response['keys'][] = $rowKey;
+
             $jql = $jqls[$row-1];
 
             for ($now; $now > $startDate; $now->modify($interval))

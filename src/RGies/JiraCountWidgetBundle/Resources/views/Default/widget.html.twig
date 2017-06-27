@@ -14,7 +14,7 @@
 
 {% block script %}
     <script>
-        var activityLine{{ widget.id }} = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+        var activityLine{{ widget.id }} = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 
         addDataRequest('{{ path('JiraCountWidgetBundle-collect-data') }}'
             , {id:{{ widget.id }}, type:'{{ widget.type }}', size: '{{ widget.size }}', updateInterval:{{ widget.updateInterval }}}
@@ -68,6 +68,15 @@
             activityLine{{ widget.id }}.push(response['value']);
             $("#sparkline-{{ widget.id }}").sparkline(activityLine{{ widget.id }}, {
                 type: 'line',
+                //lineWidth: 2,
+                //spotRadius: 3,
+                spotColor: '#c8c8c8',
+                lineColor: '#0061a6',
+                fillColor: '#5186a1',
+                highlightLineColor: '#ffffff',
+                highlightSpotColor: '#ffffff',
+                minSpotColor: '#c8c8c8',
+                maxSpotColor: '#c8c8c8',
                 tooltipFormat: '{{ '<i style="color: {{color}}" class="fa fa-circle"></i>&nbsp;{{y}}&nbsp;&nbsp;&nbsp;&nbsp;<br/>&nbsp;' }}'
             });
         });
