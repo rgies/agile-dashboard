@@ -149,7 +149,7 @@ class DefaultController extends Controller
                     $start->modify($interval);
                     $jqlQuery = str_replace('%date%', $now->format('Y-m-d'), $jql);
                     $jqlQuery = str_replace('%start%', $start->format('Y-m-d'), $jqlQuery);
-                    $jqlQuery = str_replace('%end%', $now->format('Y-m-d 23:59'), $jqlQuery);
+                    $jqlQuery = str_replace('%end%', $now->format('Y-m-d'), $jqlQuery);
 
                     try {
                         $entity = new WidgetData();
