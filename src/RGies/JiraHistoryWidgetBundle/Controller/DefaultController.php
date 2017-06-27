@@ -79,7 +79,7 @@ class DefaultController extends Controller
 
         if ($widgetConfig->getEndDate()) {
             try {
-                $endDate = new \DateTime($widgetConfig->getEndDate() . ' 23:59:59');
+                $endDate = new \DateTime($widgetConfig->getEndDate());
             } catch (Exception $e)
             {
                 $response['warning'] = wordwrap('Wrong end date format: ' . $e->getMessage(), 38, '<br/>');
@@ -156,6 +156,8 @@ class DefaultController extends Controller
                         $entity->setWidgetId($widgetId);
                         $entity->setDataRow($row);
                         $entity->setDate($keyDate);
+
+                        $response['jql'] = $jqlQuery;
 
                         switch($widgetConfig->getDataSource())
                         {
