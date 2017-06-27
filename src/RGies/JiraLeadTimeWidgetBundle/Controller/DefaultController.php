@@ -132,7 +132,7 @@ class DefaultController extends Controller
                 $start->modify($interval);
                 $jqlQuery = str_replace('%date%', $now->format('Y-m-d'), $jql);
                 $jqlQuery = str_replace('%start%', $start->format('Y-m-d'), $jqlQuery);
-                $jqlQuery = str_replace('%end%', $now->format('Y-m-d 23:59'), $jqlQuery);
+                $jqlQuery = str_replace('%end%', $now->format('Y-m-d'), $jqlQuery);
 
                 try {
                     $entity = new WidgetData();
@@ -142,13 +142,11 @@ class DefaultController extends Controller
 
                     // search for jira issues from jql
                     $issues = $issueService->search($jqlQuery, 0, 10000, ['key', 'created', 'resolutiondate']);
-
+                    $response['jql'] = $jqlQuery;
 
                     $leadTimeArray = array();
                     $average = 0;
                     foreach ($issues->getIssues() as $issue) {
-
-                        //var_dump($issue); exit;
 
                         if (isset($issue->fields->resolutiondate) && $issue->fields->resolutiondate) {
                             $resolved = new \DateTime($issue->fields->resolutiondate);
@@ -207,7 +205,10 @@ class DefaultController extends Controller
                     . $response['max'] . 'd';
             }
 
-            $response['leadTimeValues'] = array_reverse(array_map('round', $leadTimeValues));
+            $response['leadTimeValues'] = array_reverse(
+                array_map('round', $leadTimeValues, array_fill(0, count($leadTimeValues), 1))
+            );
+            $response['leadTimeLabels'] = array_reverse(array_column($response['data'], 'date'));
         }
 
         // Cache response data

@@ -40,8 +40,18 @@
                             width: '100px',
                             height: '30px',
                             lineWidth: 2,
-                            spotRadius: 4,
-                            tooltipFormat: '{{ '<i style="color: {{color}}" class="fa fa-circle"></i>&nbsp;{{y}} days&nbsp;&nbsp;&nbsp;&nbsp;<br/>&nbsp;' }}'
+                            spotRadius: 3,
+                            spotColor: '#c8c8c8',
+                            lineColor: '#0061a6',
+                            fillColor: '#5186a1',
+                            highlightLineColor: '#ffffff',
+                            highlightSpotColor: '#ffffff',
+                            minSpotColor: '#c8c8c8',
+                            maxSpotColor: '#c8c8c8',
+                            tooltipValueLookups: {
+                                names: response['leadTimeLabels']
+                            },
+                            tooltipFormat: '{{ '{{offset:names}}: {{y}} days&nbsp;&nbsp;&nbsp;&nbsp;<br/>&nbsp;' }}'
                         });
                     }
 
