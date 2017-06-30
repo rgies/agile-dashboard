@@ -61,12 +61,14 @@ class DefaultController extends Controller
         $startDate = new \DateTime('-5 years');
         $endDate = new \DateTime();
 
+        $response['debug'] = [];
+
         $jql = $widgetConfig->getJqlQuery();
 
 
         if ($widgetConfig->getStartDate()) {
             try {
-                $startDate = new \DateTime($widgetConfig->getStartDate() . ' 00:00:00');
+                $startDate = new \DateTime($widgetConfig->getStartDate());
             } catch (Exception $e)
             {
                 $response['warning'] = wordwrap('Wrong start date format: ' . $e->getMessage(), 38, '<br/>');
@@ -76,7 +78,7 @@ class DefaultController extends Controller
 
         if ($widgetConfig->getEndDate()) {
             try {
-                $endDate = new \DateTime($widgetConfig->getEndDate() . ' 23:59:59');
+                $endDate = new \DateTime($widgetConfig->getEndDate() . ' 23:59');
             } catch (Exception $e)
             {
                 $response['warning'] = wordwrap('Wrong end date format: ' . $e->getMessage(), 38, '<br/>');
@@ -90,28 +92,30 @@ class DefaultController extends Controller
 
         try {
             $issueService = new IssueService($jiraLogin);
-            $issues = $issueService->search($jqlQuery, 0, 10000, ['key','created','updated','worklog']);
+            $issues = $issueService->search($jqlQuery, 0, 100000, ['key','created','updated','worklog']);
 
             // loop to found issues
             foreach ($issues->getIssues() as $issue) {
 
                 if ($issue->fields->worklog && $issue->fields->worklog->worklogs) {
 
-                    $worklogs = $issue->fields->worklog->worklogs;
 
                     if ($issue->fields->worklog->total > $issue->fields->worklog->maxResults) {
                         $worklogs = $issueService->getWorklog($issue->key)->getWorklogs();
 
                         //$response['warning'] = $issue->key . ': to many worklog entries (' . $issue->fields->worklog->total . ')';
                         //return new Response(json_encode($response), Response::HTTP_OK);
+                    } else {
+                        $worklogs = $issue->fields->worklog->worklogs;
                     }
 
                     foreach ($worklogs as $worklog) {
 
-                        $logdate = new \DateTime($worklog->updated);
+                        $logdate = new \DateTime($worklog->started);
                         $dateKey = $logdate->format('d-m-Y');
 
                         if ($logdate >= $startDate && $logdate <= $endDate) {
+
                             if (isset($trackedDays[$dateKey])) {
                                 $trackedDays[$dateKey] += $worklog->timeSpentSeconds;
                             } else {
@@ -121,6 +125,7 @@ class DefaultController extends Controller
                             $this->_updateWorklogItem($userWorklog, $worklog);
                             $totalTimeSpend += $worklog->timeSpentSeconds;
                         }
+
                     }
                 }
             }
@@ -129,7 +134,9 @@ class DefaultController extends Controller
             return new Response(json_encode($response), Response::HTTP_OK);
         }
 
-        $response['link'] = $jiraLogin->getJiraHost() . '/issues/?jql=' . urlencode($jql);
+        $response['worklog-count'] = count($response['debug']);
+
+        $response['link'] = $jiraLogin->getJiraHost() . '/issues/?jql=' . urlencode($jqlQuery);
         $response['issuecount'] = $issues->getTotal();
         $response['startdate'] = $startDate->format('d-m-Y');
         $response['enddate'] = $endDate->format('d-m-Y');
