@@ -5,114 +5,154 @@
     <div id="chart-legend-{{ widget.id }}" style="position: absolute; right:35px; top:28px; font-size: 9px"></div>
 {% endblock %}
 
+{% block menue_items %}
+    <li role="separator" class="divider"></li>
+    <li>
+        <a href="javascript:reloadData{{ widget.id }}({{ widget.id }});">
+            <i class="fa fa-refresh fa-fw"></i> Reload
+        </a>
+    </li>
+{% endblock %}
+
 {% block script %}
     <script>
-        // HERE YOU CAN GET YOUR WIDGET DATA
+        // register request to get widget data
         addDataRequest(
                 '{{ path('JiraHistoryWidgetBundle-collect-data') }}',
                 {id:{{ widget.id }}, type:'{{ widget.type }}', updateInterval:'{{ widget.updateInterval }}'},
-                function (data) {
-                    var response = JSON.parse(data);
+                function (data) { displayData{{ widget.id }}(data);}
+        );
 
-                    $('#chart-{{ widget.id }}').html('');
+        /**
+         * Relead widget data.
+         *
+         * @param id
+         */
+        function reloadData{{ widget.id }}(id)
+        {
+            // set reload spinner
+            $('#widget-title-suffix-{{ widget.id }}').html('<i class="fa fa-refresh fa-spin fa-fw"></i>');
 
-                    // Processing icon
-                    if (response['need-update']) {
-                        $('#widget-title-suffix-{{ widget.id }}').html(
-                            '<i class="fa fa-refresh fa-spin fa-fw"></i>'
-                        );
-                    } else {
-                        $('#widget-title-suffix-{{ widget.id }}').html('');
+            // reset data cache
+            $.post( '{{ path('JiraHistoryWidgetBundle-reload-data') }}',
+                {id: id},
+                function(data) {
+                    $.post('{{ path('JiraHistoryWidgetBundle-collect-data') }}',
+                        {id:{{ widget.id }}, type:'{{ widget.type }}', needUpdate: 1, updateInterval:'{{ widget.updateInterval }}'},
+                        displayData{{ widget.id }}
+                    );
+                }
+            );
+        }
+
+        /**
+         * Display widget data.
+         *
+         * @param data
+         */
+        function displayData{{ widget.id }}(data)
+        {
+            var response = JSON.parse(data);
+
+            $('#chart-{{ widget.id }}').html('');
+
+            // Processing spinner icon
+            if (response['need-update']) {
+                $('#widget-title-suffix-{{ widget.id }}').html('<i class="fa fa-refresh fa-spin fa-fw"></i>');
+            } else {
+                $('#widget-title-suffix-{{ widget.id }}').html('');
+            }
+
+            if (response['warning']) {
+                $('#chart-{{ widget.id }}').html(
+                        '<div class="widget-value-warning"><i class="fa fa-warning"></i> ' +
+                        response['warning'] + '</div>'
+                );
+                return;
+            }
+
+            // draw chart
+            var chart{{ widget.id }} = new Morris.{{ config.chartType }}({
+                element: 'chart-{{ widget.id }}',
+                hideHover: 'auto',
+                data: response['data'],
+                xkey: 'date',
+                ykeys: response['keys'],
+                parseTime: false,
+                labels: response['labels'],
+                hoverCallback: function (index, options, content, row) {
+                    content = '';
+                    var i=0, sum = 0;
+                    for (var key in row) {
+                        if (row.hasOwnProperty(key)) {
+                            if (key.charAt(0) == 'y' && typeof(row[key]) == 'number') {
+                                i++;
+                                sum = sum + row[key];
+                            }
+                        }
                     }
 
-                    if (response['warning']) {
-                        $('#chart-{{ widget.id }}').html(
-                            '<div class="widget-value-warning"><i class="fa fa-warning"></i> ' +
-                            response['warning'] + '</div>'
-                        );
-                        return;
-                    }
+                    // draw chart legend
+                    var index = 0;
+                    for (var key in row) {
+                        if (row.hasOwnProperty(key)) {
+                            if (key.charAt(0) == 'y') {
+                                var value = row[key];
 
-                    var chart{{ widget.id }} = new Morris.{{ config.chartType }}({
-                        element: 'chart-{{ widget.id }}',
-                        hideHover: 'auto',
-                        data: response['data'],
-                        xkey: 'date',
-                        ykeys: response['keys'],
-                        parseTime: false,
-                        labels: response['labels'],
-                        hoverCallback: function (index, options, content, row) {
-                            content = '';
-                            var i=0, sum = 0;
-                            for (var key in row) {
-                                if (row.hasOwnProperty(key)) {
-                                    if (key.charAt(0) == 'y' && typeof(row[key]) == 'number') {
-                                        i++;
-                                        sum = sum + row[key];
-                                    }
+                                if (i > 1) {
+                                    value = value + '&nbsp;(' + Math.round(value / sum * 100) + '%)';
                                 }
-                            }
 
-                            var index = 0;
-                            for (var key in row) {
-                                if (row.hasOwnProperty(key)) {
-                                    if (key.charAt(0) == 'y') {
-                                        var value = row[key];
-
-                                        if (i > 1) {
-                                            value = value + '&nbsp;(' + Math.round(value / sum * 100) + '%)';
-                                        }
-
-                                        content = '<div class="morris-hover-point" style="text-align: left;">'
-                                                {% if (config.chartType=='Bar') %}
-                                            + '<i class="fa fa-circle" style="color:' + options.barColors[index] + '"></i>&nbsp;'
-                                                {% else %}
-                                            + '<i class="fa fa-circle" style="color:' + options.lineColors[index] + '"></i>&nbsp;'
-                                                {% endif %}
-                                            + options.labels[index]
-                                            + ':&nbsp;'
-                                            + value
-                                            + '</div>'
-                                            + content;
-                                        index++;
-                                    }
-                                }
-                            }
-
-                            {% if (config.chartType=='Area') or (config.chartType=='Bar') %}
-                            if (i>1) {
-                                content = content
-                                    + '<div class="morris-hover-row-label">Σ: '
-                                    + sum.toString()
-                                    + '</div>';
-                            }
-                            {% endif %}
-
-                            content = '<div class="morris-hover-row-label">'
-                                + row['date']
+                                content = '<div class="morris-hover-point" style="text-align: left;">'
+                                {% if (config.chartType=='Bar') %}
+                                + '<i class="fa fa-circle" style="color:' + options.barColors[index] + '"></i>&nbsp;'
+                                {% else %}
+                                + '<i class="fa fa-circle" style="color:' + options.lineColors[index] + '"></i>&nbsp;'
+                                {% endif %}
+                                + options.labels[index]
+                                + ':&nbsp;'
+                                + value
                                 + '</div>'
                                 + content;
-
-
-                            return content;
-                        },
-                        fillOpacity: 0.5
-                    });
-
-                    if (response['legend']) {
-                        $('#chart-legend-{{ widget.id }}').html(response['legend']);
-                    }
-
-                    if (response['need-update']) {
-                        dataRequestHandler.retryQueue.push(
-                            {
-                                'url':'{{ path('JiraHistoryWidgetBundle-collect-data') }}',
-                                'params': {id:{{ widget.id }}, type:'{{ widget.type }}', needUpdate: 1, updateInterval:'{{ widget.updateInterval }}'},
-                                'callback': arguments.callee
+                                index++;
                             }
-                        );
+                        }
                     }
-                }
-        );
+
+                    {% if (config.chartType=='Area') or (config.chartType=='Bar') %}
+                    if (i>1) {
+                        content = content
+                        + '<div class="morris-hover-row-label">Σ: '
+                        + sum.toString()
+                        + '</div>';
+                    }
+                    {% endif %}
+
+                    content = '<div class="morris-hover-row-label">'
+                    + row['date']
+                    + '</div>'
+                    + content;
+
+
+                    return content;
+                },
+                fillOpacity: 0.5
+            });
+
+            if (response['legend']) {
+                $('#chart-legend-{{ widget.id }}').html(response['legend']);
+            }
+
+            if (response['need-update']) {
+                dataRequestHandler.retryQueue.push(
+                        {
+                            'url':'{{ path('JiraHistoryWidgetBundle-collect-data') }}',
+                            'params': {id:{{ widget.id }}, type:'{{ widget.type }}', needUpdate: 1, updateInterval:'{{ widget.updateInterval }}'},
+                            'callback': arguments.callee
+                        }
+                );
+            }
+
+        }
     </script>
 {% endblock %}

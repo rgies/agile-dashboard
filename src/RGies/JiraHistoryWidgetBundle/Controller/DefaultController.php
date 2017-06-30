@@ -279,4 +279,36 @@ class DefaultController extends Controller
         return $result;
     }
 
+    /**
+     * Reloads widget data.
+     *
+     * @Route("/reload-data/", name="JiraHistoryWidgetBundle-reload-data")
+     * @Method("POST")
+     * @return Response
+     */
+    public function reloadWidgetAjaxAction(Request $request)
+    {
+        if (!$request->isXmlHttpRequest())
+        {
+            return new Response('No valid request', Response::HTTP_FORBIDDEN);
+        }
+
+        // Allow php to handle parallel request.
+        // Please remove if you need to write something to the session.
+        session_write_close();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $widgetId = $request->get('id');
+
+        $this->get('CacheService')->deleteValue('JiraHistoryWidgetBundle', $widgetId);
+
+        // clear widget data cache
+        $em->createQuery('delete from JiraHistoryWidgetBundle:WidgetData st where st.widget_id = :id')
+            ->setParameter('id', $widgetId)
+            ->execute();
+
+        return new Response();
+    }
+
 }
