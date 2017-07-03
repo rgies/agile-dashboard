@@ -1,4 +1,4 @@
-    <?php
+<?php
 
 namespace RGies\MetricsBundle\Form;
 
@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class ParamsType extends AbstractType
+class RecipeFieldsType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -16,17 +16,10 @@ class ParamsType extends AbstractType
     {
         $builder
             ->add('label')
-            //->add('dashboard', 'entity')
-            ->add('type','choice', array(
-                'choices' => array(
-                    'text' => 'Input',
-                    'date' => 'Date',
-                    //'choice' => 'Drop-down',
-                )
-            ))
-            ->add('placeholder')
-            ->add('preset', 'text', array('required' => false))
-            ->add('value', 'hidden')
+            ->add('name')
+            ->add('description')
+            ->add('preset')
+            ->add('type')
             ->add('pos', 'hidden')
         ;
     }
@@ -37,7 +30,7 @@ class ParamsType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'RGies\MetricsBundle\Entity\Params'
+            'data_class' => 'RGies\MetricsBundle\Entity\RecipeFields'
         ));
     }
 
@@ -46,6 +39,6 @@ class ParamsType extends AbstractType
      */
     public function getName()
     {
-        return 'rgies_metricsbundle_params';
+        return 'rgies_metricsbundle_recipefields';
     }
 }

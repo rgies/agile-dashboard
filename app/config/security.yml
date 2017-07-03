@@ -65,6 +65,8 @@ security:
     access_control:
         - { path: ^/jira_core_widget_login, roles: ROLE_ADMIN }
         - { path: ^/domain, roles: ROLE_ALLOWED_TO_SWITCH }
+        - { path: ^/recipe, roles: ROLE_ADMIN }
+        - { path: ^/recipefields, roles: ROLE_ADMIN }
         - { path: ^/user, roles: ROLE_ADMIN }
         - { path: ^/provider, roles: ROLE_ADMIN }
         - { path: ^/dashboard, roles: IS_AUTHENTICATED_ANONYMOUSLY }

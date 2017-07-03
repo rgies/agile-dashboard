@@ -63,3 +63,6 @@ parameters:
         'Unhappy':    'ion ion-sad-outline'
         'User':       'ion ion-person'
         'Warning':    'ion ion-alert-circled'
+
+    # Upload paths
+    recipe_directory: '%kernel.root_dir%/../web/uploads/recipe'

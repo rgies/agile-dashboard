@@ -3,35 +3,38 @@
 {% block content -%}
 <div class="container">
     <div class="page-header">
-        <h1><i class="fa fa-dashboard"></i> Dashboard edit</h1>
+        <h1>Recipe edit</h1>
     </div>
 
     {{ form(edit_form) }}
     {{ form(delete_form) }}
 
-
     <div class="row">
         <div class="form-group">
-            <label class="col-sm-2 control-label" style="text-align: right">Parameter</label>
+            <label class="col-sm-2 control-label" style="text-align: right">
+                <button type="button" class="btn btn-primary pull-left" onclick="location.href='{{ path('recipefields_new', {'recipeId': entity.id}) }}'">
+                    <i class="fa fa-plus"></i> Custom fields
+                </button>
+
+            </label>
             <div class="col-sm-10">
                 <table class="table table-striped">
-                    <tbody id="param-items">
-                    {% for param in params %}
-                        <tr data-id="{{ param.id }}">
-                            <td><i id="dragicon" class="ion ion-drag" style="cursor: move"></i>&nbsp; <a href="{{ path('params_edit', { 'id': param.id }) }}">{{ param.label }}</a></td>
-                            <td>{{ param.type }}</td>
-                            <td>%{{ param.placeholder }}%</td>
-                            <td><a href="{{ path('params_edit', { 'id': param.id, 'dashboard': entity.id }) }}"><i class="fa fa-edit"></i> Edit</a></td>
+                    <tbody id="recipe-field-items">
+                    {% for field in fields %}
+                        <tr data-id="{{ field.id }}">
+                            <td><i id="dragicon" class="ion ion-drag" style="cursor: move"></i>&nbsp; <a href="{{ path('recipefields_edit', { 'id': field.id }) }}">{{ field.label }}</a></td>
+                            <td>%custom_field_{{ field.name }}%</td>
+                            <td><a href="{{ path('recipefields_edit', {'id': field.id}) }}"><i class="fa fa-edit"></i> Edit</a></td>
                         </tr>
                     {% endfor %}
-                    {% if not params %}
-                    <tr>
-                        <td colspan="5">
-                            <a href="{{ path('params_new', {'dashboardId': entity.id}) }}">
-                                <i class="fa fa-plus"></i> <i>Add dashboard parameter</i>
-                            </a>
-                        </td>
-                    </tr>
+                    {% if fields|length == 0 %}
+                        <tr>
+                            <td colspan="5">
+                                <a href="{{ path('recipefields_new', {'recipeId': entity.id}) }}">
+                                    <i class="fa fa-plus"></i> <i>Create custom field</i>
+                                </a>
+                            </td>
+                        </tr>
                     {% endif %}
                     </tbody>
                 </table>
@@ -43,9 +46,6 @@
         <div class="form-group">
             <label class="col-sm-2 control-label">&nbsp;</label>
             <div class="col-sm-10 control">
-                <button type="button" class="btn btn-primary pull-left" onclick="location.href='{{ path('params_new', {'dashboardId': entity.id}) }}'">
-                    <i class="fa fa-plus"></i> Add parameter
-                </button>
                 <button id="save" type="submit" onclick="formSave()" class="btn btn-primary pull-right">
                     <i class="fa fa-check"></i> Save
                 </button>
@@ -58,10 +58,9 @@
     </div>
 
     <br/>
-    <br/>
 
-    <a href="{{ path('home') }}">
-        <i class="fa fa-arrow-circle-left"></i> Return to home
+    <a href="{{ path('recipe') }}">
+        <i class="fa fa-arrow-circle-left"></i> Return to recipes
     </a>
 </div>
 {% endblock %}
@@ -72,21 +71,19 @@
 
     <script type="text/javascript">
 
-
         $(document).ready(function() {
-            $( "#param-items" ).sortable({
+            $( "#recipe-field-items" ).sortable({
                 axis: "y",
                 cursor: "move",
                 //containment: "parent",
                 handle: "#dragicon",
                 update: function(event, ui) {
                     var items = $(this).sortable('toArray', {attribute: 'data-id'}).toString();
-                    $.post('{{ path('params_reorder') }}', {'id_list': items, 'dashboard_id': {{ entity.id }} }).done(function(data){});
+                    $.post('{{ path('recipefields_reorder') }}', {'id_list': items, 'recipe_id': {{ entity.id }} }).done(function(data){});
                 }
             }).disableSelection();
-            $( "#param-items" ).sortable('enable');
+            $( "#recipe-field-items" ).sortable('enable');
         });
-
 
         function formSave()
         {
@@ -102,7 +99,7 @@
         {
             var form = $("#delete-form");
 
-            bootbox.confirm('<h4><i class="fa fa-warning fa-2x text-danger"></i> Do you really want to delete <span class="label label-default">{{ entity.title }}</span> dashboard ?</h4>', function(result) {
+            bootbox.confirm('<h4><i class="fa fa-warning fa-2x text-danger"></i> Do you really want to delete <span class="label label-default">{{ entity.title }}</span> ?</h4>', function(result) {
                 if (result)
                 {
                     form.submit();
@@ -110,6 +107,8 @@
             });
         }
 
-        $("#edit-form").validate();
+        $( document ).ready(function() {
+            $("#edit-form").validate();
+        });
     </script>
 {% endblock %}

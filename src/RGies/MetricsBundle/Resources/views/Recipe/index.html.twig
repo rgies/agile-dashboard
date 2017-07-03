@@ -1,0 +1,53 @@
+{% extends "MetricsBundle::layout.html.twig" %}
+
+{% block content -%}
+<div class="container" xmlns="http://www.w3.org/1999/html">
+    <div class="page-header">
+        <h1>
+            <i class="fa fa-magic"></i> Recipe list
+            <button type="button" class="btn btn-primary pull-right" onclick="location.href='{{ path('recipe_new') }}'">
+                <i class="fa fa-plus"></i> New Recipe
+            </button>
+        </h1>
+    </div>
+
+    <br/>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Rating</th>
+                <th>Type</th>
+                <th>Bundle</th>
+                <th>Enabled</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td>{{ entity.id }}</td>
+                <td><a href="{{ path('recipe_edit', { 'id': entity.id }) }}">{{ entity.title }}</a></td>
+                <td>{{ entity.description }}</td>
+                <td>{{ entity.rating }}</td>
+                <td>{{ entity.entitytype }}</td>
+                <td>{{ entity.bundlename }}</td>
+                <td>{% if entity.enabled %}<i class="fa fa-check-circle"></i>{% endif %}</td>
+                <td><a href="{{ path('recipe_edit', { 'id': entity.id }) }}"><i class="fa fa-edit"></i> Edit</a>                </td>
+            </tr>
+        {% endfor %}
+        {% if entities|length == 0 %}
+        <tr>
+            <td colspan="8">
+                <a href="{{ path('recipe_new') }}"><i class="fa fa-plus"></i> <i>Create Recipe</i></a>
+            </td>
+        </tr>
+        {% endif %}
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}

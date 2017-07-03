@@ -100,6 +100,9 @@
                         {%- if aclService.userHasUrlAccess(path("user")) %}
                             <li><a href="{{ path("user") }}"><i class="ion ion-person-stalker fa-fw"></i> User Management</a></li>
                         {%- endif %}
+                        {%- if aclService.userHasUrlAccess(path("recipe")) %}
+                            <li><a href="{{ path("recipe") }}"><i class="fa fa-magic fa-fw"></i> Recipe Management</a></li>
+                        {%- endif %}
                         {%- if aclService.userHasUrlAccess(path("dashboard")) %}
                             <li><a href="{{ path("dashboard") }}"><i class="fa fa-dashboard fa-fw"></i> Dashboard Management</a></li>
                         {%- endif %}

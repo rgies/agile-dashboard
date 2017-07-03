@@ -135,6 +135,7 @@ class DashboardController extends Controller
 
         $editForm = $this->createEditForm($entity);
         $deleteForm = $this->createDeleteForm($id);
+
         $params = $em->getRepository('MetricsBundle:Params')->findBy(
             array('dashboard' => $id),
             array('pos' => 'ASC')
