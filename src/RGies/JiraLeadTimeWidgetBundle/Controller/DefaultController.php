@@ -183,8 +183,8 @@ class DefaultController extends Controller
             }
         }
 
-        $response['startdate'] = $startDate->format('d-m-y');
-        $response['enddate'] = $endDate->format('d-m-y');
+        $response['startdate'] = $startDate->format('y-m-d');
+        $response['enddate'] = $endDate->format('y-m-d');
         $response['days'] = $days;
         $response['value'] = '###';
         $response['subtext'] = $response['startdate'] . ' - ' . $response['enddate'];
