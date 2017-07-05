@@ -113,9 +113,34 @@ class WidgetsController extends Controller
      * @Method("GET")
      * @Template()
      */
-    public function newAction(Request $request, $dashboardId)
+    public function newAction(Request $request, $dashboardId = null)
     {
         $em = $this->getDoctrine()->getManager();
+
+        if ($dashboardId === null) {
+            if ($request->cookies->has(self::LAST_VISITED_DASHBOARD)) {
+                $dashboardId = $request->cookies->get(self::LAST_VISITED_DASHBOARD);
+            } else {
+                $dashboards = $em->getRepository('MetricsBundle:Dashboard')
+                    ->createQueryBuilder('d')
+                    ->where('d.domain = :domain')
+                    ->orderBy('d.pos', 'ASC')
+                    ->setParameter('domain', $request->getSession()->get('domain'))
+                    ->getQuery()->getResult();
+                if ($dashboards) {
+                    $dashboardId = $dashboards[0]->getId();
+                } else {
+                    $dashboard = new Dashboard();
+                    $dashboard->setTitle('Main Metrics')
+                        ->setDomain($request->getSession()->get('domain'))
+                        ->setPos(1);
+                    $em->persist($dashboard);
+                    $em->flush();
+                    $dashboardId = $dashboard->getId();
+                }
+            }
+        }
+
         $dashboardEntity = $em->getRepository('MetricsBundle:Dashboard')->find($dashboardId);
 
         $entity = new Widgets();

@@ -30,12 +30,16 @@ class RecipeController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('MetricsBundle:Recipe')->findAll();
+        $entities = $em->getRepository('MetricsBundle:Recipe')->findBy(
+            array(),
+            array('id' => 'DESC')
+        );
 
         return array(
             'entities' => $entities,
         );
     }
+
     /**
      * Creates a new Recipe entity.
      *

@@ -56,18 +56,7 @@ class DefaultController extends Controller
 
         // create default dashboard
         if (!$dashboards) {
-            $dashboard = new Dashboard();
-            $dashboard->setTitle('Main Metrics')
-                ->setDomain($request->getSession()->get('domain'))
-                ->setPos(1);
-            $em->persist($dashboard);
-            $em->flush();
-            $dashboards = array($dashboard);
-
-            // setup jira credential if nothing exists
-            if (!$this->get('credentialService')->loadCredentials('jira')) {
-                return $this->redirect($this->generateUrl('jira_core_widget_login_edit'));
-            }
+            return $this->redirect($this->generateUrl('recipe_library'));
         } else if ($id) {
             // create cookie
             $expire = new \DateTime('+600 days');
@@ -107,6 +96,82 @@ class DefaultController extends Controller
             'widgets'       => $widgets,
             'dashboards'    => $dashboards,
             'dashboard'     => $dashboard,
+        );
+    }
+
+    /**
+     * Lists all Recipes.
+     *
+     * @Route("/recipes/{type}", name="recipe_library")
+     * @Method("GET")
+     * @Template()
+     */
+    public function recipesAction(Request $request, $type = 'dashboard')
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        // setup jira credential if nothing exists
+        if (!$this->get('credentialService')->hasCredentials('JiraCoreWidgetBundle')) {
+            return $this->redirect($this->generateUrl('jira_core_widget_login_edit'));
+        }
+
+        $entities = $em->getRepository('MetricsBundle:Recipe')->findBy(
+            array('entity_type' => $type),
+            array('id' => 'DESC')
+        );
+
+        // check if dashboard exists
+        if ($type == 'widget') {
+            $dashboards = $em->getRepository('MetricsBundle:Dashboard')
+                ->createQueryBuilder('d')
+                ->where('d.domain = :domain')
+                ->orderBy('d.pos', 'ASC')
+                ->setParameter('domain', $request->getSession()->get('domain'))
+                ->getQuery()->getResult();
+
+            if (!$dashboards) {
+                $dashboard = new Dashboard();
+                $dashboard->setTitle('Main Metrics')
+                    ->setDomain($request->getSession()->get('domain'))
+                    ->setPos(1);
+                $em->persist($dashboard);
+                $em->flush();
+            }
+        }
+
+        if (!$entities) {
+            if ($type == 'dashboard') {
+                return $this->redirect($this->generateUrl('dashboard_new'));
+            } else {
+                return $this->redirect($this->generateUrl('widgets_new'));
+            }
+        }
+
+        return array(
+            'type'      => $type,
+            'entities'  => $entities,
+        );
+    }
+
+    /**
+     * Use recipe setup form.
+     *
+     * @Route("/recipes/use/{id}", name="recipe_use")
+     * @Method("GET")
+     * @Template()
+     */
+    public function recipeUseAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('MetricsBundle:Recipe')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Recipe entity.');
+        }
+
+        return array(
+            'entity' => $entity,
         );
     }
 

@@ -20,17 +20,22 @@
                 <ul id="dashboard-nav-items" class="nav navbar-nav">
                     {% if dashboards is defined %}
                     {% for item in dashboards %}
-                        <li data-id="{{ item.id }}" class="dashboard-nav-item{% if item.id == dashboard.id %} navbar-inverse{% endif %}">
+                        <li data-id="{{ item.id }}" style="position: relative" class="dashboard-nav-item{% if item.id == dashboard.id %} navbar-inverse{% endif %}">
                             <a href="{{ path("home", {id: item.id}) }}">
                                 {{ item.title }}
                             </a>
+                            {%- if aclService.userHasUrlAccess(path("dashboard_edit", {id: item.id})) %}
+                            <span onclick="location.href='{{ path("dashboard_edit", {id: item.id}) }}';" style="position: absolute; top:-4px; right: -6px; display: none; cursor: pointer" class="badge badge-warning badge-dashboard-edit">
+                                <i class="fa fa-pencil"></i>
+                            </span>
+                            {% endif -%}
                         </li>
                     {% endfor %}
                     {% endif %}
                 </ul>
 
                 <ul class="nav navbar-nav">
-                    <li><a href="{{ path("dashboard_new") }}" id="dashboard-new" style="display: none" title="Add new dashboard"><i class="fa fa-plus"></i></a></li>
+                    <li><a href="{{ path("recipe_library") }}" id="dashboard-new" style="display: none" title="Add new dashboard"><i class="fa fa-plus"></i></a></li>
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">

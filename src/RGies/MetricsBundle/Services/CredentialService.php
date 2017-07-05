@@ -117,6 +117,26 @@ class CredentialService
     }
 
     /**
+     * Checks if current domain has any credentials
+     *
+     * @param string provider Name of external provider bundle
+     * @return bool
+     */
+    function hasCredentials($provider = null)
+    {
+        $em = $this->_doctrine->getManager();
+        $search = array('domain' => $this->_session->get('domain'));
+
+        if ($provider) {
+            $search['provider'] = $provider;
+        }
+
+        $entities = $em->getRepository('MetricsBundle:Credential')->findBy($search);
+
+        return $entities ? true : false;
+    }
+
+    /**
      * Sets the connected state of a provider connection.
      *
      * @param string $provider

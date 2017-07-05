@@ -1,0 +1,60 @@
+{% extends "MetricsBundle::layout.html.twig" %}
+{% block content %}
+    <div class="container">
+        {% if type == 'dashboard' %}
+            <a href="{{ path("dashboard_new") }}" class="pull-right">
+                <i class="fa fa-plus"></i>
+                Empty Dashboard
+            </a>
+        {% else %}
+            <a href="{{ path("widgets_new") }}" class="pull-right">
+                <i class="fa fa-plus"></i>
+                Custom Widget
+            </a>
+        {% endif %}
+        <ul class="nav nav-tabs" style="margin-bottom: 15px">
+            <li role="presentation" {% if type == 'dashboard' %}class="active"{% endif %}>
+                <a href="{{ path("recipe_library") }}">
+                    <i class="fa fa-dashboard"></i>
+                    Dashboards
+                </a>
+            </li>
+            <li role="presentation" {% if type == 'widget' %}class="active"{% endif %}>
+                <a href="{{ path("recipe_library", {type:'widget'}) }}">
+                    <i class="fa fa-puzzle-piece"></i>
+                    Widgets
+                </a>
+            </li>
+        </ul>
+        <div class="row">
+            {% for item in entities %}
+                <div class="col-sm-6 col-md-4 col-xs-6">
+                    <div class="thumbnail">
+                        <img src="{{ asset('uploads/recipe/' ~ item.imageurl) }}" alt="{{ item.title }}">
+                        <div class="caption">
+                            <h3>
+                                {{ item.title }}
+                            </h3>
+                            <p>{{ item.description }}</p>
+                            <p style="text-align: center; padding-top: 20px;">
+                                <a href="{{ path('recipe_use', {id: item.id}) }}" class="btn btn-lg btn-primary" role="button">
+                                    <i class="fa fa-arrow-right"></i> Select ...
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="clearfix"></div>
+
+        <br/>
+        <br/>
+
+        <a href="{{ path('home') }}">
+            <i class="fa fa-arrow-circle-left"></i> Back to dashboard
+        </a>
+
+    </div>
+{% endblock %}

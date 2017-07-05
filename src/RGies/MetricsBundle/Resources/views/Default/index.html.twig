@@ -22,7 +22,7 @@
     {% include 'MetricsBundle::Templates/modal.html.twig' with {'id': 'copy-widget-modal', 'title': 'Copy Widget', 'submit': 'Copy', 'content': content} only %}
     {# END dialog #}
 
-    <button id="widget-new" title="Add new widget" class="btn btn-default" style="display: none; margin-bottom: 8px;" onclick="location.href='{{ path('widgets_new', {'dashboardId': dashboard.id}) }}'"><i class="fa fa-plus"></i> Add widget</button>
+    <button id="widget-new" title="Add new widget" class="btn btn-default" style="display: none; margin-bottom: 8px;" onclick="location.href='{{ path("recipe_library", {type:'widget'}) }}'"><i class="fa fa-plus"></i> Add widget</button>
     <script>
         var requestStack = [];
         function addDataRequest(url, params, callback) {
@@ -44,7 +44,11 @@
             <div class="panel-heading widget-panel-title" style="">&nbsp;</div>
 
             <div class="panel-body widget-panel-body">
-                <center><a href="{{ path('widgets_new', {'dashboardId': dashboard.id}) }}"><i class="fa fa-plus-circle fa-5x"></i></a></center>
+                <p style="text-align: center">
+                    <a href="{{ path("recipe_library", {type:'widget'}) }}">
+                        <i class="fa fa-plus-circle fa-5x"></i>
+                    </a>
+                </p>
             </div>
         </div>
     {% endif %}
@@ -95,9 +99,10 @@
                 dashboardEditMode = true;
                 {% if aclService.userHasUrlAccess(path('dashboard_new')) and not licenseService.limitReached('Dashboard') -%}
                 $('#dashboard-new').css('display', 'inline-block');
+                $('.badge-dashboard-edit').css('display', 'inline-block');
                 {% endif -%}
                 {% if aclService.userHasUrlAccess(path('widgets_new', {dashboardId: dashboard.id})) -%}
-                $('#widget-new').css('display', 'inline-block');
+                if (!$('#widget-0').length) $('#widget-new').css('display', 'inline-block');
                 {% endif -%}
                 $('.widget-item').addClass('widget-panel-edit-mode');
                 $('.dashboard-nav-item').addClass('widget-panel-edit-mode');
@@ -138,6 +143,7 @@
                 dashboardEditMode = false;
                 $('#dashboard-new').css('display', 'none');
                 $('#widget-new').css('display', 'none');
+                $('.badge-dashboard-edit').css('display', 'none');
                 $('.widget-item').removeClass('widget-panel-edit-mode');
                 $('.dashboard-nav-item').removeClass('widget-panel-edit-mode');
                 $( "#sortable" ).sortable('disable');
