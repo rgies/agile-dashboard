@@ -63,6 +63,11 @@
         var dashboardEditMode = false;
 
         // Catch key events
+        $( document ).on('keyup',function(evt) {
+            if (evt.keyCode == 27 && dashboardEditMode) {
+                toggleDashboardEditMode();
+            }
+        });
         $( document ).keypress(function( event ) {
             //console.log(event.keyCode);
 
