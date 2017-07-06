@@ -73,7 +73,10 @@ class DefaultController extends Controller
         if ($issues) {
             $value = '<table>';
 
+            $z = 0;
             foreach ($issues->getIssues() as $issue) {
+                if ($z++ >= $maxLines) break;
+
                 $value = $value . '<tr style="white-space: nowrap;"><td><i class="fa fa-circle"></i> '
                     . $this->_createLink($issue->key,$issue->fields->summary)
                     . $colSpacer . '</td>';
