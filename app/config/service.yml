@@ -4,6 +4,10 @@ services:
         class:            RGies\MetricsBundle\Services\WidgetService
         arguments:        [@doctrine, %widget_plugins%, @service_container]
 
+    dashboard_service:
+        class:            RGies\MetricsBundle\Services\DashboardService
+        arguments:        [@doctrine, @session, @widget_service]
+
     cache_service:
         class:            RGies\MetricsBundle\Services\CacheService
         arguments:        [@doctrine, %widget_cache%]

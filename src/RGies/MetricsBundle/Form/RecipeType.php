@@ -41,7 +41,7 @@ class RecipeType extends AbstractType
 
         $builder
             ->add('title')
-            ->add('entity_type', 'choice', array(
+            ->add('type', 'choice', array(
                 'choices'   => array('dashboard'=>'Dashboard'),
                 'attr'      => array('style' => 'width:100px')
             ))

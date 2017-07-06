@@ -116,7 +116,7 @@ class DefaultController extends Controller
         }
 
         $entities = $em->getRepository('MetricsBundle:Recipe')->findBy(
-            array('entity_type' => $type),
+            array('type' => $type),
             array('id' => 'DESC')
         );
 
@@ -170,8 +170,33 @@ class DefaultController extends Controller
             throw $this->createNotFoundException('Unable to find Recipe entity.');
         }
 
+        // if no custom fields exists create new dashboard
+        if (!count($entity->getRecipeFields())) {
+            if ($this->get('LicenseService')->limitReached('Dashboard')) {
+                return $this->redirect($this->generateUrl('home'));
+            }
+
+            $import = json_decode(
+                file_get_contents(
+                    $this->getParameter('recipe_directory') . '/' . $entity->getJsonConfig()
+                ),
+                true
+            );
+
+            $title = $import['dashboard']['title'];
+            $dashboard = $this->get('DashboardService')->import($import, $title);
+
+            return $this->redirect($this->generateUrl('home', ['id'=>$dashboard->getId()]));
+        }
+
+        $fields = $em->getRepository('MetricsBundle:RecipeFields')->findBy(
+            array('id' => $entity->getId()),
+            array('pos' => 'ASC')
+        );
+
         return array(
             'entity' => $entity,
+            'fields' => $fields,
         );
     }
 

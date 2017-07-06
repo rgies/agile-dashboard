@@ -33,7 +33,7 @@
                 <td><a href="{{ path('recipe_edit', { 'id': entity.id }) }}">{{ entity.title }}</a></td>
                 <td>{{ entity.description }}</td>
                 <td>{{ entity.rating }}</td>
-                <td>{{ entity.entitytype }}</td>
+                <td>{{ entity.type }}</td>
                 <td>{{ entity.bundlename }}</td>
                 <td>{% if entity.enabled %}<i class="fa fa-check-circle"></i>{% endif %}</td>
                 <td><a href="{{ path('recipe_edit', { 'id': entity.id }) }}"><i class="fa fa-edit"></i> Edit</a>                </td>

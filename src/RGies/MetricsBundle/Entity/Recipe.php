@@ -61,9 +61,9 @@ class Recipe
     /**
      * @var string
      *
-     * @ORM\Column(name="entity_type", type="string", length=100)
+     * @ORM\Column(name="type", type="string", length=100)
      */
-    private $entity_type;
+    private $type;
 
     /**
      * @var string
@@ -253,13 +253,13 @@ class Recipe
     /**
      * Set entityType
      *
-     * @param string $entityType
+     * @param string $type
      *
      * @return Recipe
      */
-    public function setEntityType($entityType)
+    public function setType($type)
     {
-        $this->entity_type = $entityType;
+        $this->type = $type;
 
         return $this;
     }
@@ -269,9 +269,9 @@ class Recipe
      *
      * @return string
      */
-    public function getEntityType()
+    public function getType()
     {
-        return $this->entity_type;
+        return $this->type;
     }
 
     /**

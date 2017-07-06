@@ -99,7 +99,6 @@
                 dashboardEditMode = true;
                 {% if aclService.userHasUrlAccess(path('dashboard_new')) and not licenseService.limitReached('Dashboard') -%}
                 $('#dashboard-new').css('display', 'inline-block');
-                $('.badge-dashboard-edit').css('display', 'inline-block');
                 {% endif -%}
                 {% if aclService.userHasUrlAccess(path('widgets_new', {dashboardId: dashboard.id})) -%}
                 if (!$('#widget-0').length) $('#widget-new').css('display', 'inline-block');
@@ -138,12 +137,13 @@
                     }
                 });
                 $( ".dashboard-nav-item" ).droppable('enable');
+                $('.dashboard-edit-link').css('display', 'inline-block');
 
             } else {
                 dashboardEditMode = false;
                 $('#dashboard-new').css('display', 'none');
                 $('#widget-new').css('display', 'none');
-                $('.badge-dashboard-edit').css('display', 'none');
+                $('.dashboard-edit-link').css('display', 'none');
                 $('.widget-item').removeClass('widget-panel-edit-mode');
                 $('.dashboard-nav-item').removeClass('widget-panel-edit-mode');
                 $( "#sortable" ).sortable('disable');

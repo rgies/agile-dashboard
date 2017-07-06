@@ -2,7 +2,6 @@
 
 namespace RGies\MetricsBundle\Controller;
 
-use RGies\MetricsBundle\Entity\Widgets;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -254,55 +253,6 @@ class DashboardController extends Controller
     }
 
     /**
-     * Generates data array.
-     *
-     * @param integer $id Dashbaord id
-     * @return array
-     */
-    protected function _toArray($id)
-    {
-        $data = array();
-        $em = $this->getDoctrine()->getManager();
-
-        $dashboard = $em->getRepository('MetricsBundle:Dashboard')
-            ->createQueryBuilder('d')
-            ->where('d.id = :id')
-            ->setParameter('id', $id)
-            ->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
-
-        if (!$dashboard) {
-            throw $this->createNotFoundException('Dashboard not found');
-        }
-
-        $data['dashboard'] = $dashboard[0];
-
-        $params = $em->getRepository('MetricsBundle:Params')
-            ->createQueryBuilder('p')
-            ->where('p.dashboard = :id')
-            ->setParameter('id', $id)
-            ->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
-
-        $data['params'] = $params;
-
-        $widgets = $em->getRepository('MetricsBundle:Widgets')
-            ->createQueryBuilder('w')
-            ->where('w.dashboard = :id')
-            ->setParameter('id', $id)
-            ->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
-
-        $data['widgets'] = $widgets;
-
-        $data['configs'] = array();
-        foreach($widgets as $widget) {
-            $data['configs'][$widget['id']] =
-                $this->get('widgetService')->getWidgetConfig($widget['type'], $widget['id'], true)
-            ;
-        }
-
-        return $data;
-    }
-
-    /**
      * Reorder dashboards by given id list.
      *
      * @Route("/reorderDashboards/", name="dashboard_reorder")
@@ -367,7 +317,7 @@ class DashboardController extends Controller
 
         $response->setContent(
             json_encode(
-                $this->_toArray($id)
+                $this->get('DashboardService')->export($id)
             )
         );
 
@@ -400,7 +350,7 @@ class DashboardController extends Controller
             $import = json_decode(file_get_contents($filename), true);
             $title = $import['dashboard']['title'] . '-new';
 
-            $dashboard = $this->_persistArray($import, $title);
+            $dashboard = $this->get('DashboardService')->import($import, $title);
 
             @unlink($filename);
         }
@@ -427,60 +377,12 @@ class DashboardController extends Controller
             throw $this->createNotFoundException('No dashboard id given.');
         }
 
-        $dashboard = $this->_toArray($id);
+        $dashboard = $this->get('DashboardService')->export($id);
         $dashboard['dashboard']['title'] = $title;
 
-        $this->_persistArray($dashboard, $title);
+        $this->get('DashboardService')->import($dashboard, $title);
 
         return $this->forward('MetricsBundle:Dashboard:index');
     }
-
-    /**
-     * Creates new dashboard database entry with given data.
-     *
-     * @param array $data Dashboard data
-     * @param string $title Dashboard title
-     * @return Dashboard
-     */
-    protected function _persistArray($data, $title)
-    {
-        $session = $this->get('session');
-        $em = $this->getDoctrine()->getManager();
-
-        // persist dashboard
-        $dashboard = new Dashboard($data['dashboard']);
-        $dashboard->setTitle($title);
-        $dashboard->setDomain($session->get('domain'));
-
-        $em->persist($dashboard);
-        $em->flush();
-
-        // persist params
-        if (isset($data['params'])) {
-            foreach ($data['params'] as $param) {
-                $param['dashboard'] = $dashboard;
-                $param = new Params($param);
-                $em->persist($param);
-                $em->flush();
-            }
-        }
-
-        // persist widgets
-        foreach ($data['widgets'] as $widget) {
-            $id = $widget['id'];
-            $widget['dashboard'] = $dashboard;
-            $widget = new Widgets($widget);
-            $em->persist($widget);
-            $em->flush();
-
-            // persist config
-            $config = $data['configs'][$id];
-            $config['widget_id'] = $widget->getId();
-            $this->get('WidgetService')->setWidgetConfig($widget->getType(), $config);
-        }
-
-        return $dashboard;
-    }
-
 
 }
