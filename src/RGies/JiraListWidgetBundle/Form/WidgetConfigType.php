@@ -31,7 +31,8 @@ class WidgetConfigType extends AbstractType
                 'choices' => array(
                     'summary' => 'Issue summary',
                     'assignee_invest' => 'Assignee + time spend',
-                    'age_invest' => 'Issue age + time spend'
+                    'age_invest' => 'Issue age + time spend',
+                    'status_age' => 'Status + issue age',
                 )
             ))
         ;

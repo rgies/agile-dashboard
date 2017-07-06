@@ -63,7 +63,12 @@ class DefaultController extends Controller
 
         try {
             $issueService = new IssueService($jiraLogin);
-            $issues = $issueService->search($jql, 0, $maxLines, ['key','summary','assignee','created','resolutiondate','aggregatetimespent']);
+            $issues = $issueService->search(
+                $jql,
+                0,
+                $maxLines,
+                ['key','summary','assignee','created','status','resolutiondate','aggregatetimespent']
+            );
         } catch (JiraException $e) {
             $response['warning'] = wordwrap($e->getMessage(), 38, '<br/>');
             return new Response(json_encode($response), Response::HTTP_OK);
@@ -102,6 +107,22 @@ class DefaultController extends Controller
 
                 switch ($widgetConfig->getExtendedInfo())
                 {
+                    case 'status_age':
+                        $status = 'Unknown';
+                        if ($issue->fields->status) {
+                            $status = $this->_getShortSummery($issue->fields->status->name, 15);
+                        }
+
+                        $value .= '<td><i title="State" class="fa fa-tag"></i> <i>' . $status . '</i></td>'
+                            . '<td>' . $colSpacer . '<i title="Issue Age" class="fa fa-coffee"></i> <i>'
+                            . $issueAgeDays . '</i></td>';
+
+                        if ($size == '2x1' or $size == '2x2') {
+                            $value .= '<td><i>' . $colSpacer . $this->_getShortSummery($issue->fields->summary, 30)
+                                . '</i></td>';
+                        }
+                        break;
+
                     case 'age_invest':
                         $value .= '<td><i title="Issue age" class="fa fa-coffee"></i> <i>' . $issueAgeDays . 'd</i></td>'
                             . '<td>' . $colSpacer . '<i title="Time spend" class="ion ion-android-stopwatch"></i> <i>'
@@ -176,7 +197,15 @@ class DefaultController extends Controller
     protected function _getShortName($name, $len = 10)
     {
         $split = explode(' ', $name, 2);
-        $shortName = substr($split[0], 0, 1) . '.' . $split[1];
+        if (count($split) == 1) {
+            $split = explode('.', $name, 2);
+        }
+
+        if (count($split) == 1) {
+            $shortName = ucfirst($split[0]);
+        } else {
+            $shortName = substr(ucfirst($split[0]), 0, 1) . '.' . ucfirst($split[1]);
+        }
 
         if (strlen($shortName) > ($len-1)) {
             $shortName = mb_substr($shortName, 0, ($len-1)) . '...';
