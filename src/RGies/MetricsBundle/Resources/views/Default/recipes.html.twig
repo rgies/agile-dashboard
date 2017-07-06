@@ -1,10 +1,24 @@
 {% extends "MetricsBundle::layout.html.twig" %}
 {% block content %}
+    <!-- Upload Dialog -->
+    {% set content %}
+        <form id="upload-form" method="post" action="{{ path('dashboard_import') }}" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="filebutton-upl" class="control-label">File</label>
+                <input id="filebutton-upl" name="file[]" multiple="multiple" type="file" class="filestyle" data-buttonText="Select file" data-iconName="glyphicon-import" data-input="true" data-buttonName="btn-default">
+            </div>
+        </form>
+    {% endset %}
+    {% include 'MetricsBundle::Templates/modal.html.twig' with {'id': 'upload-modal', 'title': 'Import', 'submit': 'Import', 'content': content} only %}
     <div class="container">
         {% if type == 'dashboard' %}
             <a href="{{ path("dashboard_new") }}" class="pull-right">
                 <i class="fa fa-plus"></i>
-                Empty Dashboard
+                New Dashboard
+            </a>
+            <a href="#" class="pull-right" style="padding-right: 20px;" data-toggle="modal" data-target="#upload-modal">
+                <i class="fa fa-upload"></i>
+                Import Dashboard
             </a>
         {% else %}
             <a href="{{ path("widgets_new") }}" class="pull-right">
