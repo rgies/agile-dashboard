@@ -50,6 +50,10 @@
                     <i class="fa fa-check"></i> Save
                 </button>
                 <span class="pull-right">&nbsp;&nbsp;&nbsp;</span>
+                <button id="export" onclick="location.href='{{ path('dashboard_export', { 'id': entity.id }) }}';" class="btn btn-default pull-right">
+                    <i class="fa fa-download"></i> Export
+                </button>
+                <span class="pull-right">&nbsp;&nbsp;&nbsp;</span>
                 <button id="delete" onclick="deleteEntity()" class="btn btn-danger pull-right">
                     <i class="fa fa-trash"></i> Delete
                 </button>
