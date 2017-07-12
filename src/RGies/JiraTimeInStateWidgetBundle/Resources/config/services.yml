@@ -1,0 +1,11 @@
+# Plugin Parameters
+parameters:
+    JiraTimeInStateWidgetBundleConfig:
+        widget_view: 'JiraTimeInStateWidgetBundle::Default/widget.html.twig'
+        edit_action: 'JiraTimeInStateWidgetBundle_widgetconfig_edit'
+
+# Plugin Services
+services:
+    JiraTimeInStateWidgetBundleService:
+        class: RGies\JiraTimeInStateWidgetBundle\Services\WidgetPluginService
+        arguments: [@doctrine, %JiraTimeInStateWidgetBundleConfig%]
