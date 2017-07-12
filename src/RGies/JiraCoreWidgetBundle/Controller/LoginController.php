@@ -72,8 +72,13 @@ class LoginController extends Controller
 
             if ($result) {
                 $this->get('CredentialService')->setConnectedState('JiraCoreWidgetBundle', true);
+
+                if (strtolower(substr($jiraLogin->getjiraHost(), 0, 8)) != 'https://') {
+                    $this->get('session')->getFlashBag()->add('error', 'Connection should be use SSL (https) encryption.');
+                }
             } else {
                 $this->get('CredentialService')->setConnectedState('JiraCoreWidgetBundle', false);
+                $this->get('session')->getFlashBag()->add('error', 'Connection to JIRA not possible, please check login credentials.');
             }
 
             return $this->redirect($this->generateUrl('provider'));

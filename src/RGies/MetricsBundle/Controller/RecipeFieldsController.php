@@ -58,7 +58,7 @@ class RecipeFieldsController extends Controller
      */
     private function createCreateForm(RecipeFields $entity)
     {
-        $form = $this->createForm(new RecipeFieldsType(), $entity, array(
+        $form = $this->createForm(new RecipeFieldsType($this->container), $entity, array(
             'action' => $this->generateUrl('recipefields_create', array('recipeId' => $entity->getRecipe()->getId())),
             'method' => 'POST',
             'attr'   => array('id' => 'create-form'),
@@ -129,7 +129,7 @@ class RecipeFieldsController extends Controller
     */
     private function createEditForm(RecipeFields $entity)
     {
-        $form = $this->createForm(new RecipeFieldsType(), $entity, array(
+        $form = $this->createForm(new RecipeFieldsType($this->container), $entity, array(
             'action' => $this->generateUrl('recipefields_update', array('id' => $entity->getId())),
             'method' => 'PUT',
             'attr'   => array('id' => 'edit-form'),

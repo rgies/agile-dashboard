@@ -1,4 +1,13 @@
 {% block navi %}
+    {# Show flashmessage if errors exists #}
+    {%- if app.session.getFlashBag.has("error") %}
+        <!-- Error messages -->
+        {% for flashMessage in app.session.flashbag.get("error") %}
+            <div class="alert alert-danger" role="alert">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+    {% endif -%}
     <!-- Navigation bar -->
     <nav id="navigation-block" class="navbar navbar-default" role="navigation">
         <div class="container-fluid">

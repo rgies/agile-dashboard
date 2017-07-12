@@ -35,10 +35,19 @@ class WidgetConfigType extends AbstractType
                 'SpendTime'=>'Time Spend (h)',
                 'Custom'=>'Custom Field')))
             ->add('customField','hidden')
-            ->add('start_date','text',array('required' => false, 'label' => 'Start date (2017-01-15 / -7 days / -1 month)'))
-            ->add('end_date','text',array('required' => false))
-            ->add('label1', 'text',array('label' => 'Label'))
-            ->add('jql_query1','textarea',array('label' => 'Jql Query (type=Story and resolved>="%start%" and resolved<="%end%")'))
+            ->add('start_date','text',array(
+                'required' => false,
+                'label' => 'Start date (2017-01-15 / -7 days / -1 month)'
+            ))
+            ->add('end_date','text',array(
+                'required' => false
+            ))
+            ->add('label1', 'text',array(
+                'label' => 'Label'
+            ))
+            ->add('jql_query1','textarea',array(
+                'label' => 'Jql Query (type=Story and created<="%end%" and (resolved>"%end%" or resolution=Unresolved))'
+            ))
         ;
     }
     

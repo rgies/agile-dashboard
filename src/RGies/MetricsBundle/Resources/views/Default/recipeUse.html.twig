@@ -8,5 +8,58 @@
         </h1>
     </div>
 
+
+    <!-- Data Form -->
+    <form id="dataForm" name="dataForm" role="form" method="post" action="{{ path('recipe_add', {id: entity.id}) }}">
+        {% for item in fields %}
+        <div class="form-group">
+            <label for="text-input">
+                <h3>{{ item.label }}</h3>
+                <p>{{ item.description }}</p>
+            </label>
+            {% render controller(item.type, { 'id':item.id, 'name':'field[' ~ item.name ~ ']', 'value':item.preset, 'placeholder':item.placeholder }) %}
+            {% if item.sample %}<p class="help-block">{{ item.sample }}</p>{% endif %}
+        </div>
+        {% endfor %}
+    </form>
+
+    <br/>
+
+    <div class="form-group">
+        <div class="control">
+            <button id="save" type="submit" onclick="formSave()" class="btn btn-primary pull-right">
+                <i class="fa fa-check"></i> Create Dashboard
+            </button>
+            <span class="pull-right">&nbsp;&nbsp;&nbsp;</span>
+            <button type="button" onclick="history.back();" class="btn btn-default pull-right">
+                <i class="fa fa-times-circle"></i> Cancel
+            </button>
+        </div>
+    </div>
+
 </div>
+{% endblock %}
+
+{% block js -%}
+    <link href="{{ asset('css/jquery-ui.min.css') }}" rel="stylesheet" media="screen">
+    <script src="{{ asset('js/jquery-ui.min.js') }}"></script>
+
+    <script language="JavaScript">
+
+        function formSave()
+        {
+            var form = $("#dataForm");
+
+            if (form.validate())
+            {
+                form.submit();
+            }
+        }
+
+        $( document ).ready(function() {
+            $("#dataForm").validate();
+        });
+    </script>
+
+
 {% endblock %}

@@ -52,7 +52,8 @@ class RecipeType extends AbstractType
             ))
             ->add('description')
             ->add('image_url', 'file', array(
-                'required' => false
+                'required' => false,
+                'label' => 'PNG-Image (*.png)'
             ))
             ->add('json_config', 'file', array(
                 'required' => false

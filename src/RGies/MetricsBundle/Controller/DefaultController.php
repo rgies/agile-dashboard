@@ -190,7 +190,7 @@ class DefaultController extends Controller
         }
 
         $fields = $em->getRepository('MetricsBundle:RecipeFields')->findBy(
-            array('id' => $entity->getId()),
+            array('recipe' => $entity->getId()),
             array('pos' => 'ASC')
         );
 
@@ -198,6 +198,45 @@ class DefaultController extends Controller
             'entity' => $entity,
             'fields' => $fields,
         );
+    }
+
+    /**
+     * Add dashboard or widget from recipe.
+     *
+     * @Route("/recipe/add/{id}", name="recipe_add")
+     * @Template()
+     */
+    public function recipeAddAction(Request $request, $id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('MetricsBundle:Recipe')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Recipe entity.');
+        }
+
+        if ($this->get('LicenseService')->limitReached('Dashboard')) {
+            return $this->redirect($this->generateUrl('home'));
+        }
+
+        $import = file_get_contents($this->getParameter('recipe_directory') . '/' . $entity->getJsonConfig());
+
+        if ($entity->getType() == 'dashboard') {
+            foreach ($request->get('field') as $key=>$value) {
+                $placeholder = '%custom_field_' . $key . '%';
+                $import = str_replace($placeholder, $value, $import);
+            }
+
+            $import = json_decode($import, true);
+            $title = $import['dashboard']['title'];
+            $dashboard = $this->get('DashboardService')->import($import, $title);
+
+            return $this->redirect($this->generateUrl('home', ['id'=>$dashboard->getId()]));
+        } else {
+
+            return $this->redirect($this->generateUrl('home'));
+        }
     }
 
     /**

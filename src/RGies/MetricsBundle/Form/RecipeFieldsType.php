@@ -8,18 +8,32 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class RecipeFieldsType extends AbstractType
 {
+    protected $_container;
+
+    /**
+     * Class constructor.
+     */
+    public function __construct($container)
+    {
+        $this->_container = $container;
+    }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $fieldTypes = $this->_container->getParameter('custom_fields');
+
         $builder
             ->add('label')
             ->add('name')
             ->add('description')
             ->add('preset')
-            ->add('type')
+            ->add('placeholder')
+            ->add('sample')
+            ->add('type', 'choice', array('choices' => $fieldTypes))
             ->add('pos', 'hidden')
         ;
     }

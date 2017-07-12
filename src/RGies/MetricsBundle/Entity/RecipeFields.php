@@ -51,6 +51,20 @@ class RecipeFields
     /**
      * @var string
      *
+     * @ORM\Column(name="placeholder", type="string", length=255, nullable=true)
+     */
+    private $placeholder;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="sample", type="string", length=255, nullable=true)
+     */
+    private $sample;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="preset", type="string", length=255, nullable=true)
      */
     private $preset;
@@ -246,5 +260,53 @@ class RecipeFields
     public function getPos()
     {
         return $this->pos;
+    }
+
+    /**
+     * Set sample
+     *
+     * @param string $sample
+     *
+     * @return RecipeFields
+     */
+    public function setSample($sample)
+    {
+        $this->sample = $sample;
+
+        return $this;
+    }
+
+    /**
+     * Get sample
+     *
+     * @return string
+     */
+    public function getSample()
+    {
+        return $this->sample;
+    }
+
+    /**
+     * Set placeholder
+     *
+     * @param string $placeholder
+     *
+     * @return RecipeFields
+     */
+    public function setPlaceholder($placeholder)
+    {
+        $this->placeholder = $placeholder;
+
+        return $this;
+    }
+
+    /**
+     * Get placeholder
+     *
+     * @return string
+     */
+    public function getPlaceholder()
+    {
+        return $this->placeholder;
     }
 }

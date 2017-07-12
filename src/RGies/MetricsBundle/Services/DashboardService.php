@@ -68,24 +68,37 @@ class DashboardService
         if (isset($data['params'])) {
             foreach ($data['params'] as $param) {
                 $param['dashboard'] = $dashboard;
-                $param = new Params($param);
-                $em->persist($param);
-                $em->flush();
+                try {
+                    $param = new Params($param);
+                    $em->persist($param);
+                    $em->flush();
+                } catch(\Exception $e) {
+                    $this->_session->getFlashBag()->add('error', 'Dashboard parameter could not created');
+                }
             }
         }
 
         // persist widgets
+        $widgetErrors = array();
         foreach ($data['widgets'] as $widget) {
             $id = $widget['id'];
             $widget['dashboard'] = $dashboard;
-            $widget = new Widgets($widget);
-            $em->persist($widget);
-            $em->flush();
+            try {
+                $widget = new Widgets($widget);
+                $em->persist($widget);
+                $em->flush();
 
-            // persist config
-            $config = $data['configs'][$id];
-            $config['widget_id'] = $widget->getId();
-            $this->_widgetService->setWidgetConfig($widget->getType(), $config);
+                // persist config
+                $config = $data['configs'][$id];
+                $config['widget_id'] = $widget->getId();
+                $this->_widgetService->setWidgetConfig($widget->getType(), $config);
+            } catch(\Exception $e) {
+                $widgetErrors[] = $widget->getTitle();
+            }
+        }
+
+        if ($widgetErrors) {
+            $this->_session->getFlashBag()->add('error', count($widgetErrors) . ' Widget(s) could not be created.');
         }
 
         return $dashboard;

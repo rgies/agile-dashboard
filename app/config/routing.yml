@@ -1,3 +1,8 @@
+jira_time_in_state_widget:
+    resource: "@JiraTimeInStateWidgetBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 jira_lead_time_widget:
     resource: "@JiraLeadTimeWidgetBundle/Controller/"
     type:     annotation

@@ -64,7 +64,7 @@ class JiraCoreService
                     'jiraUser'      => $credentials->user,
                     'jiraPassword'  => $credentials->password,
                     'jiraLogFile'   => '../app/logs/jira-rest-client.log',
-                    //'jiraLogLevel'  => 'INFO',
+                    //'jiraLogLevel'  => 'DEBUG',
                     //'curlOptSslVerifyHost' => true,
                     //'curlOptSslVerifyPeer' => true,
                     //'curlOptVerbose' => true,
