@@ -66,3 +66,7 @@ parameters:
 
     # Upload paths
     recipe_directory: '%kernel.root_dir%/../web/uploads/recipe'
+
+    # Color schemata
+    chart_line_colors: ['#0b62a4', '#7A92A3', '#4da74d', '#afd8f8', '#edc240', '#cb4b4b', '#9440ed', '#FFA500', '#483D8B', '#B0C4DE', '#808000', '#98FB98', '#DC143C', '#800000', '#0b62a4', '#7A92A3', '#4da74d', '#afd8f8', '#edc240', '#cb4b4b', '#9440ed', '#FFA500', '#483D8B', '#B0C4DE', '#808000', '#98FB98', '#DC143C', '#800000']
+
