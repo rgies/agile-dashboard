@@ -45,8 +45,8 @@ class WidgetConfigType extends AbstractType
             ->add('label1', 'text',array(
                 'label' => 'Label'
             ))
-            ->add('jql_query1','textarea',array(
-                'label' => 'Jql Query (type=Story and created<="%end%" and (resolved>"%end%" or resolution=Unresolved))'
+            ->add('jql_query1','textarea', array(
+                'attr' => array('rows' => 5)
             ))
         ;
     }

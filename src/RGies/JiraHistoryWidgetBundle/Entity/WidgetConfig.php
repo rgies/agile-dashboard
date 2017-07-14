@@ -55,21 +55,21 @@ class WidgetConfig
      *
      * @ORM\Column(name="start_date", type="string", length=100, nullable=true)
      */
-    private $start_date;
+    private $start_date = '-6 month';
 
     /**
      * @var string
      *
      * @ORM\Column(name="end_date", type="string", length=100, nullable=true)
      */
-    private $end_date;
+    private $end_date = 'last week friday';
 
     /**
      * @var string
      *
      * @ORM\Column(name="label1", type="string", length=255, nullable=true)
      */
-    private $label1;
+    private $label1 = 'Resolved stories';
 
 
     /**
@@ -77,7 +77,7 @@ class WidgetConfig
      *
      * @ORM\Column(name="jql_query1", type="text", nullable=true)
      */
-    private $jql_query1;
+    private $jql_query1 = 'type=Story and created<="%end%" and (resolved>"%end%" or resolution=Unresolved)';
 
 
     /**
