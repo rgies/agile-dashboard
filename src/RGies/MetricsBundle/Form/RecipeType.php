@@ -42,7 +42,7 @@ class RecipeType extends AbstractType
         $builder
             ->add('title')
             ->add('type', 'choice', array(
-                'choices'   => array('dashboard'=>'Dashboard'),
+                'choices'   => array('dashboard'=>'Dashboard', 'widget'=>'Widget'),
                 'attr'      => array('style' => 'width:100px')
             ))
             ->add('bundle_name', 'hidden', array())

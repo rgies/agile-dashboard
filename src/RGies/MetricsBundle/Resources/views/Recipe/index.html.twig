@@ -30,7 +30,10 @@
         {% for entity in entities %}
             <tr>
                 <td>{{ entity.id }}</td>
-                <td><a href="{{ path('recipe_edit', { 'id': entity.id }) }}">{{ entity.title }}</a></td>
+                <td>
+                    {% if entity.type == 'dashboard' %}<i class="fa fa-fw fa-dashboard"></i>{% else %}<i class="fa fa-fw fa-puzzle-piece"></i>{% endif %}
+                    <a href="{{ path('recipe_edit', { 'id': entity.id }) }}">{{ entity.title }}</a>
+                </td>
                 <td>{{ entity.description }}</td>
                 <td>{{ entity.rating }}</td>
                 <td>{{ entity.type }}</td>
