@@ -1,6 +1,17 @@
 {% extends "MetricsBundle::layout.html.twig" %}
 
 {% block content %}
+    {#== Import Widget Dialog =====================================================================================#}
+    {% set content %}
+        <form id="upload-form" method="post" action="{{ path('widget_import') }}" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="filebutton-upl" class="control-label">File</label>
+                <input id="filebutton-upl" name="file[]" multiple="multiple" type="file" class="filestyle" data-buttonText="Select file" data-iconName="glyphicon-import" data-input="true" data-buttonName="btn-default">
+            </div>
+            <input type="hidden" name="dashboard_id" value="{{ dashboard.id }}"/>
+        </form>
+    {% endset %}
+    {% include 'MetricsBundle::Templates/modal.html.twig' with {'id': 'upload-modal', 'title': 'Import widget', 'submit': 'Import', 'content': content} only %}
     {#== Copy Widget Dialog =====================================================================================#}
     {% set content %}
     <form id="copy-widget-form" method="post" action="{{ path('widgets_copy') }}" enctype="multipart/form-data">
@@ -22,7 +33,9 @@
     {% include 'MetricsBundle::Templates/modal.html.twig' with {'id': 'copy-widget-modal', 'title': 'Copy Widget', 'submit': 'Copy', 'content': content} only %}
     {# END dialog #}
 
-    <button id="widget-new" title="Add new widget" class="btn btn-default" style="display: none; margin-bottom: 8px;" onclick="location.href='{{ path("recipe_library", {type:'widget'}) }}'"><i class="fa fa-plus"></i> Add widget</button>
+    <button id="widget-new" title="Add widget" class="btn btn-default" style="display: none; margin-bottom: 8px;" onclick="location.href='{{ path("recipe_library", {type:'widget'}) }}'"><i class="fa fa-plus"></i> Add widget</button>
+    <button id="widget-import" title="Import widget" class="btn btn-default" style="display: none; margin-bottom: 8px;" data-toggle="modal" data-target="#upload-modal"><i class="fa fa-upload"></i> Import widget</button>
+
     <script>
         var requestStack = [];
         function addDataRequest(url, params, callback) {
@@ -75,7 +88,7 @@
                 // create new widget <n>-key
                 if (event.keyCode == 110) {
                     {%- if aclService.userHasUrlAccess(path('widgets_new', {'dashboardId': dashboard.id})) %}
-                    location.href = '{{ path('widgets_new', {'dashboardId': dashboard.id}) }}';
+                    location.href = '{{ path("recipe_library", {type:'widget'}) }}';
                     {% endif -%}
                 }
                 // dashboard drag&drop edit  mode <e>-key
@@ -106,7 +119,10 @@
                 $('#dashboard-new').css('display', 'inline-block');
                 {% endif -%}
                 {% if aclService.userHasUrlAccess(path('widgets_new', {dashboardId: dashboard.id})) -%}
-                if (!$('#widget-0').length) $('#widget-new').css('display', 'inline-block');
+                if (!$('#widget-0').length) {
+                    $('#widget-new').css('display', 'inline-block');
+                    $('#widget-import').css('display', 'inline-block');
+                }
                 {% endif -%}
                 $('.widget-item').addClass('widget-panel-edit-mode');
                 $('.dashboard-nav-item').addClass('widget-panel-edit-mode');
@@ -148,6 +164,7 @@
                 dashboardEditMode = false;
                 $('#dashboard-new').css('display', 'none');
                 $('#widget-new').css('display', 'none');
+                $('#widget-import').css('display', 'none');
                 $('.dashboard-edit-link').css('display', 'none');
                 $('.widget-item').removeClass('widget-panel-edit-mode');
                 $('.dashboard-nav-item').removeClass('widget-panel-edit-mode');

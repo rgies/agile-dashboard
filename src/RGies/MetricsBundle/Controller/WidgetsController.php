@@ -43,11 +43,13 @@ class WidgetsController extends Controller
         if ($index == null && $request->cookies->has(DefaultController::LAST_VISITED_DASHBOARD)) {
             $id = $request->cookies->get(DefaultController::LAST_VISITED_DASHBOARD);
 
+            $z=0;
             foreach ($dashboards as $dashboard) {
                 if ($dashboard->getId() == $id) {
+                    $index = $z;
                     break;
                 }
-                $index++;
+                $z++;
             }
         }
 
@@ -59,6 +61,7 @@ class WidgetsController extends Controller
             'entities' => $dashboards[$index]->getWidgets(),
         );
     }
+
     /**
      * Creates a new Widgets entity.
      *
@@ -147,8 +150,9 @@ class WidgetsController extends Controller
         $form   = $this->createCreateForm($entity, $dashboardEntity);
 
         return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
+            'dashboardId' => $dashboardId,
+            'entity'      => $entity,
+            'form'        => $form->createView(),
         );
     }
 
@@ -439,6 +443,52 @@ class WidgetsController extends Controller
         return $response;
     }
 
+    /**
+     * Import widget.
+     *
+     * @Route("/widget-import/", name="widget_import")
+     * @Template()
+     */
+    public function importWidgetAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        foreach ($request->files->get('file') as $file) {
+            if ($this->get('LicenseService')->limitReached('Widgets')) {
+                break;
+            }
+
+            $dashboardId = $request->get('dashboard_id');
+            $dashboard = $em->getRepository('MetricsBundle:Dashboard')->find($dashboardId);
+
+            if (!$dashboard) {
+                throw $this->createNotFoundException('Unable to find Dashboard entity.');
+            }
+
+            if (!$this->get('AclService')->userHasEntityAccess($dashboard)) {
+                throw $this->createNotFoundException('No access allowed.');
+            }
+
+            $filename = 'uploads/' . $file->getClientOriginalName();
+
+            if (!move_uploaded_file($file->getPathname(), $filename)) {
+                throw $this->createNotFoundException('Error on file upload');
+            }
+
+            if (substr($file->getClientOriginalName(), -5) != '.json') {
+                throw $this->createNotFoundException('Only *.json files allowed');
+            }
+
+            $import = json_decode(file_get_contents($filename), true);
+            $title = $import['widget']['title'] . '-new';
+
+            $widget = $this->get('WidgetService')->import($import, $title, $dashboard);
+
+            @unlink($filename);
+        }
+
+        return $this->redirect($this->generateUrl('widgets_edit', ['id'=>$widget->getId()]));
+    }
 
     /**
      * Copy a Widgets entity.

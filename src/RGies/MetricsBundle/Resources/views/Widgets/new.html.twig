@@ -1,13 +1,27 @@
 {% extends "MetricsBundle::layout.html.twig" %}
 
 {% block content -%}
+{#== Import Widget Dialog =====================================================================================#}
+{% set content %}
+    <form id="upload-form" method="post" action="{{ path('widget_import') }}" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="filebutton-upl" class="control-label">File</label>
+            <input id="filebutton-upl" name="file[]" multiple="multiple" type="file" class="filestyle" data-buttonText="Select file" data-iconName="glyphicon-import" data-input="true" data-buttonName="btn-default">
+        </div>
+        <input type="hidden" name="dashboard_id" value="{{ dashboardId }}"/>
+    </form>
+{% endset %}
+{% include 'MetricsBundle::Templates/modal.html.twig' with {'id': 'upload-modal', 'title': 'Import widget', 'submit': 'Import', 'content': content} only %}
+{#== END Dialog =====================================================================================#}
 <div class="container">
     <div class="page-header">
+        <button type="button" class="btn btn-default pull-right" data-toggle="modal" data-target="#upload-modal">
+            <i class="fa fa-upload"></i> Import widget
+        </button>
         <h1><i class="fa fa-puzzle-piece fa-fw"></i> Widgets creation</h1>
     </div>
 
     {{ form(form) }}
-
 
     <div class="form-group">
         <div class="control">

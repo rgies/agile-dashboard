@@ -34,13 +34,19 @@ class WidgetService
     private $_serviceContainer;
 
     /**
+     * @var \Symfony\Component\HttpFoundation\Session\Session
+     */
+    protected $_session;
+
+    /**
      * Class constructor.
      */
-    public function __construct($doctrine, $widgetTypes, $serviceContainer)
+    public function __construct($doctrine, $widgetTypes, $serviceContainer, $session)
     {
         $this->_doctrine            = $doctrine;
         $this->_widgetTypes         = $widgetTypes;
         $this->_serviceContainer    = $serviceContainer;
+        $this->_session = $session;
     }
 
     /**
@@ -160,9 +166,37 @@ class WidgetService
         return array('1x1');
     }
 
+    /**
+     * Creates new widget database entry with given data.
+     *
+     * @param array $data Widget data
+     * @param string $title Widget title
+     * @param Dashboard $dashboard Target dashboard
+     * @return Widgets
+     */
+    public function import($data, $title, $dashboard)
+    {
+        $em = $this->_doctrine->getManager();
+
+        try {
+            $widget = new Widgets($data['widget']);
+            $widget->setDashboard($dashboard);
+            $em->persist($widget);
+            $em->flush();
+
+            // persist config
+            $config = $data['config'];
+            $config['widget_id'] = $widget->getId();
+            $this->setWidgetConfig($widget->getType(), $config);
+        } catch(\Exception $e) {
+            $this->_session->getFlashBag()->add('error', ' Widget could not be created [' . $e->getMessage() . '].');
+        }
+
+        return $widget;
+    }
 
     /**
-     * Generates data array.
+     * Generates data array from given widget id.
      *
      * @param integer $id Widget id
      * @return array

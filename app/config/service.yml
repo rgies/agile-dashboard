@@ -2,7 +2,7 @@
 services:
     widget_service:
         class:            RGies\MetricsBundle\Services\WidgetService
-        arguments:        [@doctrine, %widget_plugins%, @service_container]
+        arguments:        [@doctrine, %widget_plugins%, @service_container, @session]
 
     dashboard_service:
         class:            RGies\MetricsBundle\Services\DashboardService
