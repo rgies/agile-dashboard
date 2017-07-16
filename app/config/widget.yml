@@ -15,7 +15,7 @@ parameters:
         JiraHistoryWidgetBundle:      'Jira - History Chart (Line, Bar Area)'
         JiraTimelineWidgetBundle:     'Jira - Roadmap by planed JIRA releases'
         JiraLeadTimeWidgetBundle:     'Jira - Lead time metric (Time to market)'
-        JiraTimeInStateWidgetBundle:  'Jira - Time in state assessment'
+        JiraTimeInStateWidgetBundle:  'Jira - Time in state'
 
         # Custom
         CustomChartWidgetBundle:      'Custom - Chart with manually entered data'

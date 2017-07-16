@@ -35,7 +35,7 @@ class WidgetConfigType extends AbstractType
             ))
             ->add('jql_query','text', array(
                 'attr'=>array(
-                    'placeholder'=>'project=PI and created<="%end%" and (resolved>"%end%" or resolution=Unresolved)'
+                    'placeholder'=>'Insert here your JQL query'
                 )
             ))
         ;

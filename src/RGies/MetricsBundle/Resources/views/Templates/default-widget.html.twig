@@ -26,6 +26,12 @@
                         <i class="fa fa-copy fa-fw"></i> Copy
                     </a>
                 </li>
+                <!-- Export Button -->
+                <li>
+                    <a href="{{ path('widget_export', {'id': widget.id }) }}">
+                        <i class="fa fa-download fa-fw"></i> Export
+                    </a>
+                </li>
                 <!-- Configuration Button -->
                 <li>
                     <a href="{{ path(widgetService.getWidgetEditActionName(widget.type), {id: widget.id}) }}">

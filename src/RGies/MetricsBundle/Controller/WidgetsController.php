@@ -404,6 +404,43 @@ class WidgetsController extends Controller
     }
 
     /**
+     * Export widget.
+     *
+     * @Route("/widget-export/{id}", name="widget_export")
+     * @return Response
+     */
+    public function exportWidgetAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('MetricsBundle:Widgets')->find($id);
+        $filename = str_replace(array(' ','%','/'), '_', $entity->getTitle()) . '.json';
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Widgets entity.');
+        }
+
+        if (!$this->get('AclService')->userHasEntityAccess($entity->getDashboard())) {
+            throw $this->createNotFoundException('No access allowed.');
+        }
+
+        $response = new Response();
+
+        $response->headers->set('Content-Type', 'application/json; charset=utf-8');
+        $response->headers->set('Pragma', 'public');
+        $response->headers->set('Cache-Control', 'maxage=1');
+        $response->headers->set('Content-Disposition', 'attachment;filename="' . $filename);
+
+        $response->setContent(
+            json_encode(
+                $this->get('WidgetService')->export($id)
+            )
+        );
+
+        return $response;
+    }
+
+
+    /**
      * Copy a Widgets entity.
      *
      * @Route("/copyWidget/", name="widgets_copy")

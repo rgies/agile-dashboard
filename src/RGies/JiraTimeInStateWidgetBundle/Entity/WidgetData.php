@@ -1,6 +1,6 @@
 <?php
 
-namespace RGies\JiraLeadTimeWidgetBundle\Entity;
+namespace RGies\JiraTimeInStateWidgetBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Index;
@@ -8,8 +8,8 @@ use Doctrine\ORM\Mapping\Index;
 /**
  * Widget Data
  *
- * @ORM\Table(name="JiraLeadTimeWidgetData")
- * @ORM\Entity(repositoryClass="RGies\JiraLeadTimeWidgetBundle\Entity\WidgetDataRepository")
+ * @ORM\Table(name="JiraTimeInStateWidgetData")
+ * @ORM\Entity(repositoryClass="RGies\JiraTimeInStateWidgetBundle\Entity\WidgetDataRepository")
  */
 class WidgetData
 {
@@ -39,14 +39,14 @@ class WidgetData
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="date", type="datetime")
+     * @ORM\Column(name="date", type="datetime", nullable=true)
      */
     private $date;
 
     /**
-     * @var float
+     * @var integer
      *
-     * @ORM\Column(name="value", type="float")
+     * @ORM\Column(name="value", type="array")
      */
     private $value;
 

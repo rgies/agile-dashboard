@@ -1,20 +1,154 @@
 {% extends "MetricsBundle::Templates/default-widget.html.twig" %}
 
 {% block widget_body %}
-    <h3><span id="widget-value-{{ widget.id }}">###</span></h3>
+    <div id="chart-{{ widget.id }}" style="height: {% if (widget.size=='2x2') or (widget.size=='1x2') or (widget.size=='3x2') or (widget.size=='Xx2') %}270{% else %}122{% endif %}px; top: -7px"></div>
+    <div id="chart-legend-{{ widget.id }}" style="position: absolute; right:35px; top:28px; font-size: 9px"></div>
+{% endblock %}
+
+{% block menue_items %}
+    <li role="separator" class="divider"></li>
+    <li>
+        <a href="javascript:reloadData{{ widget.id }}({{ widget.id }});">
+            <i class="fa fa-refresh fa-fw"></i> Reload
+        </a>
+    </li>
 {% endblock %}
 
 {% block script %}
     <script>
-        // HERE YOU CAN GET YOUR WIDGET DATA
-        addDataRequest('{{ path('JiraTimeInStateWidgetBundle-collect-data') }}'
-            , {id:{{ widget.id }}, type:'{{ widget.type }}', updateInterval:'{{ widget.updateInterval }}'}
-            , function (data) {
+        // register request to get widget data
+        addDataRequest(
+            '{{ path('JiraTimeInStateWidgetBundle-collect-data') }}',
+            {id:{{ widget.id }}, type:'{{ widget.type }}', updateInterval:'{{ widget.updateInterval }}'},
+            function (data) { displayData{{ widget.id }}(data);}
+        );
+
+        /**
+         * Relead widget data.
+         *
+         * @param id
+         */
+        function reloadData{{ widget.id }}(id)
+        {
+            // set reload spinner
+            $('#widget-title-suffix-{{ widget.id }}').html('<i class="fa fa-refresh fa-spin fa-fw"></i>');
+
+            // reset data cache
+            $.post( '{{ path('JiraTimeInStateWidgetBundle-reload-data') }}',
+                {id: id},
+                function(data) {
+                    $.post('{{ path('JiraTimeInStateWidgetBundle-collect-data') }}',
+                        {id:{{ widget.id }}, type:'{{ widget.type }}', needUpdate: 1, updateInterval:'{{ widget.updateInterval }}'},
+                        displayData{{ widget.id }}
+                    );
+                }
+            );
+        }
+
+        /**
+         * Display widget data.
+         *
+         * @param data
+         */
+        function displayData{{ widget.id }}(data)
+        {
             var response = JSON.parse(data);
 
-            $('#widget-value-{{ widget.id }}').hide('blind',null,function() {
-                $('#widget-value-{{ widget.id }}').html(response['value']).show('blind');
+            $('#chart-{{ widget.id }}').html('');
+
+            // Processing spinner icon
+            if (response['need-update']) {
+                $('#widget-title-suffix-{{ widget.id }}').html('<i class="fa fa-refresh fa-spin fa-fw"></i>');
+            } else {
+                $('#widget-title-suffix-{{ widget.id }}').html('');
+            }
+
+            if (response['warning']) {
+                $('#chart-{{ widget.id }}').html(
+                    '<div class="widget-value-warning"><i class="fa fa-warning"></i> ' +
+                    response['warning'] + '</div>'
+                );
+                return;
+            }
+
+            // draw chart
+            var chart{{ widget.id }} = new Morris.Area({
+                element: 'chart-{{ widget.id }}',
+                hideHover: 'auto',
+                data: response['data'],
+                xkey: 'date',
+                ykeys: response['keys'],
+                parseTime: false,
+                labels: response['labels'],
+                hoverCallback: function (index, options, content, row) {
+                    content = '';
+                    var i=0, sum = 0;
+                    for (var key in row) {
+                        if (row.hasOwnProperty(key)) {
+                            //if (key.charAt(0) == 'y' && typeof(row[key]) == 'number') {
+                            if (key != 'date' && typeof(row[key]) == 'number') {
+                                i++;
+                                sum = sum + row[key];
+                            }
+                        }
+                    }
+
+                    // draw chart legend
+                    var index = 0;
+                    for (var key in row) {
+                        if (row.hasOwnProperty(key)) {
+                            if (key != 'date') {
+                                var value = row[key];
+
+                                if (i > 1) {
+                                    value = value + 'd&nbsp;(' + Math.round(value / sum * 100) + '%)';
+                                }
+
+                                content = '<div class="morris-hover-point" style="text-align: left;">'
+                                    + '<i class="fa fa-circle" style="color:' + options.lineColors[index] + '"></i>&nbsp;'
+                                    + options.labels[index]
+                                    + ':&nbsp;'
+                                    + value
+                                    + '</div>'
+                                    + content;
+                                index++;
+                            }
+                        }
+                    }
+
+                    if (i>1) {
+                        sum = Math.round(sum * 10) / 10;
+                        content = content
+                            + '<div class="morris-hover-row-label">Σ: '
+                            + sum.toString()
+                            + ' days</div>';
+                    }
+
+                    content = '<div class="morris-hover-row-label">'
+                        + row['date']
+                        + '</div>'
+                        + content;
+
+
+                    return content;
+                },
+                fillOpacity: 0.5
             });
-        });
+
+            if (response['legend']) {
+                $('#chart-legend-{{ widget.id }}').html(response['legend']);
+            }
+
+            if (response['need-update']) {
+                dataRequestHandler.retryQueue.push(
+                    {
+                        'url':'{{ path('JiraTimeInStateWidgetBundle-collect-data') }}',
+                        'params': {id:{{ widget.id }}, type:'{{ widget.type }}', needUpdate: 1, updateInterval:'{{ widget.updateInterval }}'},
+                        'callback': arguments.callee
+                    }
+                );
+            }
+
+        }
     </script>
 {% endblock %}

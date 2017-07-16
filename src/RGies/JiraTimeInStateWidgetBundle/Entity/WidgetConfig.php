@@ -34,7 +34,7 @@ class WidgetConfig
      *
      * @ORM\Column(name="start_date", type="text", length=100, nullable=true)
      */
-    private $start_date;
+    private $start_date = '-6 month';
 
 
     /**
@@ -42,7 +42,7 @@ class WidgetConfig
      *
      * @ORM\Column(name="end_date", type="text", length=100, nullable=true)
      */
-    private $end_date;
+    private $end_date = 'last week friday';
 
 
     /**
@@ -50,7 +50,7 @@ class WidgetConfig
      *
      * @ORM\Column(name="jql_query", type="text")
      */
-    private $jql_query;
+    private $jql_query = 'project=MYPROJECT and type in (Story,Task) and created>="%start%" and created<="%end%"';
 
 
     /**

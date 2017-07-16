@@ -160,4 +160,32 @@ class WidgetService
         return array('1x1');
     }
 
+
+    /**
+     * Generates data array.
+     *
+     * @param integer $id Widget id
+     * @return array
+     * @throws \Exception
+     */
+    public function export($id)
+    {
+        $em = $this->_doctrine->getManager();
+
+        $result = $em->getRepository('MetricsBundle:Widgets')
+            ->createQueryBuilder('w')
+            ->where('w.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+
+        if (!$result) {
+            throw new \Exception('Widget with id ['. $id .'] not found');
+        }
+
+        $data = array();
+        $data['widget'] = $widget = $result[0];
+        $data['config'] = $this->getWidgetConfig($widget['type'], $widget['id'], true);
+
+        return $data;
+    }
 }

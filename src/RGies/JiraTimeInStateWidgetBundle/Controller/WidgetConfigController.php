@@ -159,6 +159,11 @@ class WidgetConfigController extends Controller
             $em->flush();
             $this->get('CacheService')->deleteValue('JiraTimeInStateWidgetBundle', $entity->getWidgetId());
 
+            // clear widget data cache
+            $em->createQuery('delete from JiraTimeInStateWidgetBundle:WidgetData st where st.widget_id = :id')
+                ->setParameter('id', $entity->getWidgetId())
+                ->execute();
+
             return $this->redirect($this->generateUrl('home'));
         }
 

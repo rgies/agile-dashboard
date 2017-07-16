@@ -150,7 +150,8 @@ class DefaultController extends Controller
 
                         if (isset($issue->fields->resolutiondate) && $issue->fields->resolutiondate) {
                             $resolved = new \DateTime($issue->fields->resolutiondate);
-                            $leadTimeDays = (int)$issue->fields->created->diff($resolved)->format('%a');
+                            //$leadTimeDays = (int)$issue->fields->created->diff($resolved)->format('%a');
+                            $leadTimeDays = ($resolved->getTimestamp() - $issue->fields->created->getTimestamp()) / 3600 / 24;
 
                             $leadTimeArray[] = $leadTimeDays;
                         }
