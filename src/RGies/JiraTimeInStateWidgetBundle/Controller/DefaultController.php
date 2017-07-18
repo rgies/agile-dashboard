@@ -44,157 +44,65 @@ class DefaultController extends Controller
         $widgetId       = $request->get('id');
         $widgetType     = $request->get('type');
         $updateInterval = $request->get('updateInterval');
-        $needUpdate     = $request->get('needUpdate');
+        $size           = $request->get('size');
 
         // Get data from cache
         $cache = $this->get('CacheService');
-        if ($needUpdate === null) {
-            if ($cacheValue = $cache->getValue('JiraTimeInStateWidgetBundle', $widgetId, null, $updateInterval)) {
-                //return new Response($cacheValue, Response::HTTP_OK);
-            }
+        if ($cacheValue = $cache->getValue('JiraTimeInStateWidgetBundle', $widgetId, null, $updateInterval)) {
+            //return new Response($cacheValue, Response::HTTP_OK);
         }
 
+        $jiraLogin = $this->get('JiraCoreService')->getLoginCredentials();
         $widgetConfig = $this->get('WidgetService')->getResolvedWidgetConfig($widgetType, $widgetId);
-        $em = $this->getDoctrine()->getManager();
+
+        $colSpacer = str_repeat('&nbsp;',5);
+        $maxLines = ($size == '1x2' || $size == '2x2') ? 15 : 5;
 
         $response = array();
-        $response['data'] = array();
-        $startDate = new \DateTime();
-        $endDate = new \DateTime();
-
-        $jql = $widgetConfig->getJqlQuery();
-
-        if ($widgetConfig->getStartDate()) {
-            try {
-                $startDate = new \DateTime($widgetConfig->getStartDate());
-            } catch (Exception $e)
-            {
-                $response['warning'] = wordwrap('Wrong start date format: ' . $e->getMessage(), 38, '<br/>');
-                return new Response(json_encode($response), Response::HTTP_OK);
-            }
-        }
-
-        if ($widgetConfig->getEndDate()) {
-            try {
-                $endDate = new \DateTime($widgetConfig->getEndDate());
-            } catch (Exception $e)
-            {
-                $response['warning'] = wordwrap('Wrong end date format: ' . $e->getMessage(), 38, '<br/>');
-                return new Response(json_encode($response), Response::HTTP_OK);
-            }
-        }
-
-        $updateCounter = 0;
-        $response['rows'] = [];
-        $response['labels'] = [];
-        $response['keys'] = [];
         $response['history'] = [];
-        $days = (int)$startDate->diff($endDate)->format('%a');
+
         $colors = $this->getParameter('chart_line_colors');
 
-        $issueService = new IssueService($this->get('JiraCoreService')->getLoginCredentials());
+        $jql = $widgetConfig->getJqlQuery();
+        $issueService = new IssueService($jiraLogin);
 
-        $now = clone $endDate;
-        $interval = '-1 day';
 
-        // auto calculate interval
-        if ($days > 300) {
-            $interval = '-3 month';
-            if (!$widgetConfig->getEndDate()) {
-                $now = new \DateTime('first day of this month');
-            }
-        } elseif ($days > 100) {
-            $interval = '-1 month';
-            if (!$widgetConfig->getEndDate()) {
-                $now = new \DateTime('first day of this month');
-            }
-        } elseif ($days > 14) {
-            $interval = '-1 week';
-            if (!$widgetConfig->getEndDate()) {
-                $now = new \DateTime('last week sunday');
-            }
+        // Execute jql query
+        try {
+            $issues = $issueService->search(
+                $jql,
+                0,
+                100000,
+                ['key', 'created'],
+                ['changelog']
+            );
+        } catch (JiraException $e) {
+            $response['warning'] = wordwrap($e->getMessage(), 38, '<br/>');
+            return new Response(json_encode($response), Response::HTTP_OK);
         }
 
-        $row = 1;
-
-        for ($now; $now > $startDate; $now->modify($interval))
-        {
-            $data = $this->_getDataArray($widgetId, 1);
-            $response['labels'] = $this->_getDataArray($widgetId, 2);
-            $response['keys'] = array_keys($response['labels']);
-            $keyDate = new \DateTime($now->format('Y-m-d'));
-            $dateTs= $keyDate->getTimestamp();
-
-            // jump over days in future
-            if ($dateTs>time()) {
-                continue;
-            }
-
-            // check for not persisted data in cache
-            if (!isset($data[$dateTs]) && $updateCounter < 1) {
-
-                $updateCounter++;
-                $start = clone $now;
-                $start->modify($interval);
-                $jqlQuery = str_replace('%date%', $now->format('Y-m-d'), $jql);
-                $jqlQuery = str_replace('%start%', $start->format('Y-m-d'), $jqlQuery);
-                $jqlQuery = str_replace('%end%', $now->format('Y-m-d'), $jqlQuery);
-
-                // Execute jql query
-                $issues = $issueService->search(
-                    $jqlQuery,
-                    0,
-                    10000,
-                    ['key', 'created'],
-                    ['changelog']
-                );
-
-                // evaluate status history
-                $this->_buildStatusHistory($response, $issues->getIssues());
-                $value = array_merge (['date'=>$keyDate->format('Y-m-d')], $response['states']);
-
-                // save data sets
-                $entity = new WidgetData();
-                $entity->setWidgetId($widgetId)
-                    ->setDataRow(1)
-                    ->setDate($keyDate);
-                $entity->setValue($value);
-                $em->persist($entity);
-                $em->flush();
-
-                // save labels
-                $entity = new WidgetData();
-                $entity->setWidgetId($widgetId)
-                    ->setDataRow(2)
-                    ->setDate(null)
-                    ->setValue($response['labels']);
-                $em->persist($entity);
-                $em->flush();
-
-                $response['data'][$keyDate->format('Y-m-d')] = $value;
-
-            } elseif (isset($data[$dateTs])) {
-                $response['data'][$keyDate->format('Y-m-d')] = $data[$keyDate->getTimestamp()];
-            } else {
-                $response['need-update'] = true;
-            }
+        if ($issues->getTotal() > $issues->getMaxResults()) {
+            $response['warning'] = 'limit of ' . $issues->getMaxResults() . ' issues reached';
         }
 
-        // set response legend
-        $response['legend'] = '';
-        $response['labels'] = array_values($response['labels']);
+        // evaluate status history
+        $this->_buildStatusHistory($response, $issues->getIssues());
 
-        foreach ($response['labels'] as $key=>$label) {
+        array_multisort($response['states'], SORT_DESC, SORT_NUMERIC);
 
-            $response['legend'] .= '&nbsp;&nbsp;<i style="color:'
-                . $colors[$key]
+        $z=0;
+        $response['table'] = '<table>';
+        foreach ($response['states'] as $state => $value) {
+            $response['table'] .= '<tr><td><i style="color:'
+                . $colors[$z]
                 . '" class="fa fa-circle"></i> '
-                . '<span>' . $label . '</span>';
+                . $state . $colSpacer . '</td>'
+                . '<td>&empty; ' . $value . 'd</td></tr>';
+            $z++;
+            if ($z == $maxLines) break;
         }
-
-        // set response data
-        //$response['data'] = $response['data'];
-        $response['data'] = array_reverse(array_values($response['data']));
+        $response['table'] .= '</table>';
+        $response['link'] = $jiraLogin->getJiraHost() . '/issues/?jql=' . urlencode($jql);
 
         // Cache response data
         $cache->setValue('JiraTimeInStateWidgetBundle', $widgetId, json_encode($response));
@@ -224,7 +132,6 @@ class DefaultController extends Controller
                         foreach ($history->items as $item) {
 
                             if (isset($item->field) && $item->field == 'status') {
-                                //var_dump($history->items);
 
                                 $timeInState = null;
 
@@ -233,10 +140,7 @@ class DefaultController extends Controller
                                         'date'   => $issue->fields->created,
                                         'status' => $item->fromString
                                     ];
-
-                                    $response['labels'][$item->fromString] = $item->fromString;
                                 }
-
 
                                 $lastItemIndex = count($response['history'][$issue->key])-1;
                                 $lastItem = $response['history'][$issue->key][$lastItemIndex];
@@ -281,44 +185,6 @@ class DefaultController extends Controller
                 $response['states'][$state] = 0;
             }
         }
-
-
-    }
-
-    /**
-     * Gets stored graph data.
-     *
-     * @param integer $widgetId Widget id
-     * @param integer $dataRowId Data row id
-     * @return array Data
-     */
-    protected function _getDataArray($widgetId, $dataRowId)
-    {
-        $result = array();
-
-        $em = $this->getDoctrine()->getManager();
-        $dataRepository = $em->getRepository('JiraTimeInStateWidgetBundle:WidgetData');
-
-        $data = $dataRepository
-            ->createQueryBuilder('d')
-            ->where('d.widget_id = :id')
-            ->andWhere('d.data_row = :row')
-            //->orderBy('d.date', 'ASC')
-            ->setParameter('id', $widgetId)
-            ->setParameter('row', $dataRowId)
-            ->getQuery()->getResult();
-
-        if ($data) {
-            foreach ($data as $entity) {
-                if ($entity->getDate()) {
-                    $result[$entity->getDate()->getTimestamp()] = $entity->getValue();
-                } else {
-                    $result = $entity->getValue();
-                }
-            }
-        }
-
-        return $result;
     }
 
     /**
@@ -339,16 +205,8 @@ class DefaultController extends Controller
         // Please remove if you need to write something to the session.
         session_write_close();
 
-        $em = $this->getDoctrine()->getManager();
-
         $widgetId = $request->get('id');
-
         $this->get('CacheService')->deleteValue('JiraTimeInStateWidgetBundle', $widgetId);
-
-        // clear widget data cache
-        $em->createQuery('delete from JiraTimeInStateWidgetBundle:WidgetData st where st.widget_id = :id')
-            ->setParameter('id', $widgetId)
-            ->execute();
 
         return new Response();
     }

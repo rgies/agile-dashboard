@@ -1,8 +1,21 @@
 {% extends "MetricsBundle::Templates/default-widget.html.twig" %}
 
 {% block widget_body %}
-    <div id="chart-{{ widget.id }}" style="height: {% if (widget.size=='2x2') or (widget.size=='1x2') or (widget.size=='3x2') or (widget.size=='Xx2') %}270{% else %}122{% endif %}px; top: -7px"></div>
-    <div id="chart-legend-{{ widget.id }}" style="position: absolute; right:35px; top:28px; font-size: 9px"></div>
+    <span id="widget-value-{{ widget.id }}" style="font-size:11px">
+        <table>
+            <tr><td><i class="fa fa-circle"></i> <a>###-#######</a> &nbsp;&nbsp;&nbsp;&nbsp;<i>################</i></td></tr>
+            <tr><td><i class="fa fa-circle"></i> <a>###-#######</a> &nbsp;&nbsp;&nbsp;&nbsp;<i>################</i></td></tr>
+            <tr><td><i class="fa fa-circle"></i> <a>###-#######</a> &nbsp;&nbsp;&nbsp;&nbsp;<i>################</i></td></tr>
+            <tr><td><i class="fa fa-circle"></i> <a>###-#######</a> &nbsp;&nbsp;&nbsp;&nbsp;<i>################</i></td></tr>
+            <tr><td><i class="fa fa-circle"></i> <a>###-#######</a> &nbsp;&nbsp;&nbsp;&nbsp;<i>################</i></td></tr>
+        </table>
+    </span>
+
+    <div class="widget-footer-line">
+        <span id="widget-link-{{ widget.id }}" style="font-size: 12px">
+            <a><i class="fa fa-arrow-circle-right"></i> More info</a>
+        </span>
+    </div>
 {% endblock %}
 
 {% block menue_items %}
@@ -19,7 +32,7 @@
         // register request to get widget data
         addDataRequest(
             '{{ path('JiraTimeInStateWidgetBundle-collect-data') }}',
-            {id:{{ widget.id }}, type:'{{ widget.type }}', updateInterval:'{{ widget.updateInterval }}'},
+            {id:{{ widget.id }}, type:'{{ widget.type }}', size: '{{ widget.size }}', updateInterval:'{{ widget.updateInterval }}'},
             function (data) { displayData{{ widget.id }}(data);}
         );
 
@@ -38,7 +51,7 @@
                 {id: id},
                 function(data) {
                     $.post('{{ path('JiraTimeInStateWidgetBundle-collect-data') }}',
-                        {id:{{ widget.id }}, type:'{{ widget.type }}', needUpdate: 1, updateInterval:'{{ widget.updateInterval }}'},
+                        {id:{{ widget.id }}, type:'{{ widget.type }}', size: '{{ widget.size }}', updateInterval:'{{ widget.updateInterval }}'},
                         displayData{{ widget.id }}
                     );
                 }
@@ -54,101 +67,29 @@
         {
             var response = JSON.parse(data);
 
-            $('#chart-{{ widget.id }}').html('');
-
-            // Processing spinner icon
-            if (response['need-update']) {
-                $('#widget-title-suffix-{{ widget.id }}').html('<i class="fa fa-refresh fa-spin fa-fw"></i>');
-            } else {
-                $('#widget-title-suffix-{{ widget.id }}').html('');
-            }
+            // reset reload spinner
+            $('#widget-title-suffix-{{ widget.id }}').html('');
 
             if (response['warning']) {
-                $('#chart-{{ widget.id }}').html(
+                $('#widget-value-{{ widget.id }}').html(
                     '<div class="widget-value-warning"><i class="fa fa-warning"></i> ' +
                     response['warning'] + '</div>'
                 );
                 return;
             }
 
-            // draw chart
-            var chart{{ widget.id }} = new Morris.Area({
-                element: 'chart-{{ widget.id }}',
-                hideHover: 'auto',
-                data: response['data'],
-                xkey: 'date',
-                ykeys: response['keys'],
-                parseTime: false,
-                labels: response['labels'],
-                hoverCallback: function (index, options, content, row) {
-                    content = '';
-                    var i=0, sum = 0;
-                    for (var key in row) {
-                        if (row.hasOwnProperty(key)) {
-                            //if (key.charAt(0) == 'y' && typeof(row[key]) == 'number') {
-                            if (key != 'date' && typeof(row[key]) == 'number') {
-                                i++;
-                                sum = sum + row[key];
-                            }
-                        }
-                    }
-
-                    // draw chart legend
-                    var index = 0;
-                    for (var key in row) {
-                        if (row.hasOwnProperty(key)) {
-                            if (key != 'date') {
-                                var value = row[key];
-
-                                if (i > 1) {
-                                    value = value + 'd&nbsp;(' + Math.round(value / sum * 100) + '%)';
-                                }
-
-                                content = '<div class="morris-hover-point" style="text-align: left;">'
-                                    + '<i class="fa fa-circle" style="color:' + options.lineColors[index] + '"></i>&nbsp;'
-                                    + options.labels[index]
-                                    + ':&nbsp;'
-                                    + value
-                                    + '</div>'
-                                    + content;
-                                index++;
-                            }
-                        }
-                    }
-
-                    if (i>1) {
-                        sum = Math.round(sum * 10) / 10;
-                        content = content
-                            + '<div class="morris-hover-row-label">Σ: '
-                            + sum.toString()
-                            + ' days</div>';
-                    }
-
-                    content = '<div class="morris-hover-row-label">'
-                        + row['date']
-                        + '</div>'
-                        + content;
-
-
-                    return content;
-                },
-                fillOpacity: 0.5
-            });
-
-            if (response['legend']) {
-                $('#chart-legend-{{ widget.id }}').html(response['legend']);
+            if (response['table']) {
+                $('#widget-value-{{ widget.id }}').html(response['table']);
             }
 
-            if (response['need-update']) {
-                dataRequestHandler.retryQueue.push(
-                    {
-                        'url':'{{ path('JiraTimeInStateWidgetBundle-collect-data') }}',
-                        'params': {id:{{ widget.id }}, type:'{{ widget.type }}', needUpdate: 1, updateInterval:'{{ widget.updateInterval }}'},
-                        'callback': arguments.callee
-                    }
+            // More info link
+            if (response['link'] != undefined) {
+                $('#widget-link-{{ widget.id }}').html(
+                    '<a href="' + response['link']
+                    + '" target="_blank"><i class="fa fa-arrow-circle-right"></i> More info '
+                    + '</a>'
                 );
             }
-
         }
     </script>
 {% endblock %}

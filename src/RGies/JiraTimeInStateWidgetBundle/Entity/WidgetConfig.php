@@ -32,25 +32,9 @@ class WidgetConfig
     /**
      * @var string
      *
-     * @ORM\Column(name="start_date", type="text", length=100, nullable=true)
-     */
-    private $start_date = '-6 month';
-
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="end_date", type="text", length=100, nullable=true)
-     */
-    private $end_date = 'last week friday';
-
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="jql_query", type="text")
      */
-    private $jql_query = 'project=MYPROJECT and type in (Story,Task) and created>="%start%" and created<="%end%"';
+    private $jql_query = 'project=MYPROJECT and type in (Story,Task) and created>=startOfWeek(-10)';
 
 
     /**
