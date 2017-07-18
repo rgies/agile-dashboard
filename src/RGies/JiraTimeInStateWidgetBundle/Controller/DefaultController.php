@@ -49,7 +49,7 @@ class DefaultController extends Controller
         // Get data from cache
         $cache = $this->get('CacheService');
         if ($cacheValue = $cache->getValue('JiraTimeInStateWidgetBundle', $widgetId, null, $updateInterval)) {
-            //return new Response($cacheValue, Response::HTTP_OK);
+            return new Response($cacheValue, Response::HTTP_OK);
         }
 
         $jiraLogin = $this->get('JiraCoreService')->getLoginCredentials();
