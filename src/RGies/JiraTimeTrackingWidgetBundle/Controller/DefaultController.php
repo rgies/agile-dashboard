@@ -175,10 +175,9 @@ class DefaultController extends Controller
             return;
         }
 
-        /*
-        if (!isset($userData->key)) {
-            var_dump($userData); exit;
-        }*/
+        if (!isset($userData->key) || !isset($userData->displayName)) {
+            return;
+        }
 
         $userKey = $userData->key;
         $userName = $userData->displayName;

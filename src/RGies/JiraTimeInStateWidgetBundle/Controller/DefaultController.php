@@ -93,12 +93,14 @@ class DefaultController extends Controller
         $z=0;
         $response['table'] = '<table>';
         foreach ($response['states'] as $state => $value) {
-            $response['table'] .= '<tr><td><i style="color:'
-                . $colors[$z]
-                . '" class="fa fa-circle"></i> '
-                . $state . $colSpacer . '</td>'
-                . '<td>&empty; ' . $value . 'd</td></tr>';
-            $z++;
+            if ($state) {
+                $response['table'] .= '<tr><td><i style="color:'
+                    . $colors[$z]
+                    . '" class="fa fa-circle"></i> '
+                    . $state . $colSpacer . '</td>'
+                    . '<td>&empty; ' . $value . 'd</td></tr>';
+                $z++;
+            }
             if ($z == $maxLines) break;
         }
         $response['table'] .= '</table>';
