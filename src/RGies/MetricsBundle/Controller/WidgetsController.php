@@ -447,6 +447,7 @@ class WidgetsController extends Controller
      * Import widget.
      *
      * @Route("/widget-import/", name="widget_import")
+     * @Method("POST")
      * @Template()
      */
     public function importWidgetAction(Request $request)
@@ -469,20 +470,20 @@ class WidgetsController extends Controller
                 throw $this->createNotFoundException('No access allowed.');
             }
 
-            $filename = 'uploads/' . $file->getClientOriginalName();
-
-            if (!move_uploaded_file($file->getPathname(), $filename)) {
-                throw $this->createNotFoundException('Error on file upload');
-            }
 
             if (substr($file->getClientOriginalName(), -5) != '.json') {
                 throw $this->createNotFoundException('Only *.json files allowed');
             }
 
-            $import = json_decode(file_get_contents($filename), true);
-            $title = $import['widget']['title'] . '-new';
+            $filename = 'uploads/' . md5(uniqid()) . '.' . $file->guessExtension();
+            //$filename = 'uploads/' . $file->getClientOriginalName();
 
-            $widget = $this->get('WidgetService')->import($import, $title, $dashboard);
+            if (!move_uploaded_file($file->getPathname(), $filename)) {
+                throw $this->createNotFoundException('Error on file upload');
+            }
+
+            $import = json_decode(file_get_contents($filename), true);
+            $widget = $this->get('WidgetService')->import($import, $dashboard);
 
             @unlink($filename);
         }

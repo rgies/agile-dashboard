@@ -170,13 +170,13 @@ class WidgetService
      * Creates new widget database entry with given data.
      *
      * @param array $data Widget data
-     * @param string $title Widget title
-     * @param Dashboard $dashboard Target dashboard
+     * @param \RGies\MetricsBundle\Entity\Dashboard $dashboard Target dashboard
      * @return Widgets
      */
-    public function import($data, $title, $dashboard)
+    public function import($data, $dashboard)
     {
         $em = $this->_doctrine->getManager();
+        $widget = null;
 
         try {
             $widget = new Widgets($data['widget']);
