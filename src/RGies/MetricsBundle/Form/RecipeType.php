@@ -27,17 +27,12 @@ class RecipeType extends AbstractType
     {
         $widgetPlugins = $this->_container->getParameter('widget_plugins');
 
-        $ratingChoice = array(
-            '5.0'=>'5.0',
-            '4.5'=>'4.5',
-            '4.0'=>'4.0',
-            '3.5'=>'3.5',
-            '3.0'=>'3.0',
-            '2.5'=>'2.5',
-            '2.0'=>'2.0',
-            '1.5'=>'1.5',
-            '1.0'=>'1.0',
-        );
+        $ratingChoice = [];
+        for ($i=50; $i>=10; $i--)
+        {
+            $rating = (string)round($i / 10.0, 1);
+            $ratingChoice[$rating] = $rating;
+        }
 
         $builder
             ->add('title')
@@ -53,7 +48,7 @@ class RecipeType extends AbstractType
             ->add('description')
             ->add('image_url', 'file', array(
                 'required' => false,
-                'label' => 'PNG-Image (*.png)'
+                'label' => 'PNG 600x400px (*.png)'
             ))
             ->add('json_config', 'file', array(
                 'required' => false

@@ -58,6 +58,12 @@
                                  data-content="<i class='fa fa-hand-pointer-o'></i> Click to select<br>this dashboard recipe."
                             >
                         </a>
+                        <div style="text-align: center; padding-top: 15px;">
+                            <a href="{{ path('recipe_use', {id: item.id}) }}" class="btn btn-primary btn-lg btn-group-justified">
+                                <i class="fa fa-arrow-right"></i>
+                                Select...
+                            </a>
+                        </div>
                     </div>
                 </div>
             {% endfor %}
