@@ -233,7 +233,13 @@ class RecipeController extends Controller
             return $this->redirect($this->generateUrl('recipe'));
         }
 
+        $fields = $em->getRepository('MetricsBundle:RecipeFields')->findBy(
+            array('recipe' => $id),
+            array('pos' => 'ASC')
+        );
+
         return array(
+            'fields'      => $fields,
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),

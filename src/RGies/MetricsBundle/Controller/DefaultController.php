@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\Security\Acl\Exception\Exception;
 use Symfony\Component\Security\Core\SecurityContextInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -160,33 +161,28 @@ class DefaultController extends Controller
      * @Method("GET")
      * @Template()
      */
-    public function recipeUseAction($id)
+    public function recipeUseAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
-
         $entity = $em->getRepository('MetricsBundle:Recipe')->find($id);
+        $dashboard = null;
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Recipe entity.');
         }
 
-        // if no custom fields exists create new dashboard
+        // if no custom fields exists create new dashboard or widget from recipe
         if (!count($entity->getRecipeFields())) {
-            if ($this->get('LicenseService')->limitReached('Dashboard')) {
+            // create dashboard or widget entity
+            try {
+                $dashboardId = $this->_createRecipeEntity($request, $entity);
+            } catch (\Exception $e) {
+                $this->addFlash('error', $e->getMessage());
                 return $this->redirect($this->generateUrl('home'));
             }
 
-            $import = json_decode(
-                file_get_contents(
-                    $this->getParameter('recipe_directory') . '/' . $entity->getJsonConfig()
-                ),
-                true
-            );
-
-            $title = $import['dashboard']['title'];
-            $dashboard = $this->get('DashboardService')->import($import, $title);
-
-            return $this->redirect($this->generateUrl('home', ['id'=>$dashboard->getId()]));
+            // redirect to target dashboard
+            return $this->redirect($this->generateUrl('home', ['id' => $dashboardId]));
         }
 
         $fields = $em->getRepository('MetricsBundle:RecipeFields')->findBy(
@@ -209,34 +205,91 @@ class DefaultController extends Controller
     public function recipeAddAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
-
         $entity = $em->getRepository('MetricsBundle:Recipe')->find($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Recipe entity.');
         }
 
-        if ($this->get('LicenseService')->limitReached('Dashboard')) {
+        // create dashboard or widget entity
+        try {
+            $dashboardId = $this->_createRecipeEntity($request, $entity, $request->get('field'));
+        } catch (\Exception $e) {
+            $this->addFlash('error', $e->getMessage());
             return $this->redirect($this->generateUrl('home'));
         }
 
-        $import = file_get_contents($this->getParameter('recipe_directory') . '/' . $entity->getJsonConfig());
+        // redirect to target dashboard
+        return $this->redirect($this->generateUrl('home', ['id' => $dashboardId]));
+    }
 
-        if ($entity->getType() == 'dashboard') {
-            foreach ($request->get('field') as $key=>$value) {
+    /**
+     * Create Dashboard or Widget entity from recipe.
+     *
+     * @param $request
+     * @param $entity
+     * @param $fields
+     */
+    protected function _createRecipeEntity($request, $entity, $fields = null)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $configFile = $this->getParameter('recipe_directory') . '/' . $entity->getJsonConfig();
+
+        if (!file_exists($configFile)) {
+            throw $this->createNotFoundException('Config file [' . $configFile . '] not found.');
+        }
+
+        // load json config
+        $import = file_get_contents($configFile);
+
+        // replace variables
+        if ($fields) {
+            foreach ($fields as $key=>$value) {
                 $placeholder = '%custom_field_' . $key . '%';
                 $import = str_replace($placeholder, $value, $import);
             }
-
-            $import = json_decode($import, true);
-            $title = $import['dashboard']['title'];
-            $dashboard = $this->get('DashboardService')->import($import, $title);
-
-            return $this->redirect($this->generateUrl('home', ['id'=>$dashboard->getId()]));
-        } else {
-
-            return $this->redirect($this->generateUrl('home'));
         }
+
+        $import = json_decode($import, true);
+
+        // check for recipe type dashboard or widget
+        switch ($entity->getType())
+        {
+            case 'dashboard':
+                if ($this->get('LicenseService')->limitReached('Dashboard')) {
+                    throw $this->createNotFoundException('Dashboard limit reached.');
+                }
+
+                $title = $import['dashboard']['title'];
+                $dashboard = $this->get('DashboardService')->import($import, $title);
+                $dashboardId = $dashboard->getId();
+                break;
+
+            case 'widget':
+                if (!$request->cookies->has(WidgetsController::LAST_VISITED_DASHBOARD)) {
+                    throw $this->createNotFoundException('No dashboard defined.');
+                }
+
+                $dashboardId = $request->cookies->get(WidgetsController::LAST_VISITED_DASHBOARD);
+                $dashboard = $em->getRepository('MetricsBundle:Dashboard')->find($dashboardId);
+
+                if (!$dashboard) {
+                    throw $this->createNotFoundException('Unable to find Dashboard entity.');
+                }
+
+                if (!$this->get('AclService')->userHasEntityAccess($dashboard)) {
+                    throw $this->createNotFoundException('No access allowed.');
+                }
+
+                $this->get('WidgetService')->import($import, $dashboard);
+                break;
+
+            Default:
+                throw $this->createNotFoundException('Unknown Recipe type [' . $entity->getType() . '].');
+
+        }
+
+        return $dashboardId;
     }
 
     /**

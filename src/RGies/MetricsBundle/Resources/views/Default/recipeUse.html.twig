@@ -8,7 +8,6 @@
         </h1>
     </div>
 
-
     <!-- Data Form -->
     <form id="dataForm" name="dataForm" role="form" method="post" action="{{ path('recipe_add', {id: entity.id}) }}">
         {% for item in fields %}
@@ -28,7 +27,7 @@
     <div class="form-group">
         <div class="control">
             <button id="save" type="submit" onclick="formSave()" class="btn btn-primary pull-right">
-                <i class="fa fa-check"></i> Create Dashboard
+                <i class="fa fa-check"></i> Create {{ entity.type }}
             </button>
             <span class="pull-right">&nbsp;&nbsp;&nbsp;</span>
             <button type="button" onclick="history.back();" class="btn btn-default pull-right">
