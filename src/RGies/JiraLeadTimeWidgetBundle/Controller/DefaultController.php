@@ -23,6 +23,8 @@ use JiraRestApi\JiraException;
  */
 class DefaultController extends Controller
 {
+    protected $_widgetId;
+
     /**
      * Collect needed widget data.
      *
@@ -59,6 +61,9 @@ class DefaultController extends Controller
 
         $response = array();
         $response['data'] = array();
+
+        $this->_widgetId = $widgetId;
+
         $startDate = new \DateTime();
         $endDate = new \DateTime();
 
@@ -110,7 +115,7 @@ class DefaultController extends Controller
             }
         }
 
-        $data = $this->_getDataArray($widgetId, 1);
+        $data = $this->_getDataArray(1);
 
         for ($now; $now > $startDate; $now->modify($interval))
         {
@@ -135,23 +140,22 @@ class DefaultController extends Controller
                 $jqlQuery = str_replace('%end%', $now->format('Y-m-d'), $jqlQuery);
 
                 try {
-                    $entity = new WidgetData();
-                    $entity->setWidgetId($widgetId);
-                    $entity->setDataRow(1);
-                    $entity->setDate($keyDate);
-
                     // search for jira issues from jql
                     $issues = $issueService->search($jqlQuery, 0, 10000, ['key', 'created', 'resolutiondate']);
                     $response['jql'] = $jqlQuery;
+                    $response['leadTime'] = [];
 
                     $leadTimeArray = array();
                     $average = 0;
+                    $min = 0;
+                    $max = 0;
+
                     foreach ($issues->getIssues() as $issue) {
 
                         if (isset($issue->fields->resolutiondate) && $issue->fields->resolutiondate) {
                             $resolved = new \DateTime($issue->fields->resolutiondate);
-                            //$leadTimeDays = (int)$issue->fields->created->diff($resolved)->format('%a');
                             $leadTimeDays = ($resolved->getTimestamp() - $issue->fields->created->getTimestamp()) / 3600 / 24;
+                            $response['leadTime'][$issue->key] = $leadTimeDays;
 
                             $leadTimeArray[] = $leadTimeDays;
                         }
@@ -160,19 +164,20 @@ class DefaultController extends Controller
 
                     if (count($leadTimeArray)) {
                         $average = array_sum($leadTimeArray) / count($leadTimeArray);
+                        $min = min($leadTimeArray);
+                        $max = max($leadTimeArray);
                     }
-
-                    $entity->setValue($average);
 
                     // don't persists data which are not final
                     if ($now->format('Y-m-d') == date('Y-m-d')) {
-                        $cache->setValue('JiraLeadTimeWidgetBundle_today', $widgetId, $entity->getValue());
+                        $cache->setValue('JiraLeadTimeWidgetBundle_today', $widgetId, $average);
                     } else {
-                        $em->persist($entity);
-                        $em->flush();
+                        $this->_saveData($keyDate, 1, $average);
+                        $this->_saveData($keyDate, 2, $min);
+                        $this->_saveData($keyDate, 3, $max);
                     }
 
-                    $this->_addData($response['data'], $keyDate->format('Y-m-d'), 1, $entity->getValue());
+                    $this->_addData($response['data'], $keyDate->format('Y-m-d'), 1, $average);
                 } catch (JiraException $e) {
                     $response['warning'] = wordwrap($e->getMessage(), 38, '<br/>');
                     return new Response(json_encode($response), Response::HTTP_OK);
@@ -198,12 +203,19 @@ class DefaultController extends Controller
             );
 
             if (count($leadTimeValues)) {
-                $response['min'] = round(min($leadTimeValues), 1);
-                $response['max'] = round(max($leadTimeValues), 1);
                 $response['value'] = round(array_sum($leadTimeValues) / count($leadTimeValues), 1);
-                $response['subtext'] .= '&nbsp;&nbsp;&nbsp;<i class="fa fa-arrow-down"></i>'
-                    . $response['min'] . 'd / <i class="fa fa-arrow-up"></i>'
-                    . $response['max'] . 'd';
+
+                $minValues = $this->_getDataArray(2);
+                $maxValues = $this->_getDataArray(3);
+
+                if (count($minValues) && count($maxValues)) {
+                    $response['min'] = round(min($minValues), 1);
+                    $response['max'] = round(max($maxValues), 1);
+
+                    $response['subtext'] .= '&nbsp;&nbsp;&nbsp;<i class="fa fa-arrow-down"></i>'
+                        . $response['min'] . 'd / <i class="fa fa-arrow-up"></i>'
+                        . $response['max'] . 'd';
+                }
             }
 
             $response['leadTimeValues'] = array_reverse(
@@ -236,13 +248,35 @@ class DefaultController extends Controller
     }
 
     /**
+     * Save data value.
+     *
+     * @param $date
+     * @param $rowKey
+     * @param $value
+     */
+    protected function _saveData($date, $rowKey, $value)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = new WidgetData();
+        $entity->setWidgetId($this->_widgetId);
+        $entity->setDataRow($rowKey);
+        $entity->setDate($date);
+
+        $entity->setValue($value);
+
+        $em->persist($entity);
+        $em->flush();
+    }
+
+    /**
      * Gets stored graph data.
      *
      * @param integer $widgetId Widget id
      * @param integer $dataRowId Data row id
      * @return array Data
      */
-    protected function _getDataArray($widgetId, $dataRowId)
+    protected function _getDataArray($dataRowId)
     {
         $result = array();
 
@@ -254,7 +288,7 @@ class DefaultController extends Controller
             ->where('d.widget_id = :id')
             ->andWhere('d.data_row = :row')
             //->orderBy('d.date', 'ASC')
-            ->setParameter('id', $widgetId)
+            ->setParameter('id', $this->_widgetId)
             ->setParameter('row', $dataRowId)
             ->getQuery()->getResult();
 
