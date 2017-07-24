@@ -115,7 +115,7 @@ class DefaultController extends Controller
 
                         $value .= '<td><i title="State" class="fa fa-tag"></i> <i>' . $status . '</i></td>'
                             . '<td>' . $colSpacer . '<i title="Issue Age" class="fa fa-coffee"></i> <i>'
-                            . $issueAgeDays . '</i></td>';
+                            . $issueAgeDays . 'd</i></td>';
 
                         if ($size == '2x1' or $size == '2x2') {
                             $value .= '<td><i>' . $colSpacer . $this->_getShortSummery($issue->fields->summary, 30)
