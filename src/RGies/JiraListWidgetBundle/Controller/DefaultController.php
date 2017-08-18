@@ -86,10 +86,6 @@ class DefaultController extends Controller
                     . $this->_createLink($issue->key,$issue->fields->summary)
                     . $colSpacer . '</td>';
 
-                // calc issue age
-                $issueAge = ($issue->fields->resolutiondate) ? new \DateTime($issue->fields->resolutiondate) : new \DateTime();
-                $issueAge = $issueAge->diff($issue->fields->created);
-                $issueAgeDays = $issueAge->format('%a');
                 if ($issue->fields->assignee) {
                     $assignee = $this->_getShortName($issue->fields->assignee->displayName);
                 } else {
@@ -115,7 +111,7 @@ class DefaultController extends Controller
 
                         $value .= '<td><i title="State" class="fa fa-tag"></i> <i>' . $status . '</i></td>'
                             . '<td>' . $colSpacer . '<i title="Issue Age" class="fa fa-coffee"></i> <i>'
-                            . $issueAgeDays . 'd</i></td>';
+                            . $this->_formatIssueAge($issue) . '</i></td>';
 
                         if ($size == '2x1' or $size == '2x2') {
                             $value .= '<td><i>' . $colSpacer . $this->_getShortSummery($issue->fields->summary, 30)
@@ -124,7 +120,7 @@ class DefaultController extends Controller
                         break;
 
                     case 'age_invest':
-                        $value .= '<td><i title="Issue age" class="fa fa-coffee"></i> <i>' . $issueAgeDays . 'd</i></td>'
+                        $value .= '<td><i title="Issue age" class="fa fa-coffee"></i> <i>' . $this->_formatIssueAge($issue) . '</i></td>'
                             . '<td>' . $colSpacer . '<i title="Time spend" class="ion ion-android-stopwatch"></i> <i>'
                             . $timeSpend . '</i></td>';
 
@@ -167,6 +163,28 @@ class DefaultController extends Controller
         $cache->setValue('JiraListWidgetBundle', $widgetId, json_encode($response));
 
         return new Response(json_encode($response), Response::HTTP_OK);
+    }
+
+    /**
+     * Format issue age output.
+     *
+     * @param $issue
+     * @return string
+     */
+    protected function _formatIssueAge($issue)
+    {
+        $issueAge = ($issue->fields->resolutiondate) ? new \DateTime($issue->fields->resolutiondate) : new \DateTime();
+        $issueAge = ($issueAge->getTimestamp() - $issue->fields->created->getTimestamp()) / 3600;
+
+        if ($issueAge > 48) {
+            $ageUnit = 'd';
+            $ageValue = floor($issueAge / 24);
+        } else {
+            $ageUnit = 'h';
+            $ageValue = floor($issueAge);
+        }
+
+        return $ageValue . $ageUnit;
     }
 
     /**
