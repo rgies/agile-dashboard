@@ -94,11 +94,40 @@ class DefaultController extends Controller
         $response['table'] = '<table>';
         foreach ($response['states'] as $state => $value) {
             if ($state) {
+
+                if ($size[0]=='1') {
+                    $stateName = $this->_getShortName($state, 20);
+                } else {
+                    $stateName = $this->_getShortName($state, 28);
+                }
+
                 $response['table'] .= '<tr><td><i style="color:'
                     . $colors[$z]
                     . '" class="fa fa-circle"></i> '
-                    . $state . $colSpacer . '</td>'
-                    . '<td>&empty; ' . $value . 'd</td></tr>';
+                    . $stateName . $colSpacer . '</td>'
+                    . '<td>&empty; ' . $this->_formatDuration($value) . $colSpacer . '</td>';
+
+                // additional info on wide layout
+                if ($size == '2x1' || $size == '2x2') {
+                    if (isset($response['min_time'][$state])) {
+                        $response['table']
+                            .= '<td><i class="fa fa-arrow-down"></i> '
+                            . $this->_formatDuration($response['min_time'][$state]) . $colSpacer
+                            . '</td>';
+                    }
+
+                    if (isset($response['max_time'][$state])) {
+                        $response['table']
+                            .= '<td><i class="fa fa-arrow-up"></i> '
+                            . $this->_formatDuration($response['max_time'][$state]) . $colSpacer
+                            . '</td>';
+                    }
+
+                    $response['table']
+                        .= '<td>&sum; ' . $response['state_count'][$state] . '</td>';
+                }
+
+                $response['table'] .= '</tr>';
                 $z++;
             }
             if ($z == $maxLines) break;
@@ -148,21 +177,19 @@ class DefaultController extends Controller
                                 $lastItem = $response['history'][$issue->key][$lastItemIndex];
 
                                 $response['labels'][$item->toString] = $item->toString;
-                                //$timeDiff = $lastItem['date']->diff($created);
-                                //$timeInState = $timeDiff->h + ($timeDiff->days * 24);
 
                                 $timeInState = ($created->getTimestamp() - $lastItem['date']->getTimestamp()) / 3600;
 
-
-                                //$timeInState = (int)$lastItem['date']->diff($created)->format('%h');
                                 $response['history'][$issue->key][$lastItemIndex]['waiting']
                                     = $timeInState;
 
                                 // increment time in state based on status
-                                if (isset($states[$item->fromString][$issue->key])) {
-                                    $states[$item->fromString][$issue->key] += $timeInState;
-                                } else {
-                                    $states[$item->fromString][$issue->key] = $timeInState;
+                                if ($timeInState >= 0.01) {
+                                    if (isset($states[$item->fromString][$issue->key])) {
+                                        $states[$item->fromString][$issue->key] += $timeInState;
+                                    } else {
+                                        $states[$item->fromString][$issue->key] = $timeInState;
+                                    }
                                 }
 
                                 $response['history'][$issue->key][] = [
@@ -182,9 +209,15 @@ class DefaultController extends Controller
         foreach ($states as $state=>$values)
         {
             if (count($values)) {
-                $response['states'][$state] = round(array_sum($values) / count($values) / 24,1);
+                $response['states'][$state] = round(array_sum($values) / count($values),1);
+                $response['min_time'][$state] = min($values);
+                $response['max_time'][$state] = max($values);
+                $response['state_count'][$state] = count($values);
             } else {
                 $response['states'][$state] = 0;
+                $response['min_time'][$state] = 0;
+                $response['max_time'][$state] = 0;
+                $response['state_count'][$state] = 0;
             }
         }
     }
@@ -212,4 +245,46 @@ class DefaultController extends Controller
 
         return new Response();
     }
+
+    /**
+     * Format duration.
+     *
+     * @param float $value duration
+     * @return string
+     */
+    protected function _formatDuration($value)
+    {
+        if (!$value) {
+            $unit = 'd';
+            $duration = 0;
+        }
+        elseif ($value >= 24) {
+            $unit = 'd';
+            $duration = round($value / 24, 1);
+        } else {
+            $unit = 'h';
+            $duration = round($value, 1);
+        }
+
+        return $duration . $unit;
+    }
+
+    /**
+     * Get shorten summary.
+     *
+     * @param $value
+     * @param int $len
+     * @return string
+     */
+    protected function _getShortName($value, $len = 30)
+    {
+        if (strlen($value) > ($len-1)) {
+            $shortName = mb_substr($value, 0, ($len-1)) . '...';
+        } else {
+            $shortName = $value;
+        }
+
+        return '<span title="' . str_replace('"', '&quot;', $value) . '">' . htmlentities($shortName) . '</span>';
+    }
+
 }
