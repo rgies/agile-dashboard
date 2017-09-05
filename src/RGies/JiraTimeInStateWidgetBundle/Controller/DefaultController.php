@@ -184,7 +184,7 @@ class DefaultController extends Controller
                                     = $timeInState;
 
                                 // increment time in state based on status
-                                if ($timeInState >= 0.01) {
+                                if ($timeInState >= 0.002) {
                                     if (isset($states[$item->fromString][$issue->key])) {
                                         $states[$item->fromString][$issue->key] += $timeInState;
                                     } else {
@@ -209,7 +209,7 @@ class DefaultController extends Controller
         foreach ($states as $state=>$values)
         {
             if (count($values)) {
-                $response['states'][$state] = round(array_sum($values) / count($values),1);
+                $response['states'][$state] = array_sum($values) / count($values);
                 $response['min_time'][$state] = min($values);
                 $response['max_time'][$state] = max($values);
                 $response['state_count'][$state] = count($values);
@@ -257,10 +257,15 @@ class DefaultController extends Controller
         if (!$value) {
             $unit = 'd';
             $duration = 0;
-        }
-        elseif ($value >= 24) {
+        } elseif ($value >= 24) {
             $unit = 'd';
             $duration = round($value / 24, 1);
+        } elseif ($value * 60 < 1) {
+            $unit = 's';
+            $duration = round($value * 3600, 0);
+        } elseif ($value < 1) {
+            $unit = 'm';
+            $duration = round($value * 60, 1);
         } else {
             $unit = 'h';
             $duration = round($value, 1);
