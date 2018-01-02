@@ -5,7 +5,7 @@ Dashboard with agile metrics connected to Atlassian Jira.
 
 ## Requirements
 
-* PHP >= 5.5.9 (with php5-curl)
+* PHP >= 5.5.9 (with php5-curl, php5-mcrypt)
 * Composer
 * Mysql
 
