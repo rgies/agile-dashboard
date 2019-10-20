@@ -1,7 +1,7 @@
 # Agile Dashboard - Community Edition
 Dashboard with agile metrics connected to Atlassian Jira.
 
-![Sample Dashboard](http://www.rgies.de/images/agile-dashboard3.jpg)
+![Sample Dashboard](http://metrics.rgies.de/agile-dashboard3.jpg)
 
 ## Requirements
 
